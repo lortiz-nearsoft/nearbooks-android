@@ -12,7 +12,7 @@ import dagger.Provides;
  */
 @Module
 public class BaseActivityModule {
-    private final BaseActivity baseActivity;
+    private BaseActivity baseActivity;
 
     public BaseActivityModule(BaseActivity baseActivity) {
         this.baseActivity = baseActivity;
