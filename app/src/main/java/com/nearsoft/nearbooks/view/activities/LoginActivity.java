@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.activities;
+package com.nearsoft.nearbooks.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityLoginBinding;
 import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
-import com.nearsoft.nearbooks.models.viewmodels.UserViewModel;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
+import com.nearsoft.nearbooks.view.models.UserViewModel;
 import com.nearsoft.nearbooks.ws.BookService;
 
 import java.util.List;

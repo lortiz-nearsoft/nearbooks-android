@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.activities.zxing;
+package com.nearsoft.nearbooks.view.activities.zxing;
 
 import com.journeyapps.barcodescanner.CaptureActivity;
 

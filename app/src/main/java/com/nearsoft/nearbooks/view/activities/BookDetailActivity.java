@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.activities;
+package com.nearsoft.nearbooks.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +9,8 @@ import android.view.View;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityBookDetailBinding;
-import com.nearsoft.nearbooks.fragments.BookDetailFragment;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
 
 public class BookDetailActivity extends BaseActivity {
     private ActivityBookDetailBinding binding;

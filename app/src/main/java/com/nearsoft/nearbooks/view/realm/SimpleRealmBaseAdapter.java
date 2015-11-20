@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.adapters.realm;
+package com.nearsoft.nearbooks.view.realm;
 
 import android.content.Context;
 import android.view.View;

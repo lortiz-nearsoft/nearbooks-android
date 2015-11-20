@@ -1,7 +1,7 @@
 package com.nearsoft.nearbooks.di.modules;
 
-import com.nearsoft.nearbooks.activities.BaseActivity;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
+import com.nearsoft.nearbooks.view.activities.BaseActivity;
 
 import dagger.Module;
 import dagger.Provides;

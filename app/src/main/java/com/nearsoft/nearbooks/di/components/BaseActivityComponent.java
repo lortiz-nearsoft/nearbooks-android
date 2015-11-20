@@ -1,6 +1,5 @@
 package com.nearsoft.nearbooks.di.components;
 
-import com.nearsoft.nearbooks.activities.BaseActivity;
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
 
@@ -13,8 +12,4 @@ import dagger.Component;
 @PerActivity
 @Component(dependencies = {NearbooksApplicationComponent.class}, modules = {BaseActivityModule.class})
 public interface BaseActivityComponent {
-
-    //Exposed to sub-graphs.
-    BaseActivity baseActivity();
-
 }

@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.fragments;
+package com.nearsoft.nearbooks.view.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentBookDetailBinding;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
 
 public class BookDetailFragment extends BaseFragment {
     /**

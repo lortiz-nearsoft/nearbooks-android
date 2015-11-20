@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".view.activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,24 +24,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".view.activities.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.HomeActivity"
+            android:name=".view.activities.HomeActivity"
             android:label="@string/title_library"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.BookDetailActivity"
+            android:name=".view.activities.BookDetailActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".activities.HomeActivity">
+            android:parentActivityName=".view.activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity" />
+                android:value=".view.activities.HomeActivity" />
         </activity>
         <activity
-            android:name=".activities.zxing.CaptureActivityAnyOrientation"
+            android:name=".view.activities.zxing.CaptureActivityAnyOrientation"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"

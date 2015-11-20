@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.activities;
+package com.nearsoft.nearbooks.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,14 +21,14 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
-import com.nearsoft.nearbooks.activities.zxing.CaptureActivityAnyOrientation;
 import com.nearsoft.nearbooks.databinding.ActivityHomeBinding;
-import com.nearsoft.nearbooks.fragments.BaseFragment;
-import com.nearsoft.nearbooks.fragments.BookDetailFragment;
-import com.nearsoft.nearbooks.fragments.LibraryFragment;
 import com.nearsoft.nearbooks.models.realm.Book;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
-import com.nearsoft.nearbooks.models.viewmodels.UserViewModel;
+import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
+import com.nearsoft.nearbooks.view.fragments.BaseFragment;
+import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
+import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
+import com.nearsoft.nearbooks.view.models.UserViewModel;
 
 import io.realm.Realm;
 

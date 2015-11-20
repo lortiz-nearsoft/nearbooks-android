@@ -1,7 +1,7 @@
 package com.nearsoft.nearbooks.models;
 
 import com.nearsoft.nearbooks.models.realm.Book;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
 
 import java.util.List;
 

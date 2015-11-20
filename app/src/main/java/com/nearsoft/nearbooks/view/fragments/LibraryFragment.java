@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.fragments;
+package com.nearsoft.nearbooks.view.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -10,12 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nearsoft.nearbooks.R;
-import com.nearsoft.nearbooks.adapters.realm.BookRecyclerViewAdapter;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.realm.Book;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
 import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
+import com.nearsoft.nearbooks.view.realm.BookRecyclerViewAdapter;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;

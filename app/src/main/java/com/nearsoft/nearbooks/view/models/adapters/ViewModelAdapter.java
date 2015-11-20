@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.models.viewmodels.adapters;
+package com.nearsoft.nearbooks.view.models.adapters;
 
 import android.databinding.BindingAdapter;
 import android.graphics.drawable.Drawable;

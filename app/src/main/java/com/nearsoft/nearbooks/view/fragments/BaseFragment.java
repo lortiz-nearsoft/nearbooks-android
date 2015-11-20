@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.fragments;
+package com.nearsoft.nearbooks.view.fragments;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;

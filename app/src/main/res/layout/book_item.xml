@@ -7,7 +7,7 @@
 
         <variable
             name="book"
-            type="com.nearsoft.nearbooks.models.viewmodels.BookViewModel" />
+            type="com.nearsoft.nearbooks.view.models.BookViewModel" />
     </data>
 
     <LinearLayout

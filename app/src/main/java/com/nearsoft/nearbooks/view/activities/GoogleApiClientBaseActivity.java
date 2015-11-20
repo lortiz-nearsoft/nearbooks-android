@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.activities;
+package com.nearsoft.nearbooks.view.activities;
 
 import android.os.Bundle;
 

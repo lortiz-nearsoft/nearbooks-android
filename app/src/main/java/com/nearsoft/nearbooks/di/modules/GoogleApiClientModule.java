@@ -3,8 +3,8 @@ package com.nearsoft.nearbooks.di.modules;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.nearsoft.nearbooks.activities.BaseActivity;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
+import com.nearsoft.nearbooks.view.activities.BaseActivity;
 
 import dagger.Module;
 import dagger.Provides;

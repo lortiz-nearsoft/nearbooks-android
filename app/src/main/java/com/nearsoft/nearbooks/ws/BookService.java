@@ -1,6 +1,6 @@
 package com.nearsoft.nearbooks.ws;
 
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
 
 import java.util.List;
 

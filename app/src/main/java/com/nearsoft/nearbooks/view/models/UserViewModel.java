@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.models.viewmodels;
+package com.nearsoft.nearbooks.view.models;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;

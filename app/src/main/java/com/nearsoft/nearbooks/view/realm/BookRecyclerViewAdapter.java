@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.adapters.realm;
+package com.nearsoft.nearbooks.view.realm;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.models.realm.Book;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import com.nearsoft.nearbooks.view.models.BookViewModel;
 
 import io.realm.RealmResults;
 
