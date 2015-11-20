@@ -1,4 +1,4 @@
-package com.nearsoft.nearbooks.view.realm;
+package com.nearsoft.nearbooks.view.adapters.realm;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;

@@ -13,9 +13,9 @@ import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.realm.Book;
+import com.nearsoft.nearbooks.view.adapters.realm.BookRecyclerViewAdapter;
 import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
 import com.nearsoft.nearbooks.view.models.BookViewModel;
-import com.nearsoft.nearbooks.view.realm.BookRecyclerViewAdapter;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
