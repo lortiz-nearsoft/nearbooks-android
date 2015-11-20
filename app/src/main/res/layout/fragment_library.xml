@@ -6,12 +6,12 @@
         android:layout_height="match_parent"
         tools:context="com.nearsoft.nearbooks.fragments.LibraryFragment">
 
-        <ListView
-            android:id="@+id/listViewBooks"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerViewBooks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:scrollbars="vertical"
+            android:visibility="gone" />
 
         <TextView
             android:id="@android:id/empty"
@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            android:text="@string/message_no_books" />
+            android:text="@string/message_no_books"
+            android:visibility="visible" />
 
     </FrameLayout>
 </layout>
