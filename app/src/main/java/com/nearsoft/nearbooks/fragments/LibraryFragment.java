@@ -3,19 +3,22 @@ package com.nearsoft.nearbooks.fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.nearsoft.nearbooks.R;
-import com.nearsoft.nearbooks.adapters.BookListAdapter;
+import com.nearsoft.nearbooks.adapters.realm.BookRecyclerViewAdapter;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.realm.Book;
 import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
@@ -26,9 +29,11 @@ import io.realm.RealmResults;
  * Use the {@link LibraryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LibraryFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class LibraryFragment extends BaseFragment implements RecyclerItemClickListener.OnItemClickListener, RealmChangeListener {
     private OnLibraryFragmentListener mListener;
     private Realm realm;
+    private BookRecyclerViewAdapter bookRecyclerViewAdapter;
+    private FragmentLibraryBinding binding;
 
     public LibraryFragment() {
         // Required empty public constructor
@@ -56,16 +61,25 @@ public class LibraryFragment extends BaseFragment implements AdapterView.OnItemC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        FragmentLibraryBinding binding = getBinding(FragmentLibraryBinding.class);
+        binding = getBinding(FragmentLibraryBinding.class);
 
         RealmResults<Book> books = BookModel.getAllBooks(realm);
-        BookListAdapter bookListAdapter = new BookListAdapter(getActivity(), books, true);
+        bookRecyclerViewAdapter = new BookRecyclerViewAdapter(getContext(), books, true);
 
-        binding.listViewBooks.setEmptyView(binding.getRoot().findViewById(android.R.id.empty));
-        binding.listViewBooks.setAdapter(bookListAdapter);
-        binding.listViewBooks.setOnItemClickListener(this);
+        binding.recyclerViewBooks.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        binding.recyclerViewBooks.setLayoutManager(layoutManager);
+        binding.recyclerViewBooks.setAdapter(bookRecyclerViewAdapter);
+        binding.recyclerViewBooks.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        updateUI();
     }
 
     @Override
@@ -77,21 +91,42 @@ public class LibraryFragment extends BaseFragment implements AdapterView.OnItemC
             throw new ClassCastException(context.toString()
                     + " must implement OnLibraryFragmentListener");
         }
+
         realm = Realm.getDefaultInstance();
+        realm.addChangeListener(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
+        realm.removeChangeListener(this);
         realm.close();
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(View view, int position) {
         if (mListener != null) {
-            Book book = (Book) parent.getItemAtPosition(position);
+            Book book = bookRecyclerViewAdapter.getItem(position);
             mListener.onBookSelected(new BookViewModel(book), view.findViewById(R.id.imageViewBookCover));
+        }
+    }
+
+    @Override
+    public void onChange() {
+        updateUI();
+    }
+
+    private void updateUI() {
+        if (bookRecyclerViewAdapter != null) {
+            if (bookRecyclerViewAdapter.getItemCount() == 0) {
+                binding.recyclerViewBooks.setVisibility(View.GONE);
+                binding.empty.setVisibility(View.VISIBLE);
+            } else {
+                binding.recyclerViewBooks.setVisibility(View.VISIBLE);
+                binding.empty.setVisibility(View.GONE);
+            }
         }
     }
 
