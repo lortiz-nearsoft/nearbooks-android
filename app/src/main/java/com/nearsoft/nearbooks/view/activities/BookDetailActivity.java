@@ -1,8 +1,6 @@
 package com.nearsoft.nearbooks.view.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,8 +74,7 @@ public class BookDetailActivity extends BaseActivity {
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 //
-                Intent intent = new Intent(this, HomeActivity.class);
-                NavUtils.navigateUpTo(this, intent);
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
