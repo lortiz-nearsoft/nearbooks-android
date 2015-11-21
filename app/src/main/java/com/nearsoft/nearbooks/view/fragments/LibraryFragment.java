@@ -3,7 +3,7 @@ package com.nearsoft.nearbooks.view.fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,8 +66,14 @@ public class LibraryFragment extends BaseFragment implements RecyclerItemClickLi
         RealmResults<Book> books = BookModel.getAllBooks(realm);
         bookRecyclerViewAdapter = new BookRecyclerViewAdapter(getContext(), books, true);
 
+        boolean isTablet = getResources().getBoolean(R.bool.isTable);
+        boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(
+                getContext(),
+                isTablet ? isLandscape ? 3 : 2 : 1
+        );
+
         binding.recyclerViewBooks.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         binding.recyclerViewBooks.setLayoutManager(layoutManager);
         binding.recyclerViewBooks.setAdapter(bookRecyclerViewAdapter);
         binding.recyclerViewBooks.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
