@@ -15,5 +15,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {NearbooksApplicationModule.class, NetModule.class})
 public interface NearbooksApplicationComponent {
+
     BookService providesBookService();
+
 }

@@ -1,6 +1,7 @@
 package com.nearsoft.nearbooks.view.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,15 +15,19 @@ import javax.inject.Inject;
  * Google api client base activity.
  * Created by epool on 11/17/15.
  */
-public abstract class GoogleApiClientBaseActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public abstract class GoogleApiClientBaseActivity
+        extends BaseActivity
+        implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+
     @Inject
-    protected GoogleApiClient googleApiClient;
+    protected GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        GoogleApiClientComponent googleApiClientComponent = DaggerGoogleApiClientComponent.builder()
+        GoogleApiClientComponent googleApiClientComponent = DaggerGoogleApiClientComponent
+                .builder()
                 .nearbooksApplicationComponent(getNearbooksApplicationComponent())
                 .baseActivityModule(getBaseActivityModule())
                 .googleApiClientModule(new GoogleApiClientModule(this, this))
@@ -35,7 +40,7 @@ public abstract class GoogleApiClientBaseActivity extends BaseActivity implement
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         System.out.println("onConnectionFailed ====>: " + connectionResult.getErrorMessage());
     }
 

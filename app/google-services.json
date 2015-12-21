@@ -16,6 +16,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "130661059453-ev4pivo0s7r834795invlvtlq1ra5v69.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nearsoft.nearbooks",
+            "certificate_hash": "D73854C4BC441B8FE495A1566FDF746086EAB062"
+          }
+        },
+        {
           "client_id": "130661059453-qo9mefb53i2f5m80qc57f94o2onko7rg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -38,7 +46,12 @@
         },
         "appinvite_service": {
           "status": 2,
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "130661059453-56utmg42k7ojq3a3v9sat13noojvm1uq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "google_signin_service": {
           "status": 2

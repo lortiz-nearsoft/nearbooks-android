@@ -12,15 +12,16 @@ import dagger.Provides;
  */
 @Module
 public class BaseActivityModule {
-    private BaseActivity baseActivity;
+
+    private BaseActivity mBaseActivity;
 
     public BaseActivityModule(BaseActivity baseActivity) {
-        this.baseActivity = baseActivity;
+        mBaseActivity = baseActivity;
     }
 
     @PerActivity
     @Provides
     public BaseActivity providesBaseActivity() {
-        return baseActivity;
+        return mBaseActivity;
     }
 }

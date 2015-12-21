@@ -1,15 +1,13 @@
 package com.nearsoft.nearbooks.view.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentBookDetailBinding;
-import com.nearsoft.nearbooks.view.models.BookViewModel;
+import com.nearsoft.nearbooks.models.sqlite.Book;
 
 public class BookDetailFragment extends BaseFragment {
     /**
@@ -18,10 +16,7 @@ public class BookDetailFragment extends BaseFragment {
      */
     public static final String ARG_BOOK_ITEM = "ARG_BOOK_ITEM";
 
-    /**
-     * The dummy title this fragment is presenting.
-     */
-    private BookViewModel bookViewModel;
+    private Book mBook;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -30,10 +25,10 @@ public class BookDetailFragment extends BaseFragment {
     public BookDetailFragment() {
     }
 
-    public static BookDetailFragment newInstance(BookViewModel bookViewModel) {
+    public static BookDetailFragment newInstance(Book book) {
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_BOOK_ITEM, bookViewModel);
+        args.putParcelable(ARG_BOOK_ITEM, book);
 
         BookDetailFragment fragment = new BookDetailFragment();
         fragment.setArguments(args);
@@ -48,18 +43,7 @@ public class BookDetailFragment extends BaseFragment {
             // Load the dummy title specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load title from a title provider.
-            bookViewModel = getArguments().getParcelable(ARG_BOOK_ITEM);
-            if (bookViewModel != null) {
-                setTitle(bookViewModel.getTitle());
-            }
-        }
-    }
-
-    public void setTitle(String title) {
-        Activity activity = this.getActivity();
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-        if (appBarLayout != null) {
-            appBarLayout.setTitle(title);
+            mBook = getArguments().getParcelable(ARG_BOOK_ITEM);
         }
     }
 
@@ -69,11 +53,12 @@ public class BookDetailFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
         FragmentBookDetailBinding binding = getBinding(FragmentBookDetailBinding.class);
-        binding.setBook(bookViewModel);
+        binding.setBook(mBook);
 
         return rootView;
     }

@@ -1,6 +1,6 @@
 package com.nearsoft.nearbooks.ws;
 
-import com.nearsoft.nearbooks.view.models.BookViewModel;
+import com.nearsoft.nearbooks.models.sqlite.Book;
 
 import java.util.List;
 
@@ -12,6 +12,8 @@ import retrofit.http.GET;
  * Created by epool on 11/18/15.
  */
 public interface BookService {
+
     @GET("nearbooks")
-    Call<List<BookViewModel>> getAllBooks();
+    Call<List<Book>> getAllBooks();
+
 }

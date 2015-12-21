@@ -3,13 +3,12 @@ package com.nearsoft.nearbooks.di.modules;
 import android.content.Context;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
+import com.raizlabs.android.dbflow.config.FlowManager;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Dagger 2 Nearbooks module.
@@ -17,22 +16,18 @@ import io.realm.RealmConfiguration;
  */
 @Module
 public class NearbooksApplicationModule {
-    private final NearbooksApplication nearbooksApplication;
+    private final NearbooksApplication mNearbooksApplication;
 
     public NearbooksApplicationModule(NearbooksApplication nearbooksApplication) {
-        this.nearbooksApplication = nearbooksApplication;
+        mNearbooksApplication = nearbooksApplication;
 
-        RealmConfiguration config = new RealmConfiguration.Builder(this.nearbooksApplication.getApplicationContext())
-                .name("nearbooks.realm")
-                .schemaVersion(1)
-                .build();
-        Realm.setDefaultConfiguration(config);
+        FlowManager.init(this.mNearbooksApplication.getApplicationContext());
     }
 
-    @Singleton
     @Provides
+    @Singleton
     public Context provideApplicationContext() {
-        return nearbooksApplication.getApplicationContext();
+        return mNearbooksApplication.getApplicationContext();
     }
 
 }

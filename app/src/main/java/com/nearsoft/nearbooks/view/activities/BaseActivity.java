@@ -16,7 +16,7 @@ import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
  * Created by epool on 11/17/15.
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    private ViewDataBinding binding;
+    private ViewDataBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         int layoutResourceId = getLayoutResourceId();
 
-        binding = DataBindingUtil.setContentView(this, layoutResourceId);
+        mBinding = DataBindingUtil.setContentView(this, layoutResourceId);
 
         Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
         if (toolbar != null) {
@@ -39,7 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected <T extends ViewDataBinding> T getBinding(Class<T> clazz) {
-        return clazz.cast(binding);
+        return clazz.cast(mBinding);
     }
 
     protected NearbooksApplicationComponent getNearbooksApplicationComponent() {
