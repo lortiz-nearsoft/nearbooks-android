@@ -13,13 +13,16 @@
     <string name="label_book_available">This book is available</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
 
-    <string name="message_nearsoft_account_needed">You should use a nearsoft account email =(</string>
+    <string name="message_nearsoft_account_needed">You should use a nearsoft account email
+        =(</string>
     <string name="message_no_books">There are no books =(</string>
     <string name="message_book_not_found">Book not found =(</string>
 
     <string name="error_google_api">There was an error with google api: %s</string>
     <string name="error_general">There was an error: %s</string>
     <string name="error_user_not_found">User not found</string>
+    <string name="error_internet_connection">Please verify your internet connection and try
+        again</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

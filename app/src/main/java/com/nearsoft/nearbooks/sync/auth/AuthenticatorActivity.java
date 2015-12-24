@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityLoginBinding;
 import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.util.Util;
 
 /**
  * Nearbooks authenticator activity.
@@ -104,7 +105,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
             } else {
                 errorMessage = getString(R.string.message_nearsoft_account_needed);
             }
-        } else {
+        } else if (!Util.isThereInternetConnection(this)) {
+            errorMessage = getString(R.string.error_internet_connection);
+        } else if (result.getStatus().getStatusCode() != 12501) { // unknown status code
             errorMessage = getString(R.string.error_google_api, result.getStatus());
         }
 
