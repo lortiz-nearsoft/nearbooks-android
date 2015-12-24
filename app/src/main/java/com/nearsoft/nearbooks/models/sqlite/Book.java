@@ -139,7 +139,6 @@ public class Book extends NearbooksBaseObservableModel implements Parcelable {
         if (title != null ? !title.equals(book.title) : book.title != null) return false;
         if (author != null ? !author.equals(book.author) : book.author != null) return false;
         return !(year != null ? !year.equals(book.year) : book.year != null);
-
     }
 
     @Override

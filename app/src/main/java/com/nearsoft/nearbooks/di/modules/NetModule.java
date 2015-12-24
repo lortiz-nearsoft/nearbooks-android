@@ -24,6 +24,7 @@ import retrofit.Retrofit;
  */
 @Module
 public class NetModule {
+
     private String mBaseUrl;
 
     public NetModule(String baseUrl) {

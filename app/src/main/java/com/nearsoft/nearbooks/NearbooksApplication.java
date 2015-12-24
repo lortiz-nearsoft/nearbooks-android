@@ -13,7 +13,11 @@ import com.nearsoft.nearbooks.di.modules.NetModule;
  */
 public class NearbooksApplication extends Application {
 
-    private NearbooksApplicationComponent mNearbooksApplicationComponent;
+    private static NearbooksApplicationComponent mNearbooksApplicationComponent;
+
+    public static NearbooksApplicationComponent getNearbooksApplicationComponent() {
+        return mNearbooksApplicationComponent;
+    }
 
     @Override
     public void onCreate() {
@@ -24,9 +28,5 @@ public class NearbooksApplication extends Application {
                 .nearbooksApplicationModule(new NearbooksApplicationModule(this))
                 .netModule(new NetModule(getString(R.string.url_base_api)))
                 .build();
-    }
-
-    public NearbooksApplicationComponent getNearbooksApplicationComponent() {
-        return mNearbooksApplicationComponent;
     }
 }

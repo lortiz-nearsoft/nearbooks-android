@@ -4,6 +4,8 @@ import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 
+import com.google.gson.Gson;
+import com.nearsoft.nearbooks.NearbooksApplication;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 /**
@@ -48,5 +50,13 @@ abstract class NearbooksBaseObservableModel extends BaseModel implements Observa
         if (mCallbacks != null) {
             mCallbacks.notifyCallbacks(this, fieldId, null);
         }
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = NearbooksApplication
+                .getNearbooksApplicationComponent()
+                .provideGson();
+        return gson.toJson(this);
     }
 }
