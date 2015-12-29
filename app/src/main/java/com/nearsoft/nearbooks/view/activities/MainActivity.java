@@ -7,40 +7,30 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityMainBinding;
-import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
-import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
-import com.nearsoft.nearbooks.ws.BookService;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
-public class MainActivity extends GoogleApiClientBaseActivity {
+public class MainActivity extends BaseActivity {
 
     @Inject
-    Lazy<User> mUser;
-    private ActivityMainBinding mBinding;
+    protected Lazy<User> mLazyUser;
     private AccountManager mAccountManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = getBinding(ActivityMainBinding.class);
+        ActivityMainBinding binding = getBinding(ActivityMainBinding.class);
 
         mAccountManager = AccountManager.get(this);
 
@@ -54,9 +44,9 @@ public class MainActivity extends GoogleApiClientBaseActivity {
     }
 
     @Override
-    protected void injectComponent(GoogleApiClientComponent googleApiClientComponent) {
-        super.injectComponent(googleApiClientComponent);
-        googleApiClientComponent.inject(this);
+    protected void injectComponent(BaseActivityComponent baseActivityComponent) {
+        super.injectComponent(baseActivityComponent);
+        baseActivityComponent.inject(this);
     }
 
     private void getTokenForAccountCreateIfNeeded(String accountType, String authTokenType) {
@@ -66,7 +56,7 @@ public class MainActivity extends GoogleApiClientBaseActivity {
                     public void run(AccountManagerFuture<Bundle> future) {
                         try {
                             future.getResult();
-                            if (mUser.get() != null) {
+                            if (mLazyUser.get() != null) {
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -101,29 +91,4 @@ public class MainActivity extends GoogleApiClientBaseActivity {
                 , null);
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-    }
-
-    private void doCache() {
-        BookService bookService = getNearbooksApplicationComponent().providesBookService();
-        Call<List<Book>> call = bookService.getAllBooks();
-        call.enqueue(new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Response<List<Book>> response, Retrofit retrofit) {
-                BookModel.cacheBooks(response.body());
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Snackbar
-                        .make(
-                                mBinding.getRoot(),
-                                getString(R.string.error_google_api, t.getLocalizedMessage()),
-                                Snackbar.LENGTH_LONG
-                        )
-                        .show();
-            }
-        });
-    }
 }

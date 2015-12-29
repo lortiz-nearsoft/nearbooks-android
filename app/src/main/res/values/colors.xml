@@ -283,4 +283,10 @@
 
     <color name="transparent_grey">#44000000</color>
 
+    <integer-array name="swipe_colors">
+        <item>@color/blue_500</item>
+        <item>@color/green_500</item>
+        <item>@color/yellow_500</item>
+    </integer-array>
+
 </resources>

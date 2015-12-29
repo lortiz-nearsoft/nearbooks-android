@@ -24,6 +24,11 @@ public class BookRecyclerViewCursorAdapter
         mFlowCursorAdapter = new FlowCursorList<>(true, bookWhere);
     }
 
+    public void notifyDataChanged() {
+        mFlowCursorAdapter.refresh();
+        notifyDataSetChanged();
+    }
+
     @Override
     public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         BookItemBinding binding = DataBindingUtil

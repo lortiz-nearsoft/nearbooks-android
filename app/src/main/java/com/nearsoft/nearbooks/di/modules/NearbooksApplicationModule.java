@@ -1,6 +1,8 @@
 package com.nearsoft.nearbooks.di.modules;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.nearsoft.nearbooks.models.sqlite.User;
@@ -40,6 +42,13 @@ public class NearbooksApplicationModule {
                 .select()
                 .from(User.class)
                 .querySingle();
+    }
+
+    @Provides
+    @Singleton
+    public SharedPreferences provideDefaultSharedPreferences() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(mNearbooksApplication);
     }
 
 }

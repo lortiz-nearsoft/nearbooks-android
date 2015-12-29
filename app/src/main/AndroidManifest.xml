@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.nearsoft.nearbooks"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+    >
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
-
     <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
 
     <application
         android:name=".NearbooksApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -35,11 +36,7 @@
         <activity
             android:name=".view.activities.BookDetailActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activities.HomeActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.HomeActivity"/>
-        </activity>
+            android:parentActivityName=".view.activities.HomeActivity"/>
         <activity
             android:name=".view.activities.zxing.CaptureActivityAnyOrientation"
             android:screenOrientation="fullSensor"
@@ -51,10 +48,32 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"/>
 
-        <service android:name=".sync.NearbooksAuthenticatorService">
+        <provider
+            android:name=".db.NearbooksDatabase_Provider"
+            android:authorities="com.nearsoft.nearbooks.provider"
+            android:exported="false"/>
+
+        <service
+            android:name=".sync.SyncService"
+            android:exported="false">
+            <!-- This intent filter is required.
+            It allows the system to launch our sync service as needed. -->
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <!-- This points to a required XML file which describes our SyncAdapter. -->
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_adapter"/>
+        </service>
+
+        <service
+            android:name=".sync.NearbooksAuthenticatorService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"/>

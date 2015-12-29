@@ -1,6 +1,7 @@
 package com.nearsoft.nearbooks.models.sqlite;
 
 import android.databinding.Bindable;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,13 +11,21 @@ import com.nearsoft.nearbooks.db.NearbooksDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.annotation.provider.ContentUri;
+import com.raizlabs.android.dbflow.annotation.provider.TableEndpoint;
 
 /**
  * User sqlite model
  * Created by epool on 12/18/15.
  */
+@TableEndpoint(name = User.NAME, contentProviderName = NearbooksDatabase.CONTENT_PROVIDER_NAME)
 @Table(database = NearbooksDatabase.class)
 public class User extends NearbooksBaseObservableModel implements Parcelable {
+
+    public static final String NAME = "User";
+
+    @ContentUri(path = NAME, type = ContentUri.ContentType.VND_MULTIPLE)
+    public static final Uri CONTENT_URI = buildUri(NAME);
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
         public User createFromParcel(Parcel source) {
@@ -99,6 +108,26 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
     }
 
     @Override
+    public Uri getDeleteUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    public Uri getInsertUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    public Uri getUpdateUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    public Uri getQueryUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
     @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,4 +163,5 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.idToken);
     }
+
 }
