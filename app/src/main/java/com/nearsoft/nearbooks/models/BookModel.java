@@ -19,11 +19,11 @@ public class BookModel {
     public static void cacheBooks(final List<Book> books) {
         if (books == null || books.isEmpty()) return;
 
-        Delete.table(Book.class);
-
         TransactionManager.transact(NearbooksDatabase.NAME, new Runnable() {
             @Override
             public void run() {
+                Delete.table(Book.class);
+
                 for (Book book : books) {
                     book.save();
                 }

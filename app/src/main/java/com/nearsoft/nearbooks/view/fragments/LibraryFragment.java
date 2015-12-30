@@ -3,6 +3,7 @@ package com.nearsoft.nearbooks.view.fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import com.nearsoft.nearbooks.util.SyncUtil;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
-import com.raizlabs.android.dbflow.sql.language.Where;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,6 +57,14 @@ public class LibraryFragment
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mBookRecyclerViewCursorAdapter =
+                new BookRecyclerViewCursorAdapter(BookModel.getAllBooks());
+    }
+
+    @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_library;
     }
@@ -66,11 +74,6 @@ public class LibraryFragment
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         mBinding = getBinding(FragmentLibraryBinding.class);
-
-        Where<Book> bookWhere = BookModel.getAllBooks();
-        if (bookWhere.hasData()) {
-            mBookRecyclerViewCursorAdapter = new BookRecyclerViewCursorAdapter(bookWhere);
-        }
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -149,22 +152,21 @@ public class LibraryFragment
                     } else if (mBinding.swipeRefreshLayout.isRefreshing() && !isSyncing) {
                         mBinding.swipeRefreshLayout.setRefreshing(false);
                     }
+                    updateUI();
                 }
             });
         }
     }
 
     private void updateUI() {
-        if (mBookRecyclerViewCursorAdapter != null) {
-            if (mBookRecyclerViewCursorAdapter.getItemCount() == 0) {
-                mBinding.recyclerViewBooks.setVisibility(View.GONE);
-                mBinding.textViewEmpty.setVisibility(View.VISIBLE);
-            } else {
-                mBinding.recyclerViewBooks.setVisibility(View.VISIBLE);
-                mBinding.textViewEmpty.setVisibility(View.GONE);
-            }
-            mBookRecyclerViewCursorAdapter.notifyDataSetChanged();
+        if (mBookRecyclerViewCursorAdapter.getItemCount() == 0) {
+            mBinding.recyclerViewBooks.setVisibility(View.GONE);
+            mBinding.textViewEmpty.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.recyclerViewBooks.setVisibility(View.VISIBLE);
+            mBinding.textViewEmpty.setVisibility(View.GONE);
         }
+        mBookRecyclerViewCursorAdapter.notifyDataChanged();
     }
 
     public interface OnLibraryFragmentListener {
