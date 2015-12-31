@@ -12,11 +12,10 @@
     <string name="label_year">Year: %s</string>
     <string name="label_book_available">This book is available</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
+    <string name="placeholder_search_books">Search for books&#8230;</string>
 
     <string name="message_nearsoft_account_needed">You should use a nearsoft account email
         =(</string>
-    <string name="message_no_books">There are no books =(</string>
-    <string name="message_book_not_found">Book not found =(</string>
 
     <string name="error_google_api">There was an error with google api: %s</string>
     <string name="error_general">There was an error: %s</string>

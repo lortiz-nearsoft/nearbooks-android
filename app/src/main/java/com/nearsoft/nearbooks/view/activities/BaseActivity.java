@@ -1,8 +1,11 @@
 package com.nearsoft.nearbooks.view.activities;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -29,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initDependencies();
         super.onCreate(savedInstanceState);
 
         int layoutResourceId = getLayoutResourceId();
@@ -40,6 +44,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
 
+        handleIntent(getIntent());
+    }
+
+    private void initDependencies() {
         mBaseActivityComponent = DaggerBaseActivityComponent
                 .builder()
                 .nearbooksApplicationComponent(getNearbooksApplicationComponent())
@@ -60,6 +68,28 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onPause();
 
         mSyncChangeHandler.onPause();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            if (this instanceof OnSearchListener) {
+                OnSearchListener onSearchListener = (OnSearchListener) this;
+                onSearchListener.onSearchRequest(query);
+            }
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                if (fragment instanceof OnSearchListener) {
+                    OnSearchListener onSearchListener = (OnSearchListener) fragment;
+                    onSearchListener.onSearchRequest(query);
+                }
+            }
+        }
     }
 
     protected abstract int getLayoutResourceId();
@@ -90,6 +120,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected BaseActivityModule getBaseActivityModule() {
         return new BaseActivityModule(this);
+    }
+
+    public interface OnSearchListener {
+
+        void onSearchRequest(String query);
+
     }
 
 }

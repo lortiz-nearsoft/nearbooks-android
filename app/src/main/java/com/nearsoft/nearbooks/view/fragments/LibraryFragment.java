@@ -1,15 +1,21 @@
 package com.nearsoft.nearbooks.view.fragments;
 
 import android.app.Fragment;
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
@@ -33,11 +39,14 @@ public class LibraryFragment
         extends BaseFragment
         implements RecyclerItemClickListener.OnItemClickListener,
         SwipeRefreshLayout.OnRefreshListener,
-        SyncChangeHandler.OnSyncChangeListener {
+        SyncChangeHandler.OnSyncChangeListener,
+        BaseActivity.OnSearchListener,
+        Filter.FilterListener {
 
     private OnLibraryFragmentListener mListener;
     private BookRecyclerViewCursorAdapter mBookRecyclerViewCursorAdapter;
     private FragmentLibraryBinding mBinding;
+    private SearchView mSearchView;
 
     public LibraryFragment() {
         // Required empty public constructor
@@ -60,20 +69,16 @@ public class LibraryFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         mBookRecyclerViewCursorAdapter =
                 new BookRecyclerViewCursorAdapter(BookModel.getAllBooks());
     }
 
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.fragment_library;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        mBinding = getBinding(FragmentLibraryBinding.class);
+        mBinding = FragmentLibraryBinding.inflate(inflater, container, false);
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -90,7 +95,7 @@ public class LibraryFragment
             }
         });
 
-        return rootView;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -110,9 +115,9 @@ public class LibraryFragment
                     " must implement OnLibraryFragmentListener");
         }
 
-        getBaseActivity()
-                .getSyncChangeHandler()
-                .addOnSyncChangeListener(this);
+        BaseActivity baseActivity = getBaseActivity();
+        SyncChangeHandler syncChangeHandler = baseActivity.getSyncChangeHandler();
+        syncChangeHandler.addOnSyncChangeListener(this);
     }
 
     @Override
@@ -123,6 +128,51 @@ public class LibraryFragment
         getBaseActivity()
                 .getSyncChangeHandler()
                 .removeOnSyncChangeListener(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // Inflate the options menu from XML
+        inflater.inflate(R.menu.menu_library, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager)
+                getContext().getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        mSearchView = (SearchView) searchMenuItem.getActionView();
+        // Assumes current activity is the searchable activity
+        mSearchView
+                .setSearchableInfo(
+                        searchManager
+                                .getSearchableInfo(
+                                        getBaseActivity().getComponentName()
+                                )
+                );
+        mSearchView.setIconifiedByDefault(true);
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    mSearchView.setIconified(true);
+                    mSearchView.setQuery("", false);
+                }
+            }
+        });
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mBookRecyclerViewCursorAdapter.getFilter().filter(query, LibraryFragment.this);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mBookRecyclerViewCursorAdapter.getFilter().filter(newText, LibraryFragment.this);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -167,6 +217,16 @@ public class LibraryFragment
             mBinding.textViewEmpty.setVisibility(View.GONE);
         }
         mBookRecyclerViewCursorAdapter.notifyDataChanged();
+    }
+
+    @Override
+    public void onSearchRequest(String query) {
+        mSearchView.setQuery(query, false);
+    }
+
+    @Override
+    public void onFilterComplete(int count) {
+        updateUI();
     }
 
     public interface OnLibraryFragmentListener {

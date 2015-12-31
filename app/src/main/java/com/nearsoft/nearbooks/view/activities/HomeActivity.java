@@ -193,7 +193,8 @@ public class HomeActivity
                 Snackbar
                         .make(
                                 mBinding.getRoot(),
-                                R.string.message_book_not_found,
+                                getResources()
+                                        .getQuantityString(R.plurals.message_books_not_found, 1),
                                 Snackbar.LENGTH_LONG
                         )
                         .show();
