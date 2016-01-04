@@ -46,8 +46,8 @@ public class UserModel {
                 .getString(context.getString(R.string.current_user_id), null);
     }
 
-    public static void signOut(BaseActivity baseActivity, User user, GoogleApiClient googleApiClient,
-                               final Runnable onSignOutSuccess) {
+    public static void signOut(BaseActivity baseActivity, User user,
+                               GoogleApiClient googleApiClient, final Runnable onSignOutSuccess) {
         Auth.GoogleSignInApi.revokeAccess(googleApiClient);
         Auth.GoogleSignInApi.signOut(googleApiClient);
 
