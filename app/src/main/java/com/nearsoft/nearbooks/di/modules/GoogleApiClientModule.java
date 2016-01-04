@@ -33,7 +33,8 @@ public class GoogleApiClientModule {
         return new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(baseActivity.getString(R.string.server_client_id))
-                .requestEmail().build();
+                .requestEmail()
+                .build();
     }
 
     @PerActivity

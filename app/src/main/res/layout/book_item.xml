@@ -23,6 +23,7 @@
             android:layout_height="60dp"
             android:layout_margin="16dp"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/content_description_book_cover"
             android:scaleType="centerCrop"
             android:transitionName="@string/transition_book_cover"
             app:error="@{@drawable/ic_launcher}"
