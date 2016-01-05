@@ -30,7 +30,6 @@
         <activity
             android:name=".view.activities.HomeActivity"
             android:label="@string/title_library"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".view.activities.BookDetailActivity"
