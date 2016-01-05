@@ -3,6 +3,8 @@ package com.nearsoft.nearbooks.view.fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,9 +15,11 @@ import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.sync.SyncChangeHandler;
+import com.nearsoft.nearbooks.util.SyncUtil;
+import com.nearsoft.nearbooks.view.activities.BaseActivity;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
-import com.raizlabs.android.dbflow.sql.language.Where;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,7 +30,10 @@ import com.raizlabs.android.dbflow.sql.language.Where;
  * create an instance of this fragment.
  */
 public class LibraryFragment
-        extends BaseFragment implements RecyclerItemClickListener.OnItemClickListener {
+        extends BaseFragment
+        implements RecyclerItemClickListener.OnItemClickListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        SyncChangeHandler.OnSyncChangeListener {
 
     private OnLibraryFragmentListener mListener;
     private BookRecyclerViewCursorAdapter mBookRecyclerViewCursorAdapter;
@@ -50,6 +57,14 @@ public class LibraryFragment
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mBookRecyclerViewCursorAdapter =
+                new BookRecyclerViewCursorAdapter(BookModel.getAllBooks());
+    }
+
+    @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_library;
     }
@@ -60,17 +75,20 @@ public class LibraryFragment
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         mBinding = getBinding(FragmentLibraryBinding.class);
 
-        Where<Book> bookWhere = BookModel.getAllBooks();
-        if (bookWhere.hasData()) {
-            mBookRecyclerViewCursorAdapter = new BookRecyclerViewCursorAdapter(bookWhere);
-        }
-
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         mBinding.recyclerViewBooks.setLayoutManager(layoutManager);
         mBinding.recyclerViewBooks.setAdapter(mBookRecyclerViewCursorAdapter);
         mBinding.recyclerViewBooks
                 .addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
+
+        mBinding.swipeRefreshLayout.setOnRefreshListener(this);
+        mBinding.textViewEmpty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
+            }
+        });
 
         return rootView;
     }
@@ -91,12 +109,20 @@ public class LibraryFragment
             throw new ClassCastException(context.toString() +
                     " must implement OnLibraryFragmentListener");
         }
+
+        getBaseActivity()
+                .getSyncChangeHandler()
+                .addOnSyncChangeListener(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
+        getBaseActivity()
+                .getSyncChangeHandler()
+                .removeOnSyncChangeListener(this);
     }
 
     @Override
@@ -107,20 +133,46 @@ public class LibraryFragment
         }
     }
 
-    private void updateUI() {
-        if (mBookRecyclerViewCursorAdapter != null) {
-            if (mBookRecyclerViewCursorAdapter.getItemCount() == 0) {
-                mBinding.recyclerViewBooks.setVisibility(View.GONE);
-                mBinding.empty.setVisibility(View.VISIBLE);
-            } else {
-                mBinding.recyclerViewBooks.setVisibility(View.VISIBLE);
-                mBinding.empty.setVisibility(View.GONE);
-            }
+    @Override
+    public void onRefresh() {
+        if (!SyncUtil.isSyncing(mUser)) {
+            SyncUtil.triggerRefresh(mUser);
         }
     }
 
+    @Override
+    public void onSyncChange(final boolean isSyncing) {
+        BaseActivity baseActivity = getBaseActivity();
+        if (baseActivity != null) {
+            baseActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!mBinding.swipeRefreshLayout.isRefreshing() && isSyncing) {
+                        mBinding.swipeRefreshLayout.setRefreshing(true);
+                    } else if (mBinding.swipeRefreshLayout.isRefreshing() && !isSyncing) {
+                        mBinding.swipeRefreshLayout.setRefreshing(false);
+                    }
+                    updateUI();
+                }
+            });
+        }
+    }
+
+    private void updateUI() {
+        if (mBookRecyclerViewCursorAdapter.getItemCount() == 0) {
+            mBinding.recyclerViewBooks.setVisibility(View.GONE);
+            mBinding.textViewEmpty.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.recyclerViewBooks.setVisibility(View.VISIBLE);
+            mBinding.textViewEmpty.setVisibility(View.GONE);
+        }
+        mBookRecyclerViewCursorAdapter.notifyDataChanged();
+    }
+
     public interface OnLibraryFragmentListener {
+
         void onBookSelected(Book book, View view);
+
     }
 
 }

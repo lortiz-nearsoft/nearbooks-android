@@ -9,14 +9,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
+import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.view.activities.BaseActivity;
+
+import javax.inject.Inject;
+
 /**
  * Base fragment.
  * Created by epool on 11/18/15.
  */
 public abstract class BaseFragment extends Fragment {
+
+    @Inject
+    protected User mUser;
     private ViewDataBinding mBinding;
 
     protected abstract int getLayoutResourceId();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        injectComponent(getBaseActivity().getBaseActivityComponent());
+    }
 
     @Nullable
     @Override
@@ -26,7 +42,16 @@ public abstract class BaseFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    protected BaseActivity getBaseActivity() {
+        return (BaseActivity) getActivity();
+    }
+
+    protected void injectComponent(BaseActivityComponent baseActivityComponent) {
+        baseActivityComponent.inject(this);
+    }
+
     protected <T extends ViewDataBinding> T getBinding(Class<T> clazz) {
         return clazz.cast(mBinding);
     }
+
 }

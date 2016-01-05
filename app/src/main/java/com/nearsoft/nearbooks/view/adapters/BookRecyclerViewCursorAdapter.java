@@ -21,7 +21,12 @@ public class BookRecyclerViewCursorAdapter
     private FlowCursorList<Book> mFlowCursorAdapter;
 
     public BookRecyclerViewCursorAdapter(Where<Book> bookWhere) {
-        mFlowCursorAdapter = new FlowCursorList<>(true, bookWhere);
+        mFlowCursorAdapter = new FlowCursorList<>(false, bookWhere);
+    }
+
+    public void notifyDataChanged() {
+        mFlowCursorAdapter.refresh();
+        notifyDataSetChanged();
     }
 
     @Override

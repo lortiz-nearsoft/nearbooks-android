@@ -3,17 +3,33 @@ package com.nearsoft.nearbooks.models.sqlite;
 import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
+import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.nearsoft.nearbooks.NearbooksApplication;
-import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.nearsoft.nearbooks.db.NearbooksDatabase;
+import com.raizlabs.android.dbflow.structure.provider.BaseSyncableProviderModel;
+import com.raizlabs.android.dbflow.structure.provider.ContentUtils;
 
 /**
  * Base model.
  * Created by epool on 12/17/15.
  */
-abstract class NearbooksBaseObservableModel extends BaseModel implements Observable {
+abstract class NearbooksBaseObservableModel<T extends BaseSyncableProviderModel>
+        extends BaseSyncableProviderModel<T>
+        implements Observable {
+
     private transient PropertyChangeRegistry mCallbacks;
+
+    protected static Uri buildUri(String... paths) {
+        Uri.Builder builder = Uri
+                .parse(ContentUtils.BASE_CONTENT_URI + NearbooksDatabase.CONTENT_AUTHORITY)
+                .buildUpon();
+        for (String path : paths) {
+            builder.appendPath(path);
+        }
+        return builder.build();
+    }
 
     @Override
     public synchronized void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {

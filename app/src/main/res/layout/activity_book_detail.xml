@@ -1,7 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".activities.BookDetailActivity">
+        tools:context=".view.activities.BookDetailActivity">
 
     <data>
 
@@ -38,6 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/content_description_book_cover"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitCenter"
                     android:transitionName="@string/transition_book_cover"

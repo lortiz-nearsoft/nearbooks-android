@@ -1,11 +1,6 @@
 package com.nearsoft.nearbooks.view.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
@@ -27,9 +21,9 @@ import com.nearsoft.nearbooks.databinding.ActivityHomeBinding;
 import com.nearsoft.nearbooks.databinding.NavHeaderHomeBinding;
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
 import com.nearsoft.nearbooks.models.BookModel;
+import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.User;
-import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
@@ -43,7 +37,7 @@ public class HomeActivity
         LibraryFragment.OnLibraryFragmentListener {
 
     @Inject
-    User mUser;
+    protected User mUser;
     private ActivityHomeBinding mBinding;
 
     @Override
@@ -117,56 +111,23 @@ public class HomeActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.action_sign_out:
 
-        if (id == R.id.action_sign_out) {
-            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient);
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                UserModel.signOut(this, mUser, mGoogleApiClient, new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
 
-            AccountManager accountManager = AccountManager.get(this);
-            Account account = new Account(mUser.getEmail(), AccountGeneral.ACCOUNT_TYPE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                accountManager.removeAccount(
-                        account,
-                        this,
-                        new AccountManagerCallback<Bundle>() {
-                            @Override
-                            public void run(AccountManagerFuture<Bundle> future) {
-                                if (future.isDone()) {
-                                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-                        },
-                        null
-                );
-            } else {
-                accountManager.removeAccount(
-                        account,
-                        new AccountManagerCallback<Boolean>() {
-                            @Override
-                            public void run(AccountManagerFuture<Boolean> future) {
-                                if (future.isDone()) {
-                                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-                        },
-                        null
-                );
-            }
+                return true;
 
-            mUser.delete();
-
-            return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -229,7 +190,13 @@ public class HomeActivity
             if (book != null) {
                 goToBookDetail(book, mBinding.getRoot());
             } else {
-                Snackbar.make(mBinding.getRoot(), R.string.message_book_not_found, Snackbar.LENGTH_LONG).show();
+                Snackbar
+                        .make(
+                                mBinding.getRoot(),
+                                R.string.message_book_not_found,
+                                Snackbar.LENGTH_LONG
+                        )
+                        .show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

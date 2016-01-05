@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.view.models.adapters;
 
 import android.databinding.BindingAdapter;
 import android.graphics.drawable.Drawable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +21,18 @@ public class ViewModelAdapter {
                 .placeholder(error)
                 .error(error)
                 .into(imageView);
+    }
+
+    @BindingAdapter({"bind:colors"})
+    public static void setColorSchemeColors(SwipeRefreshLayout swipeRefreshLayout,
+                                            int colorsResource) {
+        swipeRefreshLayout
+                .setColorSchemeColors(
+                        swipeRefreshLayout
+                                .getContext()
+                                .getResources()
+                                .getIntArray(colorsResource)
+                );
     }
 
 }

@@ -2,6 +2,9 @@ package com.nearsoft.nearbooks.di.components;
 
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
+import com.nearsoft.nearbooks.view.activities.BaseActivity;
+import com.nearsoft.nearbooks.view.activities.MainActivity;
+import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 
 import dagger.Component;
 
@@ -15,4 +18,11 @@ import dagger.Component;
         modules = {BaseActivityModule.class}
 )
 public interface BaseActivityComponent {
+
+    void inject(BaseActivity baseActivity);
+
+    void inject(MainActivity mainActivity);
+
+    void inject(BaseFragment baseFragment);
+
 }

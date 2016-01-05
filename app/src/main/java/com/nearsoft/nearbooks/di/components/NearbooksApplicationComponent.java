@@ -1,5 +1,7 @@
 package com.nearsoft.nearbooks.di.components;
 
+import android.content.SharedPreferences;
+
 import com.google.gson.Gson;
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
 import com.nearsoft.nearbooks.di.modules.NetModule;
@@ -23,5 +25,7 @@ public interface NearbooksApplicationComponent {
     Gson provideGson();
 
     User provideUser();
+
+    SharedPreferences provideDefaultSharedPreferences();
 
 }
