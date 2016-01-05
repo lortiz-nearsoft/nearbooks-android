@@ -18,7 +18,7 @@ public class BookDetailActivity extends BaseActivity {
 
         ActivityBookDetailBinding binding = getBinding(ActivityBookDetailBinding.class);
 
-        final Book book = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
+        Book book = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
         binding.setBook(book);
 
         binding.fabEdit.setOnClickListener(new View.OnClickListener() {
