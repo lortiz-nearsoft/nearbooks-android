@@ -2,7 +2,6 @@ package com.nearsoft.nearbooks.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -11,40 +10,38 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityHomeBinding;
-import com.nearsoft.nearbooks.models.realm.Book;
+import com.nearsoft.nearbooks.databinding.NavHeaderHomeBinding;
+import com.nearsoft.nearbooks.models.BookModel;
+import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
-import com.nearsoft.nearbooks.view.models.BookViewModel;
-import com.nearsoft.nearbooks.view.models.UserViewModel;
 
-import io.realm.Realm;
+public class HomeActivity
+        extends GoogleApiClientBaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        LibraryFragment.OnLibraryFragmentListener {
 
-public class HomeActivity extends GoogleApiClientBaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LibraryFragment.OnLibraryFragmentListener {
     public final static String USER_KEY = "USER_KEY";
-    private ActivityHomeBinding binding;
+    private ActivityHomeBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = getBinding(ActivityHomeBinding.class);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mBinding = getBinding(ActivityHomeBinding.class);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mBinding.appBarHome.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startQRScanner();
@@ -52,21 +49,33 @@ public class HomeActivity extends GoogleApiClientBaseActivity
         });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, binding.drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        binding.drawerLayout.setDrawerListener(toggle);
+                this,
+                mBinding.drawerLayout,
+                mBinding.appBarHome.toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+        mBinding.drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        UserViewModel userViewModel = getIntent().getParcelableExtra(USER_KEY);
-        TextView textViewEmail = (TextView) binding.navView.getHeaderView(0).findViewById(R.id.textViewEmail);
-        textViewEmail.setText(userViewModel.getEmail());
+        User user = getIntent().getParcelableExtra(USER_KEY);
+        NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
+                .inflate(getLayoutInflater());
+        navHeaderHomeBinding.setUser(user);
+        navHeaderHomeBinding.executePendingBindings();
+        mBinding.navView.addHeaderView(navHeaderHomeBinding.getRoot());
 
-        binding.navView.setNavigationItemSelectedListener(this);
+        mBinding.navView.setNavigationItemSelectedListener(this);
 
-        binding.navView.setCheckedItem(R.id.nav_library);
+        mBinding.navView.setCheckedItem(R.id.nav_library);
         // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, LibraryFragment.newInstance(), LibraryFragment.class.getName())
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(
+                        R.id.content,
+                        LibraryFragment.newInstance(),
+                        LibraryFragment.class.getName()
+                )
                 .commit();
     }
 
@@ -77,8 +86,8 @@ public class HomeActivity extends GoogleApiClientBaseActivity
 
     @Override
     public void onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START);
+        if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -100,7 +109,7 @@ public class HomeActivity extends GoogleApiClientBaseActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sign_out) {
-            Auth.GoogleSignInApi.signOut(googleApiClient);
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -127,9 +136,15 @@ public class HomeActivity extends GoogleApiClientBaseActivity
         if (baseFragment != null) {
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentByTag(baseFragment.getClass().getName());
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content, fragment != null ? fragment : baseFragment, baseFragment.getClass().getName())
+            Fragment fragment = fragmentManager
+                    .findFragmentByTag(baseFragment.getClass().getName());
+            fragmentManager
+                    .beginTransaction()
+                    .replace(
+                            R.id.content,
+                            fragment != null ? fragment : baseFragment,
+                            baseFragment.getClass().getName()
+                    )
                     .commit();
 
             // Highlight the selected item, update the title, and close the drawer
@@ -137,7 +152,7 @@ public class HomeActivity extends GoogleApiClientBaseActivity
             setTitle(item.getTitle());
         }
 
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        mBinding.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -155,19 +170,16 @@ public class HomeActivity extends GoogleApiClientBaseActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        IntentResult scanResult = IntentIntegrator
+                .parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null && scanResult.getContents() != null) {
             String isbn = scanResult.getContents();
-            Realm realm = Realm.getDefaultInstance();
-            Book book = realm.where(Book.class)
-                    .equalTo(Book.ISBN, isbn)
-                    .findFirst();
-            realm.close();
+            Book book = BookModel.findByIsbn(isbn);
 
             if (book != null) {
-                goToBookDetail(new BookViewModel(book), binding.getRoot());
+                goToBookDetail(book, mBinding.getRoot());
             } else {
-                Snackbar.make(binding.getRoot(), R.string.message_book_not_found, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mBinding.getRoot(), R.string.message_book_not_found, Snackbar.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -179,19 +191,18 @@ public class HomeActivity extends GoogleApiClientBaseActivity
     }
 
     @Override
-    public void onBookSelected(BookViewModel bookViewModel, View view) {
-        goToBookDetail(bookViewModel, view);
+    public void onBookSelected(Book book, View view) {
+        goToBookDetail(book, view);
     }
 
-    private void goToBookDetail(BookViewModel bookViewModel, View view) {
+    private void goToBookDetail(Book book, View view) {
         Intent detailIntent = new Intent(this, BookDetailActivity.class);
-        detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, bookViewModel);
+        detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, book);
 
         String transitionName = getString(R.string.transition_book_cover);
 
-        ActivityOptionsCompat options =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                        view,   // The view which starts the transition
+        ActivityOptionsCompat options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this, view,   // The view which starts the transition
                         transitionName    // The transitionName of the view we’re transitioning to
                 );
         ActivityCompat.startActivity(this, detailIntent, options.toBundle());

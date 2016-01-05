@@ -11,8 +11,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityLoginBinding;
 import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.view.models.BookViewModel;
-import com.nearsoft.nearbooks.view.models.UserViewModel;
+import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.ws.BookService;
 
 import java.util.List;
@@ -26,15 +26,16 @@ import retrofit.Retrofit;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends GoogleApiClientBaseActivity {
+
     private final static int RC_SIGN_IN = 1;
-    private ActivityLoginBinding binding;
+    private ActivityLoginBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = getBinding(ActivityLoginBinding.class);
+        mBinding = getBinding(ActivityLoginBinding.class);
 
-        binding.signInButton.setOnClickListener(new View.OnClickListener() {
+        mBinding.signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
@@ -48,7 +49,7 @@ public class LoginActivity extends GoogleApiClientBaseActivity {
     }
 
     public void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
@@ -67,20 +68,32 @@ public class LoginActivity extends GoogleApiClientBaseActivity {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount googleSignInAccount = result.getSignInAccount();
-            String email = googleSignInAccount.getEmail();
-            if (email != null && email.endsWith(getString(R.string.nearsoft_domain))) {
+            if (googleSignInAccount != null && googleSignInAccount.getEmail() != null &&
+                    googleSignInAccount.getEmail().endsWith(getString(R.string.nearsoft_domain))) {
                 doCache();
 
                 Intent intent = new Intent(this, HomeActivity.class);
-                intent.putExtra(HomeActivity.USER_KEY, new UserViewModel(googleSignInAccount));
+                intent.putExtra(HomeActivity.USER_KEY, new User(googleSignInAccount));
                 startActivity(intent);
                 finish();
             } else {
-                Snackbar.make(binding.getRoot(), getString(R.string.message_nearsoft_account_needed), Snackbar.LENGTH_LONG).show();
-                Auth.GoogleSignInApi.signOut(googleApiClient);
+                Snackbar
+                        .make(
+                                mBinding.getRoot(),
+                                getString(R.string.message_nearsoft_account_needed),
+                                Snackbar.LENGTH_LONG
+                        )
+                        .show();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
             }
         } else {
-            Snackbar.make(binding.getRoot(), getString(R.string.error_google_api, result.getStatus().getStatusMessage()), Snackbar.LENGTH_LONG).show();
+            Snackbar
+                    .make(
+                            mBinding.getRoot(),
+                            getString(R.string.error_google_api, result.getStatus()),
+                            Snackbar.LENGTH_LONG
+                    )
+                    .show();
         }
     }
 
@@ -90,16 +103,22 @@ public class LoginActivity extends GoogleApiClientBaseActivity {
 
     private void doCache() {
         BookService bookService = getNearbooksApplicationComponent().providesBookService();
-        Call<List<BookViewModel>> call = bookService.getAllBooks();
-        call.enqueue(new Callback<List<BookViewModel>>() {
+        Call<List<Book>> call = bookService.getAllBooks();
+        call.enqueue(new Callback<List<Book>>() {
             @Override
-            public void onResponse(Response<List<BookViewModel>> response, Retrofit retrofit) {
+            public void onResponse(Response<List<Book>> response, Retrofit retrofit) {
                 BookModel.cacheBooks(response.body());
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Snackbar.make(binding.getRoot(), getString(R.string.error_general, t.getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
+                Snackbar
+                        .make(
+                                mBinding.getRoot(),
+                                getString(R.string.error_general, t.getLocalizedMessage()),
+                                Snackbar.LENGTH_LONG
+                        )
+                        .show();
             }
         });
     }

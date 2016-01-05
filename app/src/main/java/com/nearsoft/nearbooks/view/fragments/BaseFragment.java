@@ -14,18 +14,19 @@ import android.view.ViewGroup;
  * Created by epool on 11/18/15.
  */
 public abstract class BaseFragment extends Fragment {
-    private ViewDataBinding binding;
+    private ViewDataBinding mBinding;
 
     protected abstract int getLayoutResourceId();
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, getLayoutResourceId(), container, false);
-        return binding.getRoot();
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        mBinding = DataBindingUtil.inflate(inflater, getLayoutResourceId(), container, false);
+        return mBinding.getRoot();
     }
 
     protected <T extends ViewDataBinding> T getBinding(Class<T> clazz) {
-        return clazz.cast(binding);
+        return clazz.cast(mBinding);
     }
 }

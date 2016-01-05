@@ -14,9 +14,9 @@ public class ViewModelAdapter {
 
     @BindingAdapter({"bind:imageUrl", "bind:error"})
     public static void loadImage(ImageView imageView, String url, Drawable error) {
-        Glide.with(imageView.getContext())
+        Glide
+                .with(imageView.getContext())
                 .load(url)
-                .fitCenter()
                 .placeholder(error)
                 .error(error)
                 .into(imageView);

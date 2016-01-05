@@ -1,12 +1,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.fragments.BookDetailFragment">
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".fragments.BookDetailFragment">
 
     <data>
 
         <variable
             name="book"
-            type="com.nearsoft.nearbooks.view.models.BookViewModel" />
+            type="com.nearsoft.nearbooks.models.sqlite.Book"/>
     </data>
 
     <LinearLayout
@@ -27,7 +27,7 @@
                 android:layout_weight="0.5"
                 android:text="@{@string/label_isbn(book.isbn)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                tools:text="ISBN" />
+                tools:text="ISBN"/>
 
             <TextView
                 android:id="@+id/textViewBookYear"
@@ -36,7 +36,7 @@
                 android:layout_weight="0.5"
                 android:text="@{@string/label_year(book.year)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                tools:text="2015" />
+                tools:text="2015"/>
 
         </LinearLayout>
 
@@ -46,8 +46,7 @@
             android:layout_height="wrap_content"
             android:text="@{book.title}"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textIsSelectable="true"
-            tools:text="Text" />
+            tools:text="Text"/>
 
         <TextView
             android:id="@+id/textViewBookAvailability"
@@ -55,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="@{book.isAvailable ? @string/label_book_available : @string/label_book_borrowed(book.author)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            tools:text="Availability" />
+            tools:text="Availability"/>
 
     </LinearLayout>
 </layout>

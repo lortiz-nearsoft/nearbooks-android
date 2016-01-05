@@ -7,20 +7,19 @@ import android.view.View;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityBookDetailBinding;
+import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
-import com.nearsoft.nearbooks.view.models.BookViewModel;
 
 public class BookDetailActivity extends BaseActivity {
-    private ActivityBookDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = getBinding(ActivityBookDetailBinding.class);
+        ActivityBookDetailBinding binding = getBinding(ActivityBookDetailBinding.class);
 
-        final BookViewModel bookViewModel = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
-        binding.setBook(bookViewModel);
+        final Book book = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
+        binding.setBook(book);
 
         binding.fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,8 +45,9 @@ public class BookDetailActivity extends BaseActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            BookDetailFragment noteDetailFragment = BookDetailFragment.newInstance(bookViewModel);
-            getSupportFragmentManager().beginTransaction()
+            BookDetailFragment noteDetailFragment = BookDetailFragment.newInstance(book);
+            getSupportFragmentManager()
+                    .beginTransaction()
                     .add(R.id.note_detail_container, noteDetailFragment)
                     .commit();
         }
@@ -67,13 +67,6 @@ public class BookDetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more text, see the Navigation pattern on Android Design:
-                //
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                //
                 onBackPressed();
                 return true;
             default:

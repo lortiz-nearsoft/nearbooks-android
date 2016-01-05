@@ -10,6 +10,9 @@ import dagger.Component;
  * Created by epool on 11/17/15.
  */
 @PerActivity
-@Component(dependencies = {NearbooksApplicationComponent.class}, modules = {BaseActivityModule.class})
+@Component(
+        dependencies = {NearbooksApplicationComponent.class},
+        modules = {BaseActivityModule.class}
+)
 public interface BaseActivityComponent {
 }

@@ -7,6 +7,7 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.raizlabs.android.dbflow.structure.ModelAdapter;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -14,7 +15,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.RealmObject;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
@@ -24,10 +24,10 @@ import retrofit.Retrofit;
  */
 @Module
 public class NetModule {
-    private String baseUrl;
+    private String mBaseUrl;
 
     public NetModule(String baseUrl) {
-        this.baseUrl = baseUrl;
+        mBaseUrl = baseUrl;
     }
 
     @Provides
@@ -44,7 +44,7 @@ public class NetModule {
         gsonBuilder.setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {
-                return f.getDeclaringClass().equals(RealmObject.class);
+                return f.getDeclaredClass().equals(ModelAdapter.class);
             }
 
             @Override
@@ -66,9 +66,10 @@ public class NetModule {
     @Provides
     @Singleton
     public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
-        return new Retrofit.Builder()
+        return new Retrofit
+                .Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(baseUrl)
+                .baseUrl(mBaseUrl)
                 .client(okHttpClient)
                 .build();
     }

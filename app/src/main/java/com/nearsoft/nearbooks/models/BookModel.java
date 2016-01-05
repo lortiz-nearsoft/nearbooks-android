@@ -1,12 +1,14 @@
 package com.nearsoft.nearbooks.models;
 
-import com.nearsoft.nearbooks.models.realm.Book;
-import com.nearsoft.nearbooks.view.models.BookViewModel;
+import com.nearsoft.nearbooks.db.NearbooksDatabase;
+import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.sqlite.Book_Table;
+import com.raizlabs.android.dbflow.runtime.TransactionManager;
+import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 
 import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Model to handle book actions.
@@ -14,33 +16,34 @@ import io.realm.RealmResults;
  */
 public class BookModel {
 
-    public static void cacheBooks(List<BookViewModel> books) {
-        clearBooks();
+    public static void cacheBooks(final List<Book> books) {
+        if (books == null || books.isEmpty()) return;
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        Delete.table(Book.class);
 
-        for (BookViewModel bookViewModel : books) {
-            realm.copyToRealmOrUpdate(bookViewModel.toRealm());
-        }
-
-        realm.commitTransaction();
-
-        realm.close();
+        TransactionManager.transact(NearbooksDatabase.NAME, new Runnable() {
+            @Override
+            public void run() {
+                for (Book book : books) {
+                    book.save();
+                }
+            }
+        });
     }
 
-    public static RealmResults<Book> getAllBooks(Realm realm) {
-        return realm.where(Book.class).findAllSorted(Book.TITLE, true);
+    public static Book findByIsbn(String isbn) {
+        return SQLite
+                .select()
+                .from(Book.class)
+                .where(Book_Table.isbn.eq(isbn))
+                .querySingle();
     }
 
-    public static void clearBooks() {
-        Realm realm = Realm.getDefaultInstance();
-
-        realm.beginTransaction();
-        realm.where(Book.class).findAll().clear();
-        realm.commitTransaction();
-
-        realm.close();
+    public static Where<Book> getAllBooks() {
+        return SQLite
+                .select()
+                .from(Book.class)
+                .orderBy(Book_Table.title, true);
     }
 
 }

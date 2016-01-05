@@ -1,17 +1,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.nearsoft.nearbooks.view.fragments.LibraryFragment">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context="com.nearsoft.nearbooks.fragments.LibraryFragment">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewBooks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/empty"
@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:text="@string/message_no_books"
-            android:visibility="visible" />
+            android:visibility="visible"/>
 
     </FrameLayout>
 </layout>
