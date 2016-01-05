@@ -111,7 +111,6 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
             return false;
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
         return !(idToken != null ? !idToken.equals(user.idToken) : user.idToken != null);
-
     }
 
     @Override

@@ -2,10 +2,16 @@
 <manifest package="com.nearsoft.nearbooks"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
         android:name=".NearbooksApplication"
@@ -18,33 +24,41 @@
             android:name=".view.activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activities.LoginActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".view.activities.HomeActivity"
-            android:label="@string/title_library"
-            android:theme="@style/AppTheme" />
+            android:label="@string/title_library"/>
         <activity
             android:name=".view.activities.BookDetailActivity"
             android:label="@string/app_name"
             android:parentActivityName=".view.activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.HomeActivity" />
+                android:value=".view.activities.HomeActivity"/>
         </activity>
         <activity
             android:name=".view.activities.zxing.CaptureActivityAnyOrientation"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".sync.auth.AuthenticatorActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"/>
+
+        <service android:name=".sync.NearbooksAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"/>
+        </service>
     </application>
 
 </manifest>

@@ -4,6 +4,8 @@ import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.di.modules.GoogleApiClientModule;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
 import com.nearsoft.nearbooks.view.activities.GoogleApiClientBaseActivity;
+import com.nearsoft.nearbooks.view.activities.HomeActivity;
+import com.nearsoft.nearbooks.view.activities.MainActivity;
 
 import dagger.Component;
 
@@ -19,5 +21,9 @@ import dagger.Component;
 public interface GoogleApiClientComponent extends BaseActivityComponent {
 
     void inject(GoogleApiClientBaseActivity googleApiClientBaseActivity);
+
+    void inject(MainActivity mainActivity);
+
+    void inject(HomeActivity homeActivity);
 
 }

@@ -16,6 +16,7 @@ import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
  * Created by epool on 11/17/15.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
     private ViewDataBinding mBinding;
 
     @Override
@@ -43,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected NearbooksApplicationComponent getNearbooksApplicationComponent() {
-        return ((NearbooksApplication) getApplication()).getNearbooksApplicationComponent();
+        return NearbooksApplication.getNearbooksApplicationComponent();
     }
 
     protected BaseActivityModule getBaseActivityModule() {
