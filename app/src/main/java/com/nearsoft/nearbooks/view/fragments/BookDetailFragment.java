@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentBookDetailBinding;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 
@@ -48,19 +47,14 @@ public class BookDetailFragment extends BaseFragment {
     }
 
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.fragment_book_detail;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
-        FragmentBookDetailBinding binding = getBinding(FragmentBookDetailBinding.class);
+        FragmentBookDetailBinding binding = FragmentBookDetailBinding
+                .inflate(inflater, container, false);
         binding.setBook(mBook);
 
-        return rootView;
+        return binding.getRoot();
     }
 
 }

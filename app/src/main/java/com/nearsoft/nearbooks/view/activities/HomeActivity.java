@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
@@ -193,7 +194,8 @@ public class HomeActivity
                 Snackbar
                         .make(
                                 mBinding.getRoot(),
-                                R.string.message_book_not_found,
+                                getResources()
+                                        .getQuantityString(R.plurals.message_books_not_found, 1),
                                 Snackbar.LENGTH_LONG
                         )
                         .show();
@@ -218,11 +220,11 @@ public class HomeActivity
 
         String transitionName = getString(R.string.transition_book_cover);
 
+        @SuppressWarnings("unchecked")
         ActivityOptionsCompat options = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(
                         this,
-                        view,           // The view which starts the transition
-                        transitionName  // The transitionName of the view we’re transitioning to
+                        Pair.create(view, transitionName)
                 );
         ActivityCompat.startActivity(this, detailIntent, options.toBundle());
     }

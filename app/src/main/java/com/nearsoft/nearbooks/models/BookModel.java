@@ -1,5 +1,7 @@
 package com.nearsoft.nearbooks.models;
 
+import android.text.TextUtils;
+
 import com.nearsoft.nearbooks.db.NearbooksDatabase;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.Book_Table;
@@ -43,6 +45,23 @@ public class BookModel {
         return SQLite
                 .select()
                 .from(Book.class)
+                .orderBy(Book_Table.title, true);
+    }
+
+    public static Where<Book> getBooksByQuery(CharSequence charSequenceQuery) {
+        if (TextUtils.isEmpty(charSequenceQuery)) {
+            return getAllBooks();
+        }
+
+        String query = "%" + charSequenceQuery.toString() + "%";
+
+        return SQLite
+                .select()
+                .from(Book.class)
+                .where(Book_Table.title.like(query))
+                .or(Book_Table.author.like(query))
+                .or(Book_Table.isbn.like(query))
+                .or(Book_Table.year.like(query))
                 .orderBy(Book_Table.title, true);
     }
 

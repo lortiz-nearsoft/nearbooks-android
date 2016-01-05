@@ -10,14 +10,14 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityAuthenticatorBinding;
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
+import com.nearsoft.nearbooks.exceptions.SignInException;
+import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.util.SyncUtil;
-import com.nearsoft.nearbooks.util.Util;
 
 import javax.inject.Inject;
 
@@ -32,7 +32,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
 
     private final static int RC_SIGN_IN = 1;
-    private final static int UNKNOWN_STATUS_CODE = 12501;
     @Inject
     protected SharedPreferences sharedPreferences;
     private ActivityAuthenticatorBinding mBinding;
@@ -79,6 +78,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             finishLogin(result);
@@ -86,27 +86,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
     }
 
     private void finishLogin(GoogleSignInResult result) {
-        String errorMessage = null;
-
-        if (result.isSuccess()) {
-            GoogleSignInAccount googleSignInAccount = result.getSignInAccount();
-            if (validateNearsoftAccount(googleSignInAccount)) {
-                User user = new User(googleSignInAccount);
-                createSyncAccount(user);
-            } else {
-                errorMessage = getString(R.string.message_nearsoft_account_needed);
-            }
-        } else if (!Util.isThereInternetConnection(this)) {
-            errorMessage = getString(R.string.error_internet_connection);
-        } else if (result.getStatus().getStatusCode() != UNKNOWN_STATUS_CODE) {
-            errorMessage = getString(R.string.error_google_api, result.getStatus());
-        }
-
-        if (errorMessage != null) {
+        try {
+            createSyncAccount(UserModel.signIn(this, result));
+        } catch (SignInException e) {
             Snackbar
                     .make(
                             mBinding.getRoot(),
-                            errorMessage,
+                            e.getMessage(),
                             Snackbar.LENGTH_LONG
                     )
                     .show();
@@ -131,8 +117,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
             SyncUtil.configSyncPeriod(account);
             newAccount = true;
 
-            user.save();
-
             Bundle bundle = new Bundle();
             bundle.putString(AccountManager.KEY_ACCOUNT_NAME, user.getEmail());
             bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, mAccountType);
@@ -154,11 +138,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
                     .putBoolean(AccountGeneral.PREF_SETUP_COMPLETE, true)
                     .apply();
         }
-    }
-
-    private boolean validateNearsoftAccount(GoogleSignInAccount googleSignInAccount) {
-        return googleSignInAccount != null && googleSignInAccount.getEmail() != null &&
-                googleSignInAccount.getEmail().endsWith(getString(R.string.nearsoft_domain));
     }
 
     @Override

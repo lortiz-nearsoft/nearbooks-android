@@ -48,6 +48,9 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
     private String email;
 
     @Column
+    private String photoUrl;
+
+    @Column
     private String idToken;
 
     public User() {
@@ -58,12 +61,17 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
         this.displayName = googleSignInAccount.getDisplayName();
         this.email = googleSignInAccount.getEmail();
         this.idToken = googleSignInAccount.getIdToken();
+        Uri photoUri = googleSignInAccount.getPhotoUrl();
+        if (photoUri != null) {
+            this.photoUrl = photoUri.toString();
+        }
     }
 
     protected User(Parcel in) {
         this.id = in.readString();
         this.displayName = in.readString();
         this.email = in.readString();
+        this.photoUrl = in.readString();
         this.idToken = in.readString();
     }
 
@@ -95,6 +103,16 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
     public void setEmail(String email) {
         this.email = email;
         notifyPropertyChanged(BR.email);
+    }
+
+    @Bindable
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+        notifyPropertyChanged(BR.photoUrl);
     }
 
     @Bindable
@@ -139,7 +157,10 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
         if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null)
             return false;
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
-        return !(idToken != null ? !idToken.equals(user.idToken) : user.idToken != null);
+        if (photoUrl != null ? !photoUrl.equals(user.photoUrl) : user.photoUrl != null)
+            return false;
+        return idToken != null ? idToken.equals(user.idToken) : user.idToken == null;
+
     }
 
     @Override
@@ -147,6 +168,7 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (photoUrl != null ? photoUrl.hashCode() : 0);
         result = 31 * result + (idToken != null ? idToken.hashCode() : 0);
         return result;
     }
@@ -161,6 +183,7 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.displayName);
         dest.writeString(this.email);
+        dest.writeString(this.photoUrl);
         dest.writeString(this.idToken);
     }
 

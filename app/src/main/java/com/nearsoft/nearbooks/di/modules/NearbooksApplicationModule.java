@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
-import com.nearsoft.nearbooks.models.sqlite.User;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import javax.inject.Singleton;
 
@@ -33,15 +31,6 @@ public class NearbooksApplicationModule {
     @Singleton
     public Context provideApplicationContext() {
         return mNearbooksApplication.getApplicationContext();
-    }
-
-    @Provides
-    @Singleton
-    public User provideUser() {
-        return SQLite
-                .select()
-                .from(User.class)
-                .querySingle();
     }
 
     @Provides
