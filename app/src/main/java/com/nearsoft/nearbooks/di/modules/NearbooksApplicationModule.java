@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.facebook.stetho.Stetho;
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
@@ -25,6 +26,8 @@ public class NearbooksApplicationModule {
         mNearbooksApplication = nearbooksApplication;
 
         FlowManager.init(this.mNearbooksApplication.getApplicationContext());
+
+        Stetho.initializeWithDefaults(this.mNearbooksApplication.getApplicationContext());
     }
 
     @Provides
