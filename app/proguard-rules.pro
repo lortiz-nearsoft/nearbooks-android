@@ -60,10 +60,26 @@
 # Zxing - https://github.com/journeyapps/zxing-android-embedded
 # It looks not necessary
 
-# Stetho - https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-facebook-stetho.pro
+# Stetho - https://github.com/facebook/stetho/tree/master/stetho-js-rhino#proguard
 -keep class com.facebook.stetho.** { *; }
 
 # Rhino (javascript) - https://github.com/facebook/stetho/tree/master/stetho-js-rhino#proguard
 -dontwarn org.mozilla.javascript.**
 -dontwarn org.mozilla.classfile.**
--keep class org.mozilla.javascript.** { *; }
+-keep class org.mozilla.classfile.** { *; }
+-keep class org.mozilla.javascript.* { *; }
+-keep class org.mozilla.javascript.annotations.** { *; }
+-keep class org.mozilla.javascript.ast.** { *; }
+-keep class org.mozilla.javascript.commonjs.module.** { *; }
+-keep class org.mozilla.javascript.commonjs.module.provider.** { *; }
+-keep class org.mozilla.javascript.debug.** { *; }
+-keep class org.mozilla.javascript.jdk13.** { *; }
+-keep class org.mozilla.javascript.jdk15.** { *; }
+-keep class org.mozilla.javascript.json.** { *; }
+-keep class org.mozilla.javascript.optimizer.** { *; }
+-keep class org.mozilla.javascript.regexp.** { *; }
+-keep class org.mozilla.javascript.serialize.** { *; }
+-keep class org.mozilla.javascript.typedarrays.** { *; }
+-keep class org.mozilla.javascript.v8dtoa.** { *; }
+-keep class org.mozilla.javascript.xml.** { *; }
+-keep class org.mozilla.javascript.xmlimpl.** { *; }
