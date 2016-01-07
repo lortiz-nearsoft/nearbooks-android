@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.di.modules;
 
 import android.content.Context;
 
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -61,6 +62,7 @@ public class NetModule {
     public OkHttpClient provideOkHttpClient(Cache cache) {
         OkHttpClient client = new OkHttpClient();
         client.setCache(cache);
+        client.networkInterceptors().add(new StethoInterceptor());
 //        TODO: Add credentials.
 //        client.interceptors().add(new Interceptor() {
 //            @Override
