@@ -17,7 +17,6 @@ import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.helpers.SimpleTransitionListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 
 public class BookDetailActivity extends BaseActivity {
 
@@ -145,31 +144,26 @@ public class BookDetailActivity extends BaseActivity {
                         R.string.url_book_cover_full,
                 mBook.getId());
 
-        RequestCreator requestCreator = Picasso.with(BookDetailActivity.this)
+        Picasso.with(BookDetailActivity.this)
                 .load(imageUrl)
-                .noFade();
-        if (loadThumbnailFirst) {
-            requestCreator.noPlaceholder();
-        } else {
-            requestCreator.placeholder(R.drawable.ic_launcher);
-        }
-        requestCreator
-                .into(mBinding.imageViewBookCover, loadThumbnailFirst ? new Callback() {
+                .noFade()
+                .noPlaceholder()
+                .error(R.drawable.ic_launcher)
+                .into(mBinding.imageViewBookCover, new Callback() {
                     @Override
                     public void onSuccess() {
                         Picasso.with(BookDetailActivity.this)
                                 .load(getString(R.string.url_book_cover_full, mBook.getId()))
-                                .placeholder(R.drawable.ic_launcher)
+                                .noFade()
+                                .noPlaceholder()
+                                .error(R.drawable.ic_launcher)
                                 .into(mBinding.imageViewBookCover);
                     }
 
                     @Override
                     public void onError() {
-                        Picasso.with(BookDetailActivity.this)
-                                .load(R.drawable.ic_launcher)
-                                .into(mBinding.imageViewBookCover);
                     }
-                } : null);
+                });
     }
 
     @Override
