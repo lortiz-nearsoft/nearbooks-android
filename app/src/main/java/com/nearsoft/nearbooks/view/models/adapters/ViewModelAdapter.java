@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 /**
  * View model adapter.
@@ -15,7 +15,7 @@ public class ViewModelAdapter {
 
     @BindingAdapter({"bind:imageUrl", "bind:error"})
     public static void loadImage(ImageView imageView, String url, Drawable error) {
-        Glide
+        Picasso
                 .with(imageView.getContext())
                 .load(url)
                 .placeholder(error)

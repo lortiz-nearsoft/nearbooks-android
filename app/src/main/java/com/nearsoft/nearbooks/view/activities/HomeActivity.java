@@ -173,7 +173,7 @@ public class HomeActivity
         integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
         integrator.setOrientationLocked(false);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-        integrator.setPrompt("Scan a book QR code");
+        integrator.setPrompt(getString(R.string.message_scan_book_qr_code));
         integrator.setCameraId(0);  // Use a specific camera of the device
         integrator.setBeepEnabled(false);
         integrator.setBarcodeImageEnabled(true);
@@ -218,13 +218,14 @@ public class HomeActivity
         Intent detailIntent = new Intent(this, BookDetailActivity.class);
         detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, book);
 
-        String transitionName = getString(R.string.transition_book_cover);
-
         @SuppressWarnings("unchecked")
         ActivityOptionsCompat options = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(
                         this,
-                        Pair.create(view, transitionName)
+                        Pair.create(
+                                view.findViewById(R.id.imageViewBookCover),
+                                BookDetailActivity.VIEW_NAME_BOOK_COVER
+                        )
                 );
         ActivityCompat.startActivity(this, detailIntent, options.toBundle());
     }
