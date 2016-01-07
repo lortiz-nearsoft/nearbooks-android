@@ -17,7 +17,7 @@ import com.raizlabs.android.dbflow.structure.provider.ContentUtils;
 public class NearbooksDatabase {
 
     public static final String NAME = "nearbooks";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     // Must be the class name whose implements the content provider annotation.
     public static final String CONTENT_PROVIDER_NAME = "NearbooksDatabase";

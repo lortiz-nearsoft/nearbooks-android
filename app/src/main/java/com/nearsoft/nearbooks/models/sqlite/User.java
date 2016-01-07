@@ -15,7 +15,7 @@ import com.raizlabs.android.dbflow.annotation.provider.ContentUri;
 import com.raizlabs.android.dbflow.annotation.provider.TableEndpoint;
 
 /**
- * User sqlite model
+ * User sqlite model.
  * Created by epool on 12/18/15.
  */
 @TableEndpoint(name = User.NAME, contentProviderName = NearbooksDatabase.CONTENT_PROVIDER_NAME)
@@ -39,19 +39,19 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
 
     @Column
     @PrimaryKey
-    private String id;
+    protected String id;
 
     @Column
-    private String displayName;
+    protected String displayName;
 
     @Column
-    private String email;
+    protected String email;
 
     @Column
-    private String photoUrl;
+    protected String photoUrl;
 
     @Column
-    private String idToken;
+    protected String idToken;
 
     public User() {
     }

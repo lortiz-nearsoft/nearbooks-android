@@ -7,10 +7,13 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.nearsoft.nearbooks.gson.BookForeignKeyContainerSerializer;
 import com.nearsoft.nearbooks.ws.BookService;
 import com.raizlabs.android.dbflow.structure.ModelAdapter;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -25,6 +28,8 @@ import retrofit.Retrofit;
  */
 @Module
 public class NetModule {
+
+    private final static long SECONDS_TIMEOUT = 20;
 
     private String mBaseUrl;
 
@@ -43,6 +48,10 @@ public class NetModule {
     @Singleton
     public Gson provideGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        gsonBuilder.registerTypeAdapter(
+                BookForeignKeyContainerSerializer.TYPE, new BookForeignKeyContainerSerializer()
+        );
         gsonBuilder.setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {
@@ -62,6 +71,9 @@ public class NetModule {
     public OkHttpClient provideOkHttpClient(Cache cache) {
         OkHttpClient client = new OkHttpClient();
         client.setCache(cache);
+        client.setConnectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS);
+        client.setReadTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS);
+        client.setWriteTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS);
         client.networkInterceptors().add(new StethoInterceptor());
 //        TODO: Add credentials.
 //        client.interceptors().add(new Interceptor() {

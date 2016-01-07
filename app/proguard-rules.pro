@@ -59,3 +59,11 @@
 
 # Zxing - https://github.com/journeyapps/zxing-android-embedded
 # It looks not necessary
+
+# Stetho - https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-facebook-stetho.pro
+-keep class com.facebook.stetho.** { *; }
+
+# Rhino (javascript) - https://github.com/facebook/stetho/tree/master/stetho-js-rhino#proguard
+-dontwarn org.mozilla.javascript.**
+-dontwarn org.mozilla.classfile.**
+-keep class org.mozilla.javascript.** { *; }

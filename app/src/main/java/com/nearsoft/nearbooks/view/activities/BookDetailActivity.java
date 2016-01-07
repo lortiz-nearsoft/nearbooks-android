@@ -17,6 +17,7 @@ import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.helpers.SimpleTransitionListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 public class BookDetailActivity extends BaseActivity {
 
@@ -129,7 +130,7 @@ public class BookDetailActivity extends BaseActivity {
      */
     private void loadThumbnail() {
         Picasso.with(this)
-                .load(getString(R.string.url_book_cover_thumbnail, mBook.getIsbn()))
+                .load(getString(R.string.url_book_cover_thumbnail, mBook.getId()))
                 .noFade()
                 .into(mBinding.imageViewBookCover);
     }
@@ -142,25 +143,31 @@ public class BookDetailActivity extends BaseActivity {
                 loadThumbnailFirst ?
                         R.string.url_book_cover_thumbnail :
                         R.string.url_book_cover_full,
-                mBook.getIsbn());
+                mBook.getId());
 
-        Picasso.with(BookDetailActivity.this)
+        RequestCreator requestCreator = Picasso.with(BookDetailActivity.this)
                 .load(imageUrl)
-                .noFade()
-                .noPlaceholder()
+                .noFade();
+        if (loadThumbnailFirst) {
+            requestCreator.noPlaceholder();
+        } else {
+            requestCreator.placeholder(R.drawable.ic_launcher);
+        }
+        requestCreator
                 .into(mBinding.imageViewBookCover, loadThumbnailFirst ? new Callback() {
                     @Override
                     public void onSuccess() {
                         Picasso.with(BookDetailActivity.this)
-                                .load(getString(R.string.url_book_cover_full, mBook.getIsbn()))
-                                .noFade()
-                                .noPlaceholder()
+                                .load(getString(R.string.url_book_cover_full, mBook.getId()))
+                                .placeholder(R.drawable.ic_launcher)
                                 .into(mBinding.imageViewBookCover);
                     }
 
                     @Override
                     public void onError() {
-
+                        Picasso.with(BookDetailActivity.this)
+                                .load(R.drawable.ic_launcher)
+                                .into(mBinding.imageViewBookCover);
                     }
                 } : null);
     }

@@ -4,6 +4,7 @@ import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 import android.net.Uri;
+import android.support.annotation.IntDef;
 
 import com.google.gson.Gson;
 import com.nearsoft.nearbooks.NearbooksApplication;
@@ -11,13 +12,19 @@ import com.nearsoft.nearbooks.db.NearbooksDatabase;
 import com.raizlabs.android.dbflow.structure.provider.BaseSyncableProviderModel;
 import com.raizlabs.android.dbflow.structure.provider.ContentUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Base model.
  * Created by epool on 12/17/15.
  */
-abstract class NearbooksBaseObservableModel<T extends BaseSyncableProviderModel>
+public abstract class NearbooksBaseObservableModel<T extends BaseSyncableProviderModel>
         extends BaseSyncableProviderModel<T>
         implements Observable {
+
+    public static final int SQLITE_BOOLEAN_FALSE = 0;
+    public static final int SQLITE_BOOLEAN_TRUE = 1;
 
     private transient PropertyChangeRegistry mCallbacks;
 
@@ -75,4 +82,13 @@ abstract class NearbooksBaseObservableModel<T extends BaseSyncableProviderModel>
                 .provideGson();
         return gson.toJson(this);
     }
+
+    @IntDef({
+            SQLITE_BOOLEAN_FALSE,
+            SQLITE_BOOLEAN_TRUE
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface SqliteBoolean {
+    }
+
 }
