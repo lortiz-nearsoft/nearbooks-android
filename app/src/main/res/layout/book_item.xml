@@ -29,7 +29,7 @@
                 android:contentDescription="@string/content_description_book_cover"
                 android:scaleType="centerCrop"
                 app:error="@{@drawable/ic_launcher}"
-                app:imageUrl="@{@string/url_book_cover_thumbnail(book.isbn)}"
+                app:imageUrl="@{@string/url_book_cover_thumbnail(book.id)}"
                 tools:targetApi="21"/>
 
         </com.nearsoft.nearbooks.view.widgets.SquareFrameLayout>
@@ -60,7 +60,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="@{@string/label_isbn(book.isbn)}"
+                    android:text="@{@string/label_isbn(book.id)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     tools:text="ISBN"/>
 
@@ -69,7 +69,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="@{@string/label_year(book.year)}"
+                    android:text="@{@string/label_year(book.releaseYear)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     tools:text="2015"/>
 

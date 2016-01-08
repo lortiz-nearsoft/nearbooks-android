@@ -129,7 +129,7 @@ public class BookDetailActivity extends BaseActivity {
      */
     private void loadThumbnail() {
         Picasso.with(this)
-                .load(getString(R.string.url_book_cover_thumbnail, mBook.getIsbn()))
+                .load(getString(R.string.url_book_cover_thumbnail, mBook.getId()))
                 .noFade()
                 .into(mBinding.imageViewBookCover);
     }
@@ -142,27 +142,28 @@ public class BookDetailActivity extends BaseActivity {
                 loadThumbnailFirst ?
                         R.string.url_book_cover_thumbnail :
                         R.string.url_book_cover_full,
-                mBook.getIsbn());
+                mBook.getId());
 
         Picasso.with(BookDetailActivity.this)
                 .load(imageUrl)
                 .noFade()
                 .noPlaceholder()
-                .into(mBinding.imageViewBookCover, loadThumbnailFirst ? new Callback() {
+                .error(R.drawable.ic_launcher)
+                .into(mBinding.imageViewBookCover, new Callback() {
                     @Override
                     public void onSuccess() {
                         Picasso.with(BookDetailActivity.this)
-                                .load(getString(R.string.url_book_cover_full, mBook.getIsbn()))
+                                .load(getString(R.string.url_book_cover_full, mBook.getId()))
                                 .noFade()
                                 .noPlaceholder()
+                                .error(R.drawable.ic_launcher)
                                 .into(mBinding.imageViewBookCover);
                     }
 
                     @Override
                     public void onError() {
-
                     }
-                } : null);
+                });
     }
 
     @Override

@@ -33,11 +33,11 @@ public class BookModel {
         });
     }
 
-    public static Book findByIsbn(String isbn) {
+    public static Book findByBookId(String bookId) {
         return SQLite
                 .select()
                 .from(Book.class)
-                .where(Book_Table.isbn.eq(isbn))
+                .where(Book_Table.id.eq(bookId))
                 .querySingle();
     }
 
@@ -58,10 +58,10 @@ public class BookModel {
         return SQLite
                 .select()
                 .from(Book.class)
-                .where(Book_Table.title.like(query))
+                .where(Book_Table.id.like(query))
+                .or(Book_Table.title.like(query))
                 .or(Book_Table.author.like(query))
-                .or(Book_Table.isbn.like(query))
-                .or(Book_Table.year.like(query))
+                .or(Book_Table.releaseYear.like(query))
                 .orderBy(Book_Table.title, true);
     }
 

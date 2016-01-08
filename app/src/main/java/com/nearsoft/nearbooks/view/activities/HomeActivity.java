@@ -186,7 +186,7 @@ public class HomeActivity
                 .parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null && scanResult.getContents() != null) {
             String isbn = scanResult.getContents();
-            Book book = BookModel.findByIsbn(isbn);
+            Book book = BookModel.findByBookId(isbn);
 
             if (book != null) {
                 goToBookDetail(book, mBinding.getRoot());

@@ -26,7 +26,7 @@ public class SyncChangeHandler {
     /**
      * Handle to a SyncObserver. The ProgressBar element is visible until the SyncObserver reports
      * that the sync is complete.
-     * <p>
+     * <p/>
      * <p>This allows us to delete our SyncObserver once the application is no longer in the
      * foreground.
      */

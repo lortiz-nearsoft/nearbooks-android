@@ -13,7 +13,7 @@ import retrofit.http.GET;
  */
 public interface BookService {
 
-    @GET("nearbooks")
+    @GET("books")
     Call<List<Book>> getAllBooks();
 
 }
