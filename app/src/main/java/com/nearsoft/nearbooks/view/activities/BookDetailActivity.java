@@ -1,22 +1,20 @@
 package com.nearsoft.nearbooks.view.activities;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
-import android.transition.Transition;
+import android.support.v7.graphics.Palette;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityBookDetailBinding;
 import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.util.ImageLoader;
+import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
-import com.nearsoft.nearbooks.view.helpers.SimpleTransitionListener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 public class BookDetailActivity extends BaseActivity {
 
@@ -67,103 +65,36 @@ public class BookDetailActivity extends BaseActivity {
                     .commit();
         }
 
-        loadItem();
+        new ImageLoader.Builder(this, mBinding.imageViewBookCover,
+                getString(R.string.url_book_cover_thumbnail, mBook.getId()))
+                .fullResolutionImageUrl(getString(R.string.url_book_cover_full, mBook.getId()))
+                .placeholderResourceId(R.drawable.ic_launcher)
+                .errorResourceId(R.drawable.ic_launcher)
+                .paletteAsyncListener(new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        int defaultColor = ContextCompat
+                                .getColor(BookDetailActivity.this, R.color.colorPrimary);
+                        Pair<Integer, Palette.Swatch> pair = ViewUtil
+                                .getVibrantPriorityColorSwatchPair(palette, defaultColor);
+                        Palette.Swatch swatch = pair.second;
+                        mBinding.toolbar.setBackgroundColor(pair.first);
+                        mBinding.toolbarLayout
+                                .setStatusBarScrimColor(swatch.getTitleTextColor());
+                        mBinding.toolbarLayout.setContentScrimColor(pair.first);
+                        ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar, swatch
+                                .getTitleTextColor(), BookDetailActivity.this);
+                        mBinding.textViewBookTitle.setTextColor(swatch.getTitleTextColor());
+                        mBinding.textViewBookISBN.setTextColor(swatch.getBodyTextColor());
+                        mBinding.textViewBookYear.setTextColor(swatch.getBodyTextColor());
+                    }
+                })
+                .load();
     }
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_book_detail;
-    }
-
-    private void loadItem() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && addTransitionListener()) {
-            // If we're running on Lollipop and we have added a listener to the shared element
-            // transition, load the thumbnail. The listener will load the full-size image when
-            // the transition is complete.
-            loadThumbnail();
-        } else {
-            // If all other cases we should just load the full-size image now
-            loadFullSizeImage(true);
-        }
-    }
-
-    /**
-     * Try and add a {@link Transition.TransitionListener} to the entering shared element
-     * {@link Transition}. We do this so that we can load the full-size image after the transition
-     * has completed.
-     *
-     * @return true if we were successful in adding a listener to the enter transition
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private boolean addTransitionListener() {
-        final Transition transition = getWindow().getSharedElementEnterTransition();
-
-        if (transition != null) {
-            // There is an entering shared element transition so add a listener to it
-            transition.addListener(new SimpleTransitionListener() {
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    // As the transition has ended, we can now load the full-size image
-                    loadFullSizeImage(false);
-
-                    // Make sure we remove ourselves as a listener
-                    transition.removeListener(this);
-                }
-
-                @Override
-                public void onTransitionCancel(Transition transition) {
-                    // Make sure we remove ourselves as a listener
-                    transition.removeListener(this);
-                }
-
-            });
-            return true;
-        }
-
-        // If we reach here then we have not added a listener
-        return false;
-    }
-
-    /**
-     * Load the item's thumbnail image into our {@link ImageView}.
-     */
-    private void loadThumbnail() {
-        Picasso.with(this)
-                .load(getString(R.string.url_book_cover_thumbnail, mBook.getId()))
-                .noFade()
-                .into(mBinding.imageViewBookCover);
-    }
-
-    /**
-     * Load the item's full-size image into our {@link ImageView}.
-     */
-    private void loadFullSizeImage(boolean loadThumbnailFirst) {
-        String imageUrl = getString(
-                loadThumbnailFirst ?
-                        R.string.url_book_cover_thumbnail :
-                        R.string.url_book_cover_full,
-                mBook.getId());
-
-        Picasso.with(BookDetailActivity.this)
-                .load(imageUrl)
-                .noFade()
-                .noPlaceholder()
-                .error(R.drawable.ic_launcher)
-                .into(mBinding.imageViewBookCover, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Picasso.with(BookDetailActivity.this)
-                                .load(getString(R.string.url_book_cover_full, mBook.getId()))
-                                .noFade()
-                                .noPlaceholder()
-                                .error(R.drawable.ic_launcher)
-                                .into(mBinding.imageViewBookCover);
-                    }
-
-                    @Override
-                    public void onError() {
-                    }
-                });
     }
 
     @Override

@@ -27,9 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:title="@{book.title}"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
                 app:toolbarId="@+id/toolbar">
 
                 <com.nearsoft.nearbooks.view.widgets.SquareFrameLayout
@@ -57,22 +55,64 @@
                     android:fitsSystemWindows="true"
                     app:layout_collapseMode="pin"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/bottom_gradient"
-                    app:layout_collapseMode="parallax"
-                    app:layout_collapseParallaxMultiplier="0.0"/>
-
                 <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
+                    android:id="@+id/toolbarDummy"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
             </android.support.design.widget.CollapsingToolbarLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewBookTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{book.title}"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                        tools:text="Title"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textViewBookISBN"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:text="@{@string/label_id(book.id)}"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            tools:text="ISBN"/>
+
+                        <TextView
+                            android:id="@+id/textViewBookYear"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:text="@{@string/label_year(book.releaseYear)}"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            tools:text="2015"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -89,7 +129,6 @@
             android:layout_gravity="center_vertical|start"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_search_24dp"
-            android:visibility="gone"
             app:layout_anchor="@+id/note_detail_container"
             app:layout_anchorGravity="top|end"/>
 

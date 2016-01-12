@@ -8,7 +8,7 @@
     <string name="title_social">Social</string>
     <string name="title_share">Share</string>
 
-    <string name="label_isbn">ISBN: %s</string>
+    <string name="label_id">ID: %s</string>
     <string name="label_year">Year: %s</string>
     <string name="label_book_available">This book is available</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
