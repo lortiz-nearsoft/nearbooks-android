@@ -42,7 +42,6 @@
         </activity>
         <activity
             android:name=".view.activities.BookDetailActivity"
-            android:label="@string/app_name"
             android:parentActivityName=".view.activities.HomeActivity"/>
         <activity
             android:name=".view.activities.zxing.CaptureActivityAnyOrientation"
