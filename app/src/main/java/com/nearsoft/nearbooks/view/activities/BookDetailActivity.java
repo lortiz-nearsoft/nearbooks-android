@@ -130,6 +130,8 @@ public class BookDetailActivity extends BaseActivity {
                     public void onResponse(Response<AvailabilityResponse> response) {
                         if (response.isSuccess()) {
                             AvailabilityResponse availabilityResponse = response.body();
+                            mBinding.setBorrow(availabilityResponse.getActiveBorrrow());
+                            mBinding.executePendingBindings();
                             if (availabilityResponse.isAvailable()) {
                                 mBinding.fabRequestBook.show();
                             } else {

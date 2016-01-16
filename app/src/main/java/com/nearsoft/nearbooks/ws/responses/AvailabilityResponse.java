@@ -36,6 +36,9 @@ public class AvailabilityResponse {
     @SerializedName("message")
     private String message;
 
+    @SerializedName("activeBorrrow")
+    private Borrow activeBorrrow;
+
     @SerializedName("book")
     private Book book;
 
@@ -102,6 +105,14 @@ public class AvailabilityResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Borrow getActiveBorrrow() {
+        return activeBorrrow;
+    }
+
+    public void setActiveBorrrow(Borrow activeBorrrow) {
+        this.activeBorrrow = activeBorrrow;
     }
 
     public Book getBook() {
