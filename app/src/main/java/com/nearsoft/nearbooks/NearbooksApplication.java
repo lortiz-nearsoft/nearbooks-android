@@ -6,6 +6,7 @@ import com.nearsoft.nearbooks.di.components.DaggerNearbooksApplicationComponent;
 import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent;
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
 import com.nearsoft.nearbooks.di.modules.NetModule;
+import com.squareup.picasso.Picasso;
 
 /**
  * Base Nearbooks application.
@@ -28,5 +29,6 @@ public class NearbooksApplication extends Application {
                 .nearbooksApplicationModule(new NearbooksApplicationModule(this))
                 .netModule(new NetModule(getString(R.string.url_base_api)))
                 .build();
+        Picasso.setSingletonInstance(mNearbooksApplicationComponent.providePicasso());
     }
 }

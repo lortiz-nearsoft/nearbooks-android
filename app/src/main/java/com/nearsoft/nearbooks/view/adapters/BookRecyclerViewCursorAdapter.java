@@ -1,6 +1,9 @@
 package com.nearsoft.nearbooks.view.adapters;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -11,6 +14,9 @@ import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.util.ImageLoader;
+import com.nearsoft.nearbooks.util.ViewUtil;
+import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.Where;
 
@@ -69,17 +75,37 @@ public class BookRecyclerViewCursorAdapter
     }
 
     public class BookViewHolder extends RecyclerView.ViewHolder {
-        private BookItemBinding binding;
+        private BookItemBinding mBinding;
 
         public BookViewHolder(BookItemBinding binding) {
             super(binding.getRoot());
-            this.binding = binding;
+            this.mBinding = binding;
         }
 
         public void setupViewAtPosition(int position) {
             Book book = mFlowCursorAdapter.getItem(position);
-            binding.setBook(book);
-            binding.executePendingBindings();
+
+            final Context context = mBinding.getRoot().getContext();
+
+            new ImageLoader.Builder(null, mBinding.imageViewBookCover,
+                    context.getString(R.string.url_book_cover_thumbnail, book.getId()))
+                    .placeholderResourceId(R.drawable.ic_launcher)
+                    .errorResourceId(R.drawable.ic_launcher)
+                    .paletteAsyncListener(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            int defaultColor = ContextCompat
+                                    .getColor(context, R.color.colorPrimary);
+                            ColorsWrapper colorsWrapper = ViewUtil
+                                    .getVibrantPriorityColorSwatchPair(palette, defaultColor);
+                            mBinding.setColors(colorsWrapper);
+                            mBinding.executePendingBindings();
+                        }
+                    })
+                    .load();
+
+            mBinding.setBook(book);
+            mBinding.executePendingBindings();
         }
     }
 

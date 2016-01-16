@@ -15,7 +15,7 @@ import com.nearsoft.nearbooks.ws.BookService;
 import java.io.IOException;
 import java.util.List;
 
-import retrofit.Response;
+import retrofit2.Response;
 
 /**
  * Sync adapter.

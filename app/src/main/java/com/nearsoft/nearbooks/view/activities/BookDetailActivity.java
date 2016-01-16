@@ -1,6 +1,10 @@
 package com.nearsoft.nearbooks.view.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
@@ -11,32 +15,64 @@ import android.view.View;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityBookDetailBinding;
+import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.util.ImageLoader;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
+import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
+import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BookDetailActivity extends BaseActivity {
 
     // View name of the header image. Used for activity scene transitions
     public static final String VIEW_NAME_BOOK_COVER = "detail:book_cover:image";
+    public static final String VIEW_NAME_BOOK_TOOLBAR = "detail:book_toolbar:toolbar";
 
     private ActivityBookDetailBinding mBinding;
     private Book mBook;
+    private Call<AvailabilityResponse> mCall;
+
+    public static void openWith(Activity activity, Book book, View view) {
+        Intent detailIntent = new Intent(activity, BookDetailActivity.class);
+        detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, book);
+
+        @SuppressWarnings("unchecked")
+        ActivityOptionsCompat options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(
+                        activity,
+                        Pair.create(
+                                view.findViewById(R.id.imageViewBookCover),
+                                VIEW_NAME_BOOK_COVER
+                        ),
+                        Pair.create(
+                                view.findViewById(R.id.toolbar),
+                                VIEW_NAME_BOOK_TOOLBAR
+                        )
+                );
+        ActivityCompat.startActivity(activity, detailIntent, options.toBundle());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mBinding = getBinding(ActivityBookDetailBinding.class);
-        ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER);
-
         mBook = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
         mBinding.setBook(mBook);
 
-        mBinding.fabEdit.setOnClickListener(new View.OnClickListener() {
+        ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER);
+        ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR);
+
+        mBinding.fabRequestBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BookModel.requestBookToBorrow(mBinding, mLazyUser.get(), mBook.getId() + "-0",
+                        mBinding.fabRequestBook);
             }
         });
 
@@ -75,21 +111,45 @@ public class BookDetailActivity extends BaseActivity {
                     public void onGenerated(Palette palette) {
                         int defaultColor = ContextCompat
                                 .getColor(BookDetailActivity.this, R.color.colorPrimary);
-                        Pair<Integer, Palette.Swatch> pair = ViewUtil
+                        ColorsWrapper colorsWrapper = ViewUtil
                                 .getVibrantPriorityColorSwatchPair(palette, defaultColor);
-                        Palette.Swatch swatch = pair.second;
-                        mBinding.toolbar.setBackgroundColor(pair.first);
-                        mBinding.toolbarLayout
-                                .setStatusBarScrimColor(swatch.getTitleTextColor());
-                        mBinding.toolbarLayout.setContentScrimColor(pair.first);
-                        ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar, swatch
+                        mBinding.setColors(colorsWrapper);
+                        ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar, colorsWrapper
                                 .getTitleTextColor(), BookDetailActivity.this);
-                        mBinding.textViewBookTitle.setTextColor(swatch.getTitleTextColor());
-                        mBinding.textViewBookISBN.setTextColor(swatch.getBodyTextColor());
-                        mBinding.textViewBookYear.setTextColor(swatch.getBodyTextColor());
+
+                        checkBookAvailability();
                     }
                 })
                 .load();
+    }
+
+    private void checkBookAvailability() {
+        mCall = BookModel.checkBookAvailability(mBook,
+                new Callback<AvailabilityResponse>() {
+                    @Override
+                    public void onResponse(Response<AvailabilityResponse> response) {
+                        if (response.isSuccess()) {
+                            AvailabilityResponse availabilityResponse = response.body();
+                            if (availabilityResponse.isAvailable()) {
+                                mBinding.fabRequestBook.show();
+                            } else {
+                                mBinding.fabRequestBook.hide();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mCall != null) mCall.cancel();
+
+        super.onDestroy();
     }
 
     @Override

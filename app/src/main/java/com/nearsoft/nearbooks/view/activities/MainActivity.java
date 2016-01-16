@@ -12,19 +12,12 @@ import android.widget.Toast;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityMainBinding;
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
-import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-
-import dagger.Lazy;
-
 public class MainActivity extends BaseActivity {
 
-    @Inject
-    protected Lazy<User> mLazyUser;
     private AccountManager mAccountManager;
 
     @Override

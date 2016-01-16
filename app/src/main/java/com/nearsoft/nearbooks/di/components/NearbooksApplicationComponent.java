@@ -6,10 +6,12 @@ import com.google.gson.Gson;
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
 import com.nearsoft.nearbooks.di.modules.NetModule;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
+import retrofit2.Retrofit;
 
 /**
  * Dagger 2 Nearbooks application component.
@@ -24,5 +26,9 @@ public interface NearbooksApplicationComponent {
     Gson provideGson();
 
     SharedPreferences provideDefaultSharedPreferences();
+
+    Picasso providePicasso();
+
+    Retrofit provideRetrofit();
 
 }

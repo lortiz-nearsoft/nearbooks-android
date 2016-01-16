@@ -1,16 +1,16 @@
 package com.nearsoft.nearbooks.view.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,21 +24,19 @@ import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
-import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
-
-import javax.inject.Inject;
 
 public class HomeActivity
         extends GoogleApiClientBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LibraryFragment.OnLibraryFragmentListener {
 
-    @Inject
-    protected User mUser;
+    private final static int ACTION_REQUEST = 0;
+    private final static int ACTION_CHECK_IN = 1;
+    private final static int ACTION_CHECK_OUT = 2;
+
     private ActivityHomeBinding mBinding;
 
     @Override
@@ -65,7 +63,7 @@ public class HomeActivity
 
         NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
                 .inflate(getLayoutInflater());
-        navHeaderHomeBinding.setUser(mUser);
+        navHeaderHomeBinding.setUser(mLazyUser.get());
         navHeaderHomeBinding.executePendingBindings();
         mBinding.navView.addHeaderView(navHeaderHomeBinding.getRoot());
 
@@ -115,7 +113,7 @@ public class HomeActivity
         switch (item.getItemId()) {
             case R.id.action_sign_out:
 
-                UserModel.signOut(this, mUser, mGoogleApiClient, new Runnable() {
+                UserModel.signOut(this, mLazyUser.get(), mGoogleApiClient, new Runnable() {
                     @Override
                     public void run() {
                         Intent intent = new Intent(HomeActivity.this, MainActivity.class);
@@ -185,11 +183,38 @@ public class HomeActivity
         IntentResult scanResult = IntentIntegrator
                 .parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null && scanResult.getContents() != null) {
-            String isbn = scanResult.getContents();
-            Book book = BookModel.findByBookId(isbn);
+            String qrCode = scanResult.getContents();
+            showBookActions(qrCode);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
+    private void showBookActions(@NonNull final String qrCode) {
+        String[] qrCodeParts = qrCode.split("-");
+        if (qrCodeParts.length == 2) {
+            Book book = BookModel.findByBookId(qrCodeParts[0]);
             if (book != null) {
-                goToBookDetail(book, mBinding.getRoot());
+                new AlertDialog.Builder(this)
+                        .setTitle(book.getTitle())
+                        .setItems(R.array.actions_book, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case ACTION_REQUEST:
+                                        BookModel.requestBookToBorrow(mBinding, mLazyUser.get(),
+                                                qrCode, null);
+                                        break;
+                                    case ACTION_CHECK_IN:
+                                        BookModel.doBookCheckIn(mBinding, mLazyUser.get(), qrCode);
+                                        break;
+                                    case ACTION_CHECK_OUT:
+                                        BookModel.doBookCheckOut(mBinding, mLazyUser.get(), qrCode);
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
             } else {
                 Snackbar
                         .make(
@@ -201,7 +226,13 @@ public class HomeActivity
                         .show();
             }
         } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            Snackbar
+                    .make(
+                            mBinding.getRoot(),
+                            getString(R.string.error_invalid_qr_code),
+                            Snackbar.LENGTH_LONG
+                    )
+                    .show();
         }
     }
 
@@ -211,22 +242,7 @@ public class HomeActivity
 
     @Override
     public void onBookSelected(Book book, View view) {
-        goToBookDetail(book, view);
+        BookDetailActivity.openWith(this, book, view);
     }
 
-    private void goToBookDetail(Book book, View view) {
-        Intent detailIntent = new Intent(this, BookDetailActivity.class);
-        detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, book);
-
-        @SuppressWarnings("unchecked")
-        ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(
-                        this,
-                        Pair.create(
-                                view.findViewById(R.id.imageViewBookCover),
-                                BookDetailActivity.VIEW_NAME_BOOK_COVER
-                        )
-                );
-        ActivityCompat.startActivity(this, detailIntent, options.toBundle());
-    }
 }

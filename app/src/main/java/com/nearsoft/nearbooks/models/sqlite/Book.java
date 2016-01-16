@@ -55,6 +55,9 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
     @SerializedName("releaseYear")
     protected int releaseYear;
     @Column
+    @SerializedName("description")
+    protected String description;
+    @Column
     @SerializedName("copies")
     protected int numberOfCopies;
     @Column
@@ -74,6 +77,7 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
         this.title = in.readString();
         this.author = in.readString();
         this.releaseYear = in.readInt();
+        this.description = in.readString();
         this.numberOfCopies = in.readInt();
         this.numberOfDaysAllowedForBorrowing = in.readInt();
         this.isAvailable = in.readByte() != 0;
@@ -118,6 +122,16 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
         notifyPropertyChanged(BR.releaseYear);
+    }
+
+    @Bindable
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        notifyPropertyChanged(BR.description);
     }
 
     @Bindable
@@ -201,8 +215,10 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
         if (isAvailable != book.isAvailable) return false;
         if (id != null ? !id.equals(book.id) : book.id != null) return false;
         if (title != null ? !title.equals(book.title) : book.title != null) return false;
-        return author != null ? author.equals(book.author) : book.author == null;
-
+        if (author != null ? !author.equals(book.author) : book.author != null) return false;
+        if (description != null ? !description.equals(book.description) : book.description != null)
+            return false;
+        return borrows != null ? borrows.equals(book.borrows) : book.borrows == null;
     }
 
     @Override
@@ -211,9 +227,11 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (author != null ? author.hashCode() : 0);
         result = 31 * result + releaseYear;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + numberOfCopies;
         result = 31 * result + numberOfDaysAllowedForBorrowing;
         result = 31 * result + (isAvailable ? 1 : 0);
+        result = 31 * result + (borrows != null ? borrows.hashCode() : 0);
         return result;
     }
 
@@ -228,6 +246,7 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
         dest.writeString(this.title);
         dest.writeString(this.author);
         dest.writeInt(this.releaseYear);
+        dest.writeString(this.description);
         dest.writeInt(this.numberOfCopies);
         dest.writeInt(this.numberOfDaysAllowedForBorrowing);
         dest.writeByte(isAvailable ? (byte) 1 : (byte) 0);
