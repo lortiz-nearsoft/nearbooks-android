@@ -83,3 +83,10 @@
 -keep class org.mozilla.javascript.v8dtoa.** { *; }
 -keep class org.mozilla.javascript.xml.** { *; }
 -keep class org.mozilla.javascript.xmlimpl.** { *; }
+
+# Crashlytics - https://docs.fabric.io/android/crashlytics/dex-and-proguard.html
+-keep class com.crashlytics.** { *; }
+-keep class com.crashlytics.android.**
+-keepattributes SourceFile,LineNumberTable*Annotation*
+
+-keep public class * extends java.lang.Exception

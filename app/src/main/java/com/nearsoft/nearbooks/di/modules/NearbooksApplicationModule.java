@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
+import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
@@ -12,6 +14,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Dagger 2 Nearbooks module.
@@ -25,9 +28,13 @@ public class NearbooksApplicationModule {
     public NearbooksApplicationModule(NearbooksApplication nearbooksApplication) {
         mNearbooksApplication = nearbooksApplication;
 
-        FlowManager.init(this.mNearbooksApplication.getApplicationContext());
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this.mNearbooksApplication.getApplicationContext());
+        } else {
+            Fabric.with(this.mNearbooksApplication, new Crashlytics());
+        }
 
-        Stetho.initializeWithDefaults(this.mNearbooksApplication.getApplicationContext());
+        FlowManager.init(this.mNearbooksApplication.getApplicationContext());
     }
 
     @Provides
