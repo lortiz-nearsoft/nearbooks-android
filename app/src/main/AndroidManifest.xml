@@ -84,6 +84,10 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"/>
         </service>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="29753974acc90447af1989c642fdfeee16428398"/>
     </application>
 
 </manifest>
