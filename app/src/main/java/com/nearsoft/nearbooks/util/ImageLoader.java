@@ -28,10 +28,36 @@ public class ImageLoader {
     private final int errorResourceId;
     private final Palette.PaletteAsyncListener paletteAsyncListener;
     private final boolean transitionListenerAdded;
+    private final Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            imageView.setImageBitmap(bitmap);
+
+            if (paletteAsyncListener != null) {
+                Palette.from(bitmap).generate(paletteAsyncListener);
+            }
+
+            if (!transitionListenerAdded && fullResolutionImageUrl != null) {
+                loadFullResolutionImage();
+            }
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            imageView.setImageDrawable(errorDrawable);
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            imageView.setImageDrawable(placeHolderDrawable);
+        }
+    };
 
     private ImageLoader(Builder builder) {
         this.activity = builder.activity;
         this.imageView = builder.imageView;
+        // http://goo.gl/BWZW22
+        this.imageView.setTag(target);
         this.thumbnailImageUrl = builder.thumbnailImageUrl;
         this.fullResolutionImageUrl = builder.fullResolutionImageUrl;
         this.placeholderResourceId = builder.placeholderResourceId;
@@ -50,6 +76,9 @@ public class ImageLoader {
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private boolean addTransitionListener() {
+        if (activity == null) {
+            return false;
+        }
         final Transition transition = activity.getWindow().getSharedElementEnterTransition();
 
         if (transition != null) {
@@ -80,7 +109,7 @@ public class ImageLoader {
 
     private void loadFullResolutionImage() {
         if (fullResolutionImageUrl != null) {
-            Picasso.with(activity)
+            Picasso.with(imageView.getContext())
                     .load(fullResolutionImageUrl)
                     .noFade()
                     .noPlaceholder()
@@ -90,7 +119,7 @@ public class ImageLoader {
     }
 
     private void load() {
-        RequestCreator requestCreator = Picasso.with(activity).load(thumbnailImageUrl);
+        RequestCreator requestCreator = Picasso.with(imageView.getContext()).load(thumbnailImageUrl);
         if (placeholderResourceId == 0) {
             requestCreator.noPlaceholder();
         } else {
@@ -99,30 +128,7 @@ public class ImageLoader {
         if (errorResourceId != 0) {
             requestCreator.error(errorResourceId);
         }
-        requestCreator.into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                imageView.setImageBitmap(bitmap);
-
-                if (paletteAsyncListener != null) {
-                    Palette.from(bitmap).generate(paletteAsyncListener);
-                }
-
-                if (!transitionListenerAdded) {
-                    loadFullResolutionImage();
-                }
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                imageView.setImageDrawable(errorDrawable);
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                imageView.setImageDrawable(placeHolderDrawable);
-            }
-        });
+        requestCreator.into(target);
     }
 
     public static class Builder {

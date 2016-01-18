@@ -20,8 +20,8 @@
 -keep class com.raizlabs.android.dbflow.config.GeneratedDatabaseHolder
 
 # Proguard - http://square.github.io/retrofit/
--dontwarn retrofit.**
--keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
 

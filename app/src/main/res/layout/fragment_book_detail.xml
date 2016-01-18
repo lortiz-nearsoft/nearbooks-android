@@ -16,18 +16,10 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewBookAvailability"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{book.isAvailable ? @string/label_book_available : @string/label_book_borrowed(book.author)}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            tools:text="Availability"/>
-
-        <TextView
             android:id="@+id/textViewLorem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lorem"
+            android:text="@{book.description}"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             tools:text="Text"/>
 

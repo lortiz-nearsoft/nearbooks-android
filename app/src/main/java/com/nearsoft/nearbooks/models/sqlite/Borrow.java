@@ -32,7 +32,7 @@ import java.util.Date;
 public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
 
     public static final int STATUS_CANCELLED = 0;
-    public static final int STATUS_REQUIRED = 1;
+    public static final int STATUS_REQUESTED = 1;
     public static final int STATUS_ACTIVE = 2;
     public static final int STATUS_COMPLETED = 3;
 
@@ -295,7 +295,7 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
 
     @IntDef({
             STATUS_CANCELLED,
-            STATUS_REQUIRED,
+            STATUS_REQUESTED,
             STATUS_ACTIVE,
             STATUS_COMPLETED
     })

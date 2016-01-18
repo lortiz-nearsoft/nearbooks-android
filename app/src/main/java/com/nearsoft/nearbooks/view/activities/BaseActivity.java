@@ -15,9 +15,12 @@ import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
 import com.nearsoft.nearbooks.di.components.DaggerBaseActivityComponent;
 import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent;
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 
 import javax.inject.Inject;
+
+import dagger.Lazy;
 
 /**
  * Base activity.
@@ -27,6 +30,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Inject
     protected SyncChangeHandler mSyncChangeHandler;
+    @Inject
+    protected Lazy<User> mLazyUser;
     private ViewDataBinding mBinding;
     private BaseActivityComponent mBaseActivityComponent;
 

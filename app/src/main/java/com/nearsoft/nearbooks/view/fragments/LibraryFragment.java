@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -26,6 +26,7 @@ import com.nearsoft.nearbooks.util.SyncUtil;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
+import com.nearsoft.nearbooks.view.helpers.SpacingDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,8 +82,12 @@ public class LibraryFragment
         mBinding = FragmentLibraryBinding.inflate(inflater, container, false);
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),
+                isLandscape ? 4 : 2);
         mBinding.recyclerViewBooks.setLayoutManager(layoutManager);
+        int margin = getResources().getDimensionPixelSize(R.dimen.books_margin);
+        mBinding.recyclerViewBooks.addItemDecoration(new SpacingDecoration(margin, margin, true));
         mBinding.recyclerViewBooks.setAdapter(mBookRecyclerViewCursorAdapter);
         mBinding.recyclerViewBooks
                 .addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
@@ -179,7 +184,7 @@ public class LibraryFragment
     public void onItemClick(View view, int position) {
         if (mListener != null) {
             Book book = mBookRecyclerViewCursorAdapter.getItem(position);
-            mListener.onBookSelected(book, view.findViewById(R.id.imageViewBookCover));
+            mListener.onBookSelected(book, view);
         }
     }
 

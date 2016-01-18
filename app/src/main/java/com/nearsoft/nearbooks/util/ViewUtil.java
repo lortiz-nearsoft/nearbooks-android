@@ -2,10 +2,11 @@ package com.nearsoft.nearbooks.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.databinding.ViewDataBinding;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
-import android.support.v4.util.Pair;
+import android.support.design.widget.Snackbar;
 import android.support.v7.graphics.Palette;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.ActionMenuView;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 
 import java.util.ArrayList;
 
@@ -25,30 +27,34 @@ import java.util.ArrayList;
  */
 public class ViewUtil {
 
-    public static Pair<Integer, Palette.Swatch> getVibrantPriorityColorSwatchPair(
+    public static ColorsWrapper getVibrantPriorityColorSwatchPair(
             Palette palette, int defaultColor) {
         if (palette == null) return null;
 
         if (palette.getVibrantSwatch() != null) {
-            return new Pair<>(palette.getVibrantColor(defaultColor),
+            return new ColorsWrapper(palette.getVibrantColor(defaultColor),
                     palette.getVibrantSwatch());
         } else if (palette.getLightVibrantSwatch() != null) {
-            return new Pair<>(palette.getLightVibrantColor(defaultColor),
+            return new ColorsWrapper(palette.getLightVibrantColor(defaultColor),
                     palette.getLightVibrantSwatch());
         } else if (palette.getDarkVibrantSwatch() != null) {
-            return new Pair<>(palette.getDarkVibrantColor(defaultColor),
+            return new ColorsWrapper(palette.getDarkVibrantColor(defaultColor),
                     palette.getDarkVibrantSwatch());
         } else if (palette.getMutedSwatch() != null) {
-            return new Pair<>(palette.getMutedColor(defaultColor),
+            return new ColorsWrapper(palette.getMutedColor(defaultColor),
                     palette.getMutedSwatch());
         } else if (palette.getLightMutedSwatch() != null) {
-            return new Pair<>(palette.getLightMutedColor(defaultColor),
+            return new ColorsWrapper(palette.getLightMutedColor(defaultColor),
                     palette.getLightMutedSwatch());
         } else if (palette.getDarkMutedSwatch() != null) {
-            return new Pair<>(palette.getDarkMutedColor(defaultColor),
+            return new ColorsWrapper(palette.getDarkMutedColor(defaultColor),
                     palette.getDarkMutedSwatch());
         }
         return null;
+    }
+
+    public static void showSnackbarMessage(ViewDataBinding viewDataBinding, String message) {
+        Snackbar.make(viewDataBinding.getRoot(), message, Snackbar.LENGTH_LONG).show();
     }
 
     public static class Toolbar {
@@ -144,6 +150,7 @@ public class ViewUtil {
             });
         }
 
+        @SuppressWarnings("deprecation")
         private static void removeOnGlobalLayoutListener(View v,
                                                          ViewTreeObserver
                                                                  .OnGlobalLayoutListener listener) {
