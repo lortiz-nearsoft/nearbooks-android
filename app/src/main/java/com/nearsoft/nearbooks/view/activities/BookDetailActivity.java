@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.view.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -116,6 +117,12 @@ public class BookDetailActivity extends BaseActivity {
                         mBinding.setColors(colorsWrapper);
                         ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar, colorsWrapper
                                 .getTitleTextColor(), BookDetailActivity.this);
+
+                        boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+                        if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getWindow().setStatusBarColor(palette
+                                    .getDarkVibrantColor(defaultColor));
+                        }
 
                         checkBookAvailability();
                     }

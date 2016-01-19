@@ -199,7 +199,7 @@ public class LibraryFragment
     public void onSyncChange(final boolean isSyncing) {
         BaseActivity baseActivity = getBaseActivity();
         if (baseActivity != null) {
-            baseActivity.runOnUiThread(new Runnable() {
+            mBinding.swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     if (!mBinding.swipeRefreshLayout.isRefreshing() && isSyncing) {
