@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -61,6 +60,20 @@ public class HomeActivity
         mBinding.drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
+        mBinding.linearLayoutSignOutMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserModel.signOut(HomeActivity.this, mLazyUser.get(), mGoogleApiClient, new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+            }
+        });
+
         NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
                 .inflate(getLayoutInflater());
         navHeaderHomeBinding.setUser(mLazyUser.get());
@@ -102,34 +115,6 @@ public class HomeActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sign_out:
-
-                UserModel.signOut(this, mLazyUser.get(), mGoogleApiClient, new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Create a new fragment and specify the planet to show based on
         // position
@@ -138,8 +123,6 @@ public class HomeActivity
         switch (item.getItemId()) {
             case R.id.nav_library:
                 baseFragment = LibraryFragment.newInstance();
-                break;
-            case R.id.nav_share:
                 break;
         }
 

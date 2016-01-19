@@ -6,15 +6,18 @@
             android:id="@+id/nav_library"
             android:icon="@drawable/ic_view_week_24dp"
             android:title="@string/title_library"/>
+        <item
+            android:orderInCategory="200"
+            android:title=""/>
     </group>
-
-    <item android:title="@string/title_social">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_share_24dp"
-                android:title="@string/title_share"/>
-        </menu>
-    </item>
-
+    <!--
+        <item android:title="@string/title_social">
+            <menu>
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/ic_share_24dp"
+                    android:title="@string/title_share"/>
+            </menu>
+        </item>
+    -->
 </menu>
