@@ -15,7 +15,7 @@ import com.nearsoft.nearbooks.ws.BookService;
 import java.io.IOException;
 import java.util.List;
 
-import retrofit2.Response;
+import rx.Subscriber;
 
 /**
  * Sync adapter.
@@ -40,14 +40,26 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
-                              ContentProviderClient provider, SyncResult syncResult) {
-        try {
-            Response<List<Book>> response = mBookService.getAllBooks().execute();
-            BookModel.cacheBooks(response.body());
-        } catch (IOException e) {
-            e.printStackTrace();
-            syncResult.stats.numIoExceptions += 1;
-        }
+                              ContentProviderClient provider, final SyncResult syncResult) {
+        mBookService
+                .getAllBooks()
+                .toBlocking()
+                .subscribe(new Subscriber<List<Book>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        t.printStackTrace();
+                        if (t instanceof IOException) syncResult.stats.numIoExceptions += 1;
+                    }
+
+                    @Override
+                    public void onNext(List<Book> books) {
+                        BookModel.cacheBooks(books);
+                    }
+                });
     }
 
 }

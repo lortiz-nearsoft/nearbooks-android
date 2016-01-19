@@ -17,14 +17,14 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Response;
-import retrofit2.Retrofit;
+import rx.Observable;
+import rx.observers.TestSubscriber;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
 
-    private Retrofit retrofit;
     private BookService mBookService;
 
     public ApplicationTest() {
@@ -42,9 +42,17 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
     }
 
     public void testBookService() throws IOException {
-        Response<List<Book>> booksResponse = mBookService.getAllBooks().execute();
-        assertTrue(booksResponse.isSuccess());
-        List<Book> books = booksResponse.body();
+        Observable<List<Book>> observable = mBookService.getAllBooks();
+
+        TestSubscriber<List<Book>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        List<List<Book>> responses = testSubscriber.getOnNextEvents();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        List<Book> books = responses.get(0);
         assertFalse(books.isEmpty());
     }
 
@@ -68,25 +76,40 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
     }
 
     public void testBookAvailability() throws IOException {
-        Response<AvailabilityResponse> response = mBookService
-                .getBookAvailability("0321534468-0")
-                .execute();
+        Observable<Response<AvailabilityResponse>> observable = mBookService
+                .getBookAvailability("0321534468-0");
+
+        TestSubscriber<Response<AvailabilityResponse>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        List<Response<AvailabilityResponse>> responses = testSubscriber.getOnNextEvents();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        Response<AvailabilityResponse> response = responses.get(0);
         assertNotNull(response);
-        if (response.isSuccess()) {
-            AvailabilityResponse availabilityResponse = response.body();
-            assertNotNull(availabilityResponse);
-        } else {
-            String errorMessage = ErrorUtil.parseError(response);
-            assertNotNull(errorMessage);
-        }
+        assertTrue(response.isSuccess());
+        assertNotNull(response.body());
     }
 
     public void testRequestBookToBorrow() throws IOException {
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode("0321534468-0");
         requestBody.setUserEmail("epool@nearsoft.com");
-        Response<Borrow> response = mBookService.requestBookToBorrow(requestBody).execute();
+        Observable<Response<Borrow>> observable = mBookService.requestBookToBorrow(requestBody);
+
+        TestSubscriber<Response<Borrow>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        List<Response<Borrow>> responses = testSubscriber.getOnNextEvents();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        Response<Borrow> response = responses.get(0);
         assertNotNull(response);
+
         if (response.isSuccess()) {
             Borrow borrow = response.body();
             assertNotNull(borrow);
@@ -100,8 +123,19 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode("0321534468-1");
         requestBody.setUserEmail("epool@nearsoft.com");
-        Response<MessageResponse> response = mBookService.checkInBook(requestBody).execute();
+        Observable<Response<MessageResponse>> observable = mBookService.checkInBook(requestBody);
+
+        TestSubscriber<Response<MessageResponse>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        List<Response<MessageResponse>> responses = testSubscriber.getOnNextEvents();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        Response<MessageResponse> response = responses.get(0);
         assertNotNull(response);
+
         if (response.isSuccess()) {
             MessageResponse messageResponse = response.body();
             assertNotNull(messageResponse);
@@ -115,8 +149,19 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode("0321534468-1");
         requestBody.setUserEmail("epool@nearsoft.com");
-        Response<MessageResponse> response = mBookService.checkOutBook(requestBody).execute();
+        Observable<Response<MessageResponse>> observable = mBookService.checkOutBook(requestBody);
+
+        TestSubscriber<Response<MessageResponse>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        List<Response<MessageResponse>> responses = testSubscriber.getOnNextEvents();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        Response<MessageResponse> response = responses.get(0);
         assertNotNull(response);
+
         if (response.isSuccess()) {
             MessageResponse messageResponse = response.body();
             assertNotNull(messageResponse);

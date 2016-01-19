@@ -185,14 +185,16 @@ public class HomeActivity
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which) {
                                     case ACTION_REQUEST:
-                                        BookModel.requestBookToBorrow(mBinding, mLazyUser.get(),
-                                                qrCode, null);
+                                        subscribeToActivity(BookModel.requestBookToBorrow(
+                                                mBinding, mLazyUser.get(), qrCode, null));
                                         break;
                                     case ACTION_CHECK_IN:
-                                        BookModel.doBookCheckIn(mBinding, mLazyUser.get(), qrCode);
+                                        subscribeToActivity(BookModel.doBookCheckIn(mBinding,
+                                                mLazyUser.get(), qrCode));
                                         break;
                                     case ACTION_CHECK_OUT:
-                                        BookModel.doBookCheckOut(mBinding, mLazyUser.get(), qrCode);
+                                        subscribeToActivity(BookModel.doBookCheckOut(mBinding,
+                                                mLazyUser.get(), qrCode));
                                         break;
                                 }
                             }

@@ -8,12 +8,13 @@ import com.nearsoft.nearbooks.ws.responses.MessageResponse;
 
 import java.util.List;
 
-import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import rx.Observable;
 
 /**
  * Book service.
@@ -22,18 +23,18 @@ import retrofit2.http.Path;
 public interface BookService {
 
     @GET("books")
-    Call<List<Book>> getAllBooks();
+    Observable<List<Book>> getAllBooks();
 
     @GET("borrows/availability/codeqr/{codeQr}")
-    Call<AvailabilityResponse> getBookAvailability(@Path("codeQr") String codeQr);
+    Observable<Response<AvailabilityResponse>> getBookAvailability(@Path("codeQr") String codeQr);
 
     @POST("borrows/register")
-    Call<Borrow> requestBookToBorrow(@Body RequestBody requestBody);
+    Observable<Response<Borrow>> requestBookToBorrow(@Body RequestBody requestBody);
 
     @PUT("borrows/checkin")
-    Call<MessageResponse> checkInBook(@Body RequestBody requestBody);
+    Observable<Response<MessageResponse>> checkInBook(@Body RequestBody requestBody);
 
     @PUT("borrows/checkout")
-    Call<MessageResponse> checkOutBook(@Body RequestBody requestBody);
+    Observable<Response<MessageResponse>> checkOutBook(@Body RequestBody requestBody);
 
 }

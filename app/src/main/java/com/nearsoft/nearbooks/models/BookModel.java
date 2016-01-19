@@ -25,9 +25,12 @@ import com.raizlabs.android.dbflow.sql.language.Where;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Model to handle book actions.
@@ -86,129 +89,149 @@ public class BookModel {
                 .orderBy(Book_Table.title, true);
     }
 
-    public static Call<AvailabilityResponse> checkBookAvailability(
-            Book book, Callback<AvailabilityResponse> callback) {
-        Call<AvailabilityResponse> call = mBookService.getBookAvailability(book.getId() + "-0");
-        call.enqueue(callback);
-        return call;
+    public static Observable<Response<AvailabilityResponse>> checkBookAvailability(Book book) {
+        Observable<Response<AvailabilityResponse>> observable
+                = mBookService.getBookAvailability(book.getId() + "-0");
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io());
     }
 
-    public static Call<Borrow> requestBookToBorrow(final ViewDataBinding binding, User user,
-                                                   String qrCode, final FloatingActionButton fabToHide) {
+    public static Subscription requestBookToBorrow(final ViewDataBinding binding, User user,
+                                                   String qrCode,
+                                                   final FloatingActionButton fabToHide) {
         final Context context = binding.getRoot().getContext();
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode(qrCode);
         requestBody.setUserEmail(user.getEmail());
-        Call<Borrow> call = mBookService.requestBookToBorrow(requestBody);
-        call.enqueue(new Callback<Borrow>() {
-            @Override
-            public void onResponse(Response<Borrow> response) {
-                if (response.isSuccess()) {
-                    Borrow borrow = response.body();
-                    switch (borrow.getStatus()) {
-                        case Borrow.STATUS_REQUESTED:
-                            ViewUtil.showSnackbarMessage(binding,
-                                    context.getString(R.string.message_book_requested));
-                            break;
-                        case Borrow.STATUS_ACTIVE:
-                            ViewUtil.showSnackbarMessage(binding,
-                                    context.getString(R.string.message_book_active));
-                            break;
-                        case Borrow.STATUS_CANCELLED:
-                        case Borrow.STATUS_COMPLETED:
-                        default:
-                            break;
+        Observable<Response<Borrow>> observable = mBookService.requestBookToBorrow(requestBody);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<Borrow>>() {
+                    @Override
+                    public void onCompleted() {
                     }
-                    if (fabToHide != null) {
-                        fabToHide.hide();
-                    }
-                } else {
-                    MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class,
-                            response);
-                    if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
-                    } else {
-                        ViewUtil.showSnackbarMessage(binding,
-                                context.getString(R.string.error_general,
-                                        String.valueOf(response.code())));
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
-            }
-        });
-        return call;
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<Borrow> response) {
+                        if (response.isSuccess()) {
+                            Borrow borrow = response.body();
+                            switch (borrow.getStatus()) {
+                                case Borrow.STATUS_REQUESTED:
+                                    ViewUtil.showSnackbarMessage(binding,
+                                            context.getString(R.string.message_book_requested));
+                                    break;
+                                case Borrow.STATUS_ACTIVE:
+                                    ViewUtil.showSnackbarMessage(binding,
+                                            context.getString(R.string.message_book_active));
+                                    break;
+                                case Borrow.STATUS_CANCELLED:
+                                case Borrow.STATUS_COMPLETED:
+                                default:
+                                    break;
+                            }
+                            if (fabToHide != null) {
+                                fabToHide.hide();
+                            }
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil
+                                    .parseError(MessageResponse.class, response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        context.getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                });
     }
 
-    public static Call<MessageResponse> doBookCheckIn(final ViewDataBinding binding, User user,
-                                                      String codeQr) {
+    public static Subscription doBookCheckIn(final ViewDataBinding binding, User user,
+                                             String codeQr) {
         final Context context = binding.getRoot().getContext();
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode(codeQr);
         requestBody.setUserEmail(user.getEmail());
-        Call<MessageResponse> call = mBookService.checkInBook(requestBody);
-        call.enqueue(new Callback<MessageResponse>() {
-            @Override
-            public void onResponse(Response<MessageResponse> response) {
-                if (response.isSuccess()) {
-                    MessageResponse messageResponse = response.body();
-                    ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
-                } else {
-                    MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class,
-                            response);
-                    if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
-                    } else {
-                        ViewUtil.showSnackbarMessage(binding,
-                                context.getString(R.string.error_general,
-                                        String.valueOf(response.code())));
+        Observable<Response<MessageResponse>> observable = mBookService.checkInBook(requestBody);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<MessageResponse>>() {
+                    @Override
+                    public void onCompleted() {
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
-            }
-        });
-        return call;
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<MessageResponse> response) {
+                        if (response.isSuccess()) {
+                            MessageResponse messageResponse = response.body();
+                            ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil
+                                    .parseError(MessageResponse.class, response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        context.getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                });
     }
 
-    public static Call<MessageResponse> doBookCheckOut(final ViewDataBinding binding, User user,
-                                                       String codeQr) {
+    public static Subscription doBookCheckOut(final ViewDataBinding binding, User user,
+                                              String codeQr) {
         final Context context = binding.getRoot().getContext();
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode(codeQr);
         requestBody.setUserEmail(user.getEmail());
-        Call<MessageResponse> call = mBookService.checkOutBook(requestBody);
-        call.enqueue(new Callback<MessageResponse>() {
-            @Override
-            public void onResponse(Response<MessageResponse> response) {
-                if (response.isSuccess()) {
-                    MessageResponse messageResponse = response.body();
-                    ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
-                } else {
-                    MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class,
-                            response);
-                    if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
-                    } else {
-                        ViewUtil.showSnackbarMessage(binding,
-                                context.getString(R.string.error_general,
-                                        String.valueOf(response.code())));
+        Observable<Response<MessageResponse>> observable = mBookService.checkOutBook(requestBody);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<MessageResponse>>() {
+                    @Override
+                    public void onCompleted() {
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
-            }
-        });
-        return call;
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<MessageResponse> response) {
+                        if (response.isSuccess()) {
+                            MessageResponse messageResponse = response.body();
+                            ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class,
+                                    response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        context.getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                });
     }
 
 }
