@@ -29,13 +29,13 @@ import retrofit2.Retrofit;
  * Created by epool on 11/19/15.
  */
 @Module
-public class NetModule {
+public class NetworkModule {
 
     private final static long SECONDS_TIMEOUT = 20;
 
     private String mBaseUrl;
 
-    public NetModule(String baseUrl) {
+    public NetworkModule(String baseUrl) {
         mBaseUrl = baseUrl;
     }
 

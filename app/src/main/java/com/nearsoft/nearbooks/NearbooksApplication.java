@@ -5,7 +5,7 @@ import android.app.Application;
 import com.nearsoft.nearbooks.di.components.DaggerNearbooksApplicationComponent;
 import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent;
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
-import com.nearsoft.nearbooks.di.modules.NetModule;
+import com.nearsoft.nearbooks.di.modules.NetworkModule;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -27,7 +27,7 @@ public class NearbooksApplication extends Application {
         mNearbooksApplicationComponent = DaggerNearbooksApplicationComponent
                 .builder()
                 .nearbooksApplicationModule(new NearbooksApplicationModule(this))
-                .netModule(new NetModule(getString(R.string.url_base_api)))
+                .networkModule(new NetworkModule(getString(R.string.url_base_api)))
                 .build();
         Picasso.setSingletonInstance(mNearbooksApplicationComponent.providePicasso());
     }
