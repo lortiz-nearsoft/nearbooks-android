@@ -226,7 +226,7 @@ public class LibraryFragment
 
     @Override
     public void onSearchRequest(String query) {
-        mSearchView.setQuery(query, false);
+        if (mSearchView != null) mSearchView.setQuery(query, false);
     }
 
     @Override
