@@ -18,9 +18,13 @@ import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Subscription;
 
 /**
  * Base activity.
@@ -32,6 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected SyncChangeHandler mSyncChangeHandler;
     @Inject
     protected Lazy<User> mLazyUser;
+    private Set<Subscription> mSubscriptions = new HashSet<>();
     private ViewDataBinding mBinding;
     private BaseActivityComponent mBaseActivityComponent;
 
@@ -70,9 +75,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
-
         mSyncChangeHandler.onPause();
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unSubscribeFromActivity();
+
+        super.onDestroy();
     }
 
     @Override
@@ -109,6 +121,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void injectComponent(BaseActivityComponent baseActivityComponent) {
         baseActivityComponent.inject(this);
+    }
+
+    protected void subscribeToActivity(Subscription subscription) {
+        mSubscriptions.add(subscription);
+    }
+
+    protected void unSubscribeFromActivity() {
+        for (Subscription subscription : mSubscriptions) {
+            subscription.unsubscribe();
+        }
+        mSubscriptions.clear();
     }
 
     public BaseActivityComponent getBaseActivityComponent() {

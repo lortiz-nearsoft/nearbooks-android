@@ -25,8 +25,8 @@ import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
 
 public class BookDetailActivity extends BaseActivity {
 
@@ -72,8 +72,8 @@ public class BookDetailActivity extends BaseActivity {
         mBinding.fabRequestBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BookModel.requestBookToBorrow(mBinding, mLazyUser.get(), mBook.getId() + "-0",
-                        mBinding.fabRequestBook);
+                subscribeToActivity(BookModel.requestBookToBorrow(mBinding, mLazyUser.get(),
+                        mBook.getId() + "-0", mBinding.fabRequestBook));
             }
         });
 
@@ -131,10 +131,19 @@ public class BookDetailActivity extends BaseActivity {
     }
 
     private void checkBookAvailability() {
-        mCall = BookModel.checkBookAvailability(mBook,
-                new Callback<AvailabilityResponse>() {
+        subscribeToActivity(BookModel.checkBookAvailability(mBook)
+                .subscribe(new Subscriber<Response<AvailabilityResponse>>() {
                     @Override
-                    public void onResponse(Response<AvailabilityResponse> response) {
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<AvailabilityResponse> response) {
                         if (response.isSuccess()) {
                             AvailabilityResponse availabilityResponse = response.body();
                             mBinding.setBorrow(availabilityResponse.getActiveBorrrow());
@@ -146,12 +155,7 @@ public class BookDetailActivity extends BaseActivity {
                             }
                         }
                     }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
-                    }
-                });
+                }));
     }
 
     @Override
