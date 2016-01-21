@@ -1,72 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="book"
-            type="com.nearsoft.nearbooks.models.viewmodels.BookViewModel" />
+            type="com.nearsoft.nearbooks.models.sqlite.Book"/>
+
+        <variable
+            name="colors"
+            type="com.nearsoft.nearbooks.view.helpers.ColorsWrapper"/>
     </data>
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardViewBookItem"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/imageViewBookCover"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
-            android:transitionName="@string/transition_book_cover"
-            app:error="@{@drawable/ic_launcher}"
-            app:imageUrl="@{@string/url_book_covers_api(book.isbn, false)}"
-            tools:targetApi="21" />
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardUseCompatPadding="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textViewBookTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="@{book.title}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                tools:text="Title" />
+            <com.nearsoft.nearbooks.view.widgets.SquareFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <LinearLayout
+                <ImageView
+                    android:id="@+id/imageViewBookCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/content_description_book_cover"
+                    android:scaleType="centerCrop"
+                    tools:targetApi="21"/>
+
+            </com.nearsoft.nearbooks.view.widgets.SquareFrameLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:background="@{colors.backgroundColor}">
 
-                <TextView
-                    android:id="@+id/textViewBookISBN"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@{@string/label_isbn(book.isbn)}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    tools:text="ISBN" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textViewBookYear"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@{@string/label_year(book.year)}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    tools:text="2015" />
+                    <TextView
+                        android:id="@+id/textViewBookAuthor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@{book.author}"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@{colors.titleTextColor}"
+                        tools:text="Author"/>
 
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textViewBookId"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.7"
+                            android:text="@{book.id}"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@{colors.bodyTextColor}"
+                            tools:text="ISBN"/>
+
+                        <TextView
+                            android:id="@+id/textViewBookYear"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.3"
+                            android:text="@{String.valueOf(book.releaseYear)}"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@{colors.bodyTextColor}"
+                            tools:text="2015"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
+
 </layout>

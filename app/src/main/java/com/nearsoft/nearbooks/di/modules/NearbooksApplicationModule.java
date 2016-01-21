@@ -1,15 +1,23 @@
 package com.nearsoft.nearbooks.di.modules;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 
+import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
+import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.NearbooksApplication;
+import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
+import com.raizlabs.android.dbflow.config.FlowManager;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Dagger 2 Nearbooks module.
@@ -17,22 +25,44 @@ import io.realm.RealmConfiguration;
  */
 @Module
 public class NearbooksApplicationModule {
-    private final NearbooksApplication nearbooksApplication;
+
+    private final NearbooksApplication mNearbooksApplication;
 
     public NearbooksApplicationModule(NearbooksApplication nearbooksApplication) {
-        this.nearbooksApplication = nearbooksApplication;
+        mNearbooksApplication = nearbooksApplication;
 
-        RealmConfiguration config = new RealmConfiguration.Builder(this.nearbooksApplication.getApplicationContext())
-                .name("nearbooks.realm")
-                .schemaVersion(1)
-                .build();
-        Realm.setDefaultConfiguration(config);
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this.mNearbooksApplication.getApplicationContext());
+        } else {
+            Fabric.with(this.mNearbooksApplication, new Crashlytics());
+        }
+
+        FlowManager.init(this.mNearbooksApplication.getApplicationContext());
     }
 
-    @Singleton
     @Provides
+    @Singleton
     public Context provideApplicationContext() {
-        return nearbooksApplication.getApplicationContext();
+        return mNearbooksApplication.getApplicationContext();
+    }
+
+    @Provides
+    @Singleton
+    public SharedPreferences provideDefaultSharedPreferences() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(mNearbooksApplication);
+    }
+
+    @Provides
+    @Singleton
+    public ColorsWrapper provideDefaultColorsWrapper() {
+        int colorPrimaryDark = ContextCompat.getColor(mNearbooksApplication,
+                R.color.colorPrimaryDark);
+        int colorPrimary = ContextCompat.getColor(mNearbooksApplication,
+                R.color.colorPrimary);
+        int whiteColor = ContextCompat.getColor(mNearbooksApplication,
+                R.color.white);
+        return new ColorsWrapper(colorPrimaryDark, colorPrimary, whiteColor, whiteColor);
     }
 
 }

@@ -2,34 +2,43 @@
     <string name="app_name">Nearbooks</string>
 
     <!-- Strings related to login -->
-    <string name="current_user_id">com.nearsoft.nearbooks.CURRENT_USER_ID_KEY</string>
-    <string name="shared_preference_file_name">com.nearsoft.nearbooks.PREFERENCE_FILE_KEY</string>
-    <string name="nearsoft_domain">"@nearsoft.com"</string>
-    <string name="url_base_api">http://nearbooksdemo.azurewebsites.net/api/</string>
-    <string name="url_book_covers_api">http://covers.openlibrary.org/b/isbn/%1$s-M.jpg?default=%2$s</string>
-
-    <string name="transition_book_cover">transition_book_cover</string>
-
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_library">Library</string>
     <string name="title_social">Social</string>
     <string name="title_share">Share</string>
 
-    <string name="label_isbn">ISBN: %s</string>
+    <string name="label_id">ID: %s</string>
     <string name="label_year">Year: %s</string>
-    <string name="label_book_available">This book is available</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
 
-    <string name="message_nearsoft_account_needed">You should use a nearsoft account email =(</string>
-    <string name="message_no_books">There are no books =(</string>
-    <string name="message_book_not_found">Book not found =(</string>
+    <string name="placeholder_search_books">Search for books&#8230;</string>
 
-    <string name="error_google_api">There was an error with google api: %s</string>
+    <string name="message_nearsoft_account_needed">You must use a nearsoft account email
+        =(</string>
+    <string name="message_scan_book_qr_code">Scan a book QR code</string>
+    <string name="message_book_requested">Your request is pending. Please do check in with the QR
+        book</string>
+    <string name="message_book_active">Book assigned to you, enjoy it! =D</string>
+    <string name="message_google_play_services_required">You must have Google play services installed
+        to use this application</string>
+    <string name="message_no_book_description">There is no book description.</string>
+
+    <string name="error_google_api">There was an error with google api: %d</string>
     <string name="error_general">There was an error: %s</string>
+    <string name="error_user_not_found">User not found</string>
+    <string name="error_internet_connection">Please verify your internet connection and try
+        again</string>
+    <string name="error_invalid_qr_code">Invalid Qr Code</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_sign_out">Sign out</string>
+
+    <array name="actions_book">
+        <item name="title_request">Request</item>
+        <item name="title_check_in">Check in</item>
+        <item name="title_check_out">Check out</item>
+    </array>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="message_books_not_found">
+        <item quantity="one">Book not found =(</item>
+        <item quantity="other">Books not found =(</item>
+    </plurals>
+</resources>

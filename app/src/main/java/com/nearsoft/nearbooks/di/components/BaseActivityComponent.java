@@ -1,8 +1,11 @@
 package com.nearsoft.nearbooks.di.components;
 
-import com.nearsoft.nearbooks.activities.BaseActivity;
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
+import com.nearsoft.nearbooks.view.activities.BaseActivity;
+import com.nearsoft.nearbooks.view.activities.BookDetailActivity;
+import com.nearsoft.nearbooks.view.activities.MainActivity;
+import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 
 import dagger.Component;
 
@@ -11,10 +14,18 @@ import dagger.Component;
  * Created by epool on 11/17/15.
  */
 @PerActivity
-@Component(dependencies = {NearbooksApplicationComponent.class}, modules = {BaseActivityModule.class})
+@Component(
+        dependencies = {NearbooksApplicationComponent.class},
+        modules = {BaseActivityModule.class}
+)
 public interface BaseActivityComponent {
 
-    //Exposed to sub-graphs.
-    BaseActivity baseActivity();
+    void inject(BaseActivity baseActivity);
+
+    void inject(MainActivity mainActivity);
+
+    void inject(BookDetailActivity bookDetailActivity);
+
+    void inject(BaseFragment baseFragment);
 
 }

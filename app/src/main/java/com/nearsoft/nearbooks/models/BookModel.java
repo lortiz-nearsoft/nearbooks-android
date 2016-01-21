@@ -1,12 +1,36 @@
 package com.nearsoft.nearbooks.models;
 
-import com.nearsoft.nearbooks.models.realm.Book;
-import com.nearsoft.nearbooks.models.viewmodels.BookViewModel;
+import android.content.Context;
+import android.databinding.ViewDataBinding;
+import android.support.design.widget.FloatingActionButton;
+import android.text.TextUtils;
+
+import com.nearsoft.nearbooks.NearbooksApplication;
+import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.db.NearbooksDatabase;
+import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.sqlite.Book_Table;
+import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.util.ErrorUtil;
+import com.nearsoft.nearbooks.util.ViewUtil;
+import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.bodies.RequestBody;
+import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
+import com.nearsoft.nearbooks.ws.responses.MessageResponse;
+import com.raizlabs.android.dbflow.runtime.TransactionManager;
+import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
+import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Model to handle book actions.
@@ -14,33 +38,200 @@ import io.realm.RealmResults;
  */
 public class BookModel {
 
-    public static void cacheBooks(List<BookViewModel> books) {
-        clearBooks();
+    private static BookService mBookService = NearbooksApplication
+            .getNearbooksApplicationComponent()
+            .providesBookService();
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+    public static void cacheBooks(final List<Book> books) {
+        if (books == null || books.isEmpty()) return;
 
-        for (BookViewModel bookViewModel : books) {
-            realm.copyToRealmOrUpdate(bookViewModel.toRealm());
+        TransactionManager.transact(NearbooksDatabase.NAME, new Runnable() {
+            @Override
+            public void run() {
+                Delete.table(Book.class);
+
+                for (Book book : books) {
+                    book.save();
+                }
+            }
+        });
+    }
+
+    public static Book findByBookId(String bookId) {
+        return SQLite
+                .select()
+                .from(Book.class)
+                .where(Book_Table.id.eq(bookId))
+                .querySingle();
+    }
+
+    public static Where<Book> getAllBooks() {
+        return SQLite
+                .select()
+                .from(Book.class)
+                .orderBy(Book_Table.title, true);
+    }
+
+    public static Where<Book> getBooksByQuery(CharSequence charSequenceQuery) {
+        if (TextUtils.isEmpty(charSequenceQuery)) {
+            return getAllBooks();
         }
 
-        realm.commitTransaction();
+        String query = "%" + charSequenceQuery.toString() + "%";
 
-        realm.close();
+        return SQLite
+                .select()
+                .from(Book.class)
+                .where(Book_Table.id.like(query))
+                .or(Book_Table.title.like(query))
+                .or(Book_Table.author.like(query))
+                .or(Book_Table.releaseYear.like(query))
+                .orderBy(Book_Table.title, true);
     }
 
-    public static RealmResults<Book> getAllBooks(Realm realm) {
-        return realm.where(Book.class).findAllSorted(Book.TITLE, true);
+    public static Observable<Response<AvailabilityResponse>> checkBookAvailability(Book book) {
+        Observable<Response<AvailabilityResponse>> observable
+                = mBookService.getBookAvailability(book.getId() + "-0");
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io());
     }
 
-    public static void clearBooks() {
-        Realm realm = Realm.getDefaultInstance();
+    public static Subscription requestBookToBorrow(final ViewDataBinding binding, User user,
+                                                   String qrCode,
+                                                   final FloatingActionButton fabToHide) {
+        final Context context = binding.getRoot().getContext();
+        RequestBody requestBody = new RequestBody();
+        requestBody.setQrCode(qrCode);
+        requestBody.setUserEmail(user.getEmail());
+        Observable<Response<Borrow>> observable = mBookService.requestBookToBorrow(requestBody);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<Borrow>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-        realm.beginTransaction();
-        realm.where(Book.class).findAll().clear();
-        realm.commitTransaction();
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
+                    }
 
-        realm.close();
+                    @Override
+                    public void onNext(Response<Borrow> response) {
+                        if (response.isSuccess()) {
+                            Borrow borrow = response.body();
+                            switch (borrow.getStatus()) {
+                                case Borrow.STATUS_REQUESTED:
+                                    ViewUtil.showSnackbarMessage(binding,
+                                            context.getString(R.string.message_book_requested));
+                                    break;
+                                case Borrow.STATUS_ACTIVE:
+                                    ViewUtil.showSnackbarMessage(binding,
+                                            context.getString(R.string.message_book_active));
+                                    break;
+                                case Borrow.STATUS_CANCELLED:
+                                case Borrow.STATUS_COMPLETED:
+                                default:
+                                    break;
+                            }
+                            if (fabToHide != null) {
+                                fabToHide.hide();
+                            }
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil
+                                    .parseError(MessageResponse.class, response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        context.getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                });
+    }
+
+    public static Subscription doBookCheckIn(final ViewDataBinding binding, User user,
+                                             String codeQr) {
+        final Context context = binding.getRoot().getContext();
+        RequestBody requestBody = new RequestBody();
+        requestBody.setQrCode(codeQr);
+        requestBody.setUserEmail(user.getEmail());
+        Observable<Response<MessageResponse>> observable = mBookService.checkInBook(requestBody);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<MessageResponse>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<MessageResponse> response) {
+                        if (response.isSuccess()) {
+                            MessageResponse messageResponse = response.body();
+                            ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil
+                                    .parseError(MessageResponse.class, response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        context.getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                });
+    }
+
+    public static Subscription doBookCheckOut(final ViewDataBinding binding, User user,
+                                              String codeQr) {
+        final Context context = binding.getRoot().getContext();
+        RequestBody requestBody = new RequestBody();
+        requestBody.setQrCode(codeQr);
+        requestBody.setUserEmail(user.getEmail());
+        Observable<Response<MessageResponse>> observable = mBookService.checkOutBook(requestBody);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<MessageResponse>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<MessageResponse> response) {
+                        if (response.isSuccess()) {
+                            MessageResponse messageResponse = response.body();
+                            ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class,
+                                    response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        context.getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                });
     }
 
 }

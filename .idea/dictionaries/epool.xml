@@ -4,6 +4,9 @@
       <w>gson</w>
       <w>nearbooks</w>
       <w>nearsoft</w>
+      <w>snackbar</w>
+      <w>sqlite</w>
+      <w>zxing</w>
     </words>
   </dictionary>
 </component>
