@@ -83,8 +83,9 @@ public class LibraryFragment
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+        boolean isTablet = getResources().getBoolean(R.bool.isTable);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),
-                isLandscape ? 4 : 2);
+                isTablet ? isLandscape ? 6 : 4 : isLandscape ? 4 : 2);
         mBinding.recyclerViewBooks.setLayoutManager(layoutManager);
         int margin = getResources().getDimensionPixelSize(R.dimen.books_margin);
         mBinding.recyclerViewBooks.addItemDecoration(new SpacingDecoration(margin, margin, true));

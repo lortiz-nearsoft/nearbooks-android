@@ -35,15 +35,7 @@ public class Util {
     public static boolean checkPlayServices(BaseActivity baseActivity) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(baseActivity);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(baseActivity, resultCode,
-                        PLAY_SERVICES_RESOLUTION_REQUEST)
-                        .show();
-            }
-            return false;
-        }
-        return true;
+        return resultCode == ConnectionResult.SUCCESS;
     }
 
 }
