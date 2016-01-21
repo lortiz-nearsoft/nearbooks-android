@@ -27,32 +27,34 @@ import com.raizlabs.android.dbflow.sql.language.Delete;
  */
 public class UserModel {
 
+    private final static String NEARSOFT_EMAIL_DOMAIN = "@nearsoft.com";
     private final static int UNKNOWN_STATUS_CODE = 12501;
 
     public static User signIn(Context context, GoogleSignInResult result) throws SignInException {
-
         if (result.isSuccess()) {
             GoogleSignInAccount googleSignInAccount = result.getSignInAccount();
-            if (validateNearsoftAccount(context, googleSignInAccount)) {
-                User user = new User(googleSignInAccount);
-                user.save();
-                return user;
-            } else {
-                throw new SignInException(
-                        context.getString(R.string.message_nearsoft_account_needed)
-                );
-            }
+
+            validateNearsoftAccount(googleSignInAccount);
+
+            User user = new User(googleSignInAccount);
+            user.save();
+            return user;
         } else if (!Util.isThereInternetConnection(context)) {
-            throw new SignInException(context.getString(R.string.error_internet_connection));
+            throw new SignInException("Internet connection error.",
+                    R.string.error_internet_connection);
         } else if (result.getStatus().getStatusCode() != UNKNOWN_STATUS_CODE) {
+            int statusCode = result.getStatus().getStatusCode();
             throw new SignInException(
-                    context.getString(R.string.error_google_api, result.getStatus())
+                    "Google api error: " + statusCode + ".",
+                    R.string.error_google_api, statusCode
             );
         } else {
-            throw new SignInException("Unknown Exception.");
+            throw new SignInException("Unknown Exception.", R.string.error_general,
+                    "Unknown Exception.");
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static void signOut(BaseActivity baseActivity,
                                final User user,
                                final GoogleApiClient googleApiClient,
@@ -86,13 +88,18 @@ public class UserModel {
         }
     }
 
-    private static boolean validateNearsoftAccount(Context context,
-                                                   GoogleSignInAccount googleSignInAccount) {
+    private static void validateNearsoftAccount(GoogleSignInAccount googleSignInAccount)
+            throws SignInException {
 
-        return googleSignInAccount != null && googleSignInAccount.getEmail() != null &&
-                googleSignInAccount
-                        .getEmail()
-                        .endsWith(context.getString(R.string.nearsoft_domain));
+        boolean isNearsoftAccountValid = googleSignInAccount != null &&
+                googleSignInAccount.getEmail() != null &&
+                googleSignInAccount.getEmail()
+                        .endsWith(NEARSOFT_EMAIL_DOMAIN);
+
+        if (!isNearsoftAccountValid) {
+            throw new SignInException("Nearsoft account needed.",
+                    R.string.message_nearsoft_account_needed);
+        }
     }
 
     private static void signOut(User user, GoogleApiClient googleApiClient,

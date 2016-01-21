@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.nearsoft.nearbooks.NearbooksApplication;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.models.BookModel;
@@ -20,6 +21,8 @@ import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.Where;
 
+import javax.inject.Inject;
+
 /**
  * Recycler view cursor adapter.
  * Created by epool on 12/17/15.
@@ -28,10 +31,13 @@ public class BookRecyclerViewCursorAdapter
         extends RecyclerView.Adapter<BookRecyclerViewCursorAdapter.BookViewHolder>
         implements Filterable {
 
+    @Inject
+    protected ColorsWrapper defaultColors;
     private FlowCursorList<Book> mFlowCursorAdapter;
     private BookFilter mBookFilter = new BookFilter();
 
     public BookRecyclerViewCursorAdapter(Where<Book> bookWhere) {
+        NearbooksApplication.getNearbooksApplicationComponent().inject(this);
         mFlowCursorAdapter = new FlowCursorList<>(false, bookWhere);
     }
 
@@ -105,6 +111,7 @@ public class BookRecyclerViewCursorAdapter
                     .load();
 
             mBinding.setBook(book);
+            mBinding.setColors(defaultColors);
             mBinding.executePendingBindings();
         }
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +17,7 @@ import android.view.View;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityBookDetailBinding;
+import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.util.ImageLoader;
@@ -24,7 +26,8 @@ import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 
-import retrofit2.Call;
+import javax.inject.Inject;
+
 import retrofit2.Response;
 import rx.Subscriber;
 
@@ -34,9 +37,10 @@ public class BookDetailActivity extends BaseActivity {
     public static final String VIEW_NAME_BOOK_COVER = "detail:book_cover:image";
     public static final String VIEW_NAME_BOOK_TOOLBAR = "detail:book_toolbar:toolbar";
 
+    @Inject
+    protected ColorsWrapper defaultColors;
     private ActivityBookDetailBinding mBinding;
     private Book mBook;
-    private Call<AvailabilityResponse> mCall;
 
     public static void openWith(Activity activity, Book book, View view) {
         Intent detailIntent = new Intent(activity, BookDetailActivity.class);
@@ -65,6 +69,7 @@ public class BookDetailActivity extends BaseActivity {
         mBinding = getBinding(ActivityBookDetailBinding.class);
         mBook = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
         mBinding.setBook(mBook);
+        mBinding.setColors(defaultColors);
 
         ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER);
         ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR);
@@ -123,11 +128,16 @@ public class BookDetailActivity extends BaseActivity {
                             getWindow().setStatusBarColor(palette
                                     .getDarkVibrantColor(defaultColor));
                         }
-
-                        checkBookAvailability();
                     }
                 })
                 .load();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                checkBookAvailability();
+            }
+        }, getResources().getInteger(android.R.integer.config_mediumAnimTime));
     }
 
     private void checkBookAvailability() {
@@ -159,15 +169,14 @@ public class BookDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        if (mCall != null) mCall.cancel();
-
-        super.onDestroy();
+    protected int getLayoutResourceId() {
+        return R.layout.activity_book_detail;
     }
 
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_book_detail;
+    protected void injectComponent(BaseActivityComponent baseActivityComponent) {
+        super.injectComponent(baseActivityComponent);
+        baseActivityComponent.inject(this);
     }
 
     @Override
