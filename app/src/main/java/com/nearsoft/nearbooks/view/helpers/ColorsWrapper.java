@@ -8,34 +8,42 @@ import android.support.v7.graphics.Palette;
  */
 public class ColorsWrapper {
 
-    private final int statusBarColor;
+    private final int mStatusBarColor;
 
-    private final int backgroundColor;
+    private final int mBackgroundColor;
 
-    private final int titleTextColor;
+    private final int mTitleTextColor;
 
-    private final int bodyTextColor;
+    private final int mBodyTextColor;
 
     public ColorsWrapper(int backgroundColor, Palette.Swatch swatch) {
-        this.backgroundColor = backgroundColor;
-        this.statusBarColor = swatch.getTitleTextColor();
-        this.titleTextColor = swatch.getTitleTextColor();
-        this.bodyTextColor = swatch.getBodyTextColor();
+        mBackgroundColor = backgroundColor;
+        mStatusBarColor = swatch.getTitleTextColor();
+        mTitleTextColor = swatch.getTitleTextColor();
+        mBodyTextColor = swatch.getBodyTextColor();
+    }
+
+    public ColorsWrapper(int statusBarColor, int backgroundColor, int titleTextColor,
+                         int bodyTextColor) {
+        mStatusBarColor = statusBarColor;
+        mBackgroundColor = backgroundColor;
+        mTitleTextColor = titleTextColor;
+        mBodyTextColor = bodyTextColor;
     }
 
     public int getStatusBarColor() {
-        return statusBarColor;
+        return mStatusBarColor;
     }
 
     public int getBackgroundColor() {
-        return backgroundColor;
+        return mBackgroundColor;
     }
 
     public int getTitleTextColor() {
-        return titleTextColor;
+        return mTitleTextColor;
     }
 
     public int getBodyTextColor() {
-        return bodyTextColor;
+        return mBodyTextColor;
     }
 }

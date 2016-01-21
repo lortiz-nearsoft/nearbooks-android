@@ -5,27 +5,45 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.nearsoft.nearbooks.R;
-import com.nearsoft.nearbooks.databinding.ActivityMainBinding;
+import com.nearsoft.nearbooks.common.Constants;
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
+import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
+import com.nearsoft.nearbooks.di.qualifiers.Named;
+import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
+import com.nearsoft.nearbooks.util.Util;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 public class MainActivity extends BaseActivity {
 
-    private AccountManager mAccountManager;
+    @Inject
+    protected AccountManager mAccountManager;
+    @Inject
+    @Named(BaseActivityModule.GCM_BROAD_CAST_RECEIVER)
+    protected BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = getBinding(ActivityMainBinding.class);
 
-        mAccountManager = AccountManager.get(this);
+        if (!Util.checkPlayServices(this)) {
+            Toast.makeText(this,
+                    R.string.message_google_play_services_required,
+                    Toast.LENGTH_LONG)
+                    .show();
+            finish();
+        }
 
         getTokenForAccountCreateIfNeeded(AccountGeneral.ACCOUNT_TYPE,
                 AccountGeneral.AUTH_TOKEN_TYPE_FULL_ACCESS);
@@ -42,6 +60,19 @@ public class MainActivity extends BaseActivity {
         baseActivityComponent.inject(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Constants.REGISTRATION_COMPLETE));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
     private void getTokenForAccountCreateIfNeeded(String accountType, String authTokenType) {
         mAccountManager.getAuthTokenByFeatures(accountType, authTokenType, null, this, null, null,
                 new AccountManagerCallback<Bundle>() {
@@ -50,9 +81,10 @@ public class MainActivity extends BaseActivity {
                         try {
                             future.getResult();
                             if (mLazyUser.get() != null) {
-                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                                startActivity(intent);
-                                finish();
+                                // Start IntentService to register this application with GCM.
+                                Intent intent = new Intent(MainActivity.this,
+                                        NearbooksRegistrationIntentService.class);
+                                startService(intent);
                             } else {
                                 Toast
                                         .makeText(

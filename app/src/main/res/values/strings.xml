@@ -20,8 +20,11 @@
     <string name="message_book_requested">Your request is pending. Please do check in with the QR
         book</string>
     <string name="message_book_active">Book assigned to you, enjoy it! =D</string>
+    <string name="message_google_play_services_required">You must have Google play services installed
+        to use this application</string>
+    <string name="message_no_book_description">There is no book description.</string>
 
-    <string name="error_google_api">There was an error with google api: %s</string>
+    <string name="error_google_api">There was an error with google api: %d</string>
     <string name="error_general">There was an error: %s</string>
     <string name="error_user_not_found">User not found</string>
     <string name="error_internet_connection">Please verify your internet connection and try

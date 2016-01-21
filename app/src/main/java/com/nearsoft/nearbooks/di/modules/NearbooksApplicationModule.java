@@ -3,11 +3,14 @@ package com.nearsoft.nearbooks.di.modules;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.NearbooksApplication;
+import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import javax.inject.Singleton;
@@ -48,6 +51,18 @@ public class NearbooksApplicationModule {
     public SharedPreferences provideDefaultSharedPreferences() {
         return PreferenceManager
                 .getDefaultSharedPreferences(mNearbooksApplication);
+    }
+
+    @Provides
+    @Singleton
+    public ColorsWrapper provideDefaultColorsWrapper() {
+        int colorPrimaryDark = ContextCompat.getColor(mNearbooksApplication,
+                R.color.colorPrimaryDark);
+        int colorPrimary = ContextCompat.getColor(mNearbooksApplication,
+                R.color.colorPrimary);
+        int whiteColor = ContextCompat.getColor(mNearbooksApplication,
+                R.color.white);
+        return new ColorsWrapper(colorPrimaryDark, colorPrimary, whiteColor, whiteColor);
     }
 
 }

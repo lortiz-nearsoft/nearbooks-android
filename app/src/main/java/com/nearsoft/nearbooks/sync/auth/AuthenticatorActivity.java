@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.google.android.gms.auth.api.Auth;
@@ -18,6 +17,7 @@ import com.nearsoft.nearbooks.exceptions.SignInException;
 import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.util.SyncUtil;
+import com.nearsoft.nearbooks.util.ViewUtil;
 
 import javax.inject.Inject;
 
@@ -89,13 +89,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
         try {
             createSyncAccount(UserModel.signIn(this, result));
         } catch (SignInException e) {
-            Snackbar
-                    .make(
-                            mBinding.getRoot(),
-                            e.getMessage(),
-                            Snackbar.LENGTH_LONG
-                    )
-                    .show();
+            ViewUtil.showSnackbarMessage(mBinding, e.getDisplayMessage(this));
             Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient);
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         }

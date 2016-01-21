@@ -131,6 +131,12 @@ public class ImageLoader {
         requestCreator.into(target);
     }
 
+    public interface OnImageLoadListener {
+
+        void onError();
+
+    }
+
     public static class Builder {
 
         private final Activity activity;
