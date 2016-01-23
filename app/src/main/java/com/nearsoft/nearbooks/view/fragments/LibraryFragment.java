@@ -20,32 +20,29 @@ import android.widget.Filter;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 import com.nearsoft.nearbooks.util.SyncUtil;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
-import com.nearsoft.nearbooks.view.helpers.RecyclerItemClickListener;
 import com.nearsoft.nearbooks.view.helpers.SpacingDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnLibraryFragmentListener} interface
+ * {@link BookRecyclerViewCursorAdapter.OnBookItemClickListener} interface
  * to handle interaction events.
  * Use the {@link LibraryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class LibraryFragment
         extends BaseFragment
-        implements RecyclerItemClickListener.OnItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener,
+        implements SwipeRefreshLayout.OnRefreshListener,
         SyncChangeHandler.OnSyncChangeListener,
         BaseActivity.OnSearchListener,
         Filter.FilterListener {
 
-    private OnLibraryFragmentListener mListener;
     private BookRecyclerViewCursorAdapter mBookRecyclerViewCursorAdapter;
+    private BookRecyclerViewCursorAdapter.OnBookItemClickListener mOnBookItemClickListener;
     private FragmentLibraryBinding mBinding;
     private SearchView mSearchView;
 
@@ -73,7 +70,7 @@ public class LibraryFragment
         setHasOptionsMenu(true);
 
         mBookRecyclerViewCursorAdapter =
-                new BookRecyclerViewCursorAdapter(BookModel.getAllBooks());
+                new BookRecyclerViewCursorAdapter(BookModel.getAllBooks(), mOnBookItemClickListener);
     }
 
     @Override
@@ -83,14 +80,13 @@ public class LibraryFragment
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+        boolean isTablet = getResources().getBoolean(R.bool.isTable);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),
-                isLandscape ? 4 : 2);
+                isTablet ? isLandscape ? 6 : 4 : isLandscape ? 4 : 2);
         mBinding.recyclerViewBooks.setLayoutManager(layoutManager);
         int margin = getResources().getDimensionPixelSize(R.dimen.books_margin);
         mBinding.recyclerViewBooks.addItemDecoration(new SpacingDecoration(margin, margin, true));
         mBinding.recyclerViewBooks.setAdapter(mBookRecyclerViewCursorAdapter);
-        mBinding.recyclerViewBooks
-                .addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
 
         mBinding.swipeRefreshLayout.setOnRefreshListener(this);
         mBinding.textViewEmpty.setOnClickListener(new View.OnClickListener() {
@@ -114,10 +110,11 @@ public class LibraryFragment
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mListener = (OnLibraryFragmentListener) context;
+            mOnBookItemClickListener =
+                    (BookRecyclerViewCursorAdapter.OnBookItemClickListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
-                    " must implement OnLibraryFragmentListener");
+                    " must implement " + mOnBookItemClickListener.getClass().getSimpleName());
         }
 
         BaseActivity baseActivity = getBaseActivity();
@@ -128,7 +125,7 @@ public class LibraryFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mOnBookItemClickListener = null;
 
         getBaseActivity()
                 .getSyncChangeHandler()
@@ -181,14 +178,6 @@ public class LibraryFragment
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-        if (mListener != null) {
-            Book book = mBookRecyclerViewCursorAdapter.getItem(position);
-            mListener.onBookSelected(book, view);
-        }
-    }
-
-    @Override
     public void onRefresh() {
         if (!SyncUtil.isSyncing(mUser)) {
             SyncUtil.triggerRefresh(mUser);
@@ -232,12 +221,6 @@ public class LibraryFragment
     @Override
     public void onFilterComplete(int count) {
         updateUI();
-    }
-
-    public interface OnLibraryFragmentListener {
-
-        void onBookSelected(Book book, View view);
-
     }
 
 }

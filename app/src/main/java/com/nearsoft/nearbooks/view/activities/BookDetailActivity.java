@@ -1,61 +1,61 @@
 package com.nearsoft.nearbooks.view.activities;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.graphics.Palette;
+import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityBookDetailBinding;
+import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.util.ImageLoader;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
+import com.nearsoft.nearbooks.view.helpers.SimpleTransitionListener;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
-
-import javax.inject.Inject;
+import com.squareup.picasso.Picasso;
 
 import retrofit2.Response;
 import rx.Subscriber;
 
 public class BookDetailActivity extends BaseActivity {
 
+    public static final String ARG_COLORS_WRAPPER = "PARAM_COLORS_WRAPPER";
+
     // View name of the header image. Used for activity scene transitions
     public static final String VIEW_NAME_BOOK_COVER = "detail:book_cover:image";
     public static final String VIEW_NAME_BOOK_TOOLBAR = "detail:book_toolbar:toolbar";
 
-    @Inject
-    protected ColorsWrapper defaultColors;
     private ActivityBookDetailBinding mBinding;
     private Book mBook;
 
-    public static void openWith(Activity activity, Book book, View view) {
+    public static void openWith(Activity activity, BookItemBinding binding) {
         Intent detailIntent = new Intent(activity, BookDetailActivity.class);
-        detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, book);
+        detailIntent.putExtra(BookDetailFragment.ARG_BOOK_ITEM, binding.getBook());
+        detailIntent.putExtra(ARG_COLORS_WRAPPER, binding.getColors());
 
         @SuppressWarnings("unchecked")
         ActivityOptionsCompat options = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(
                         activity,
                         Pair.create(
-                                view.findViewById(R.id.imageViewBookCover),
+                                binding.getRoot().findViewById(R.id.imageViewBookCover),
                                 VIEW_NAME_BOOK_COVER
                         ),
                         Pair.create(
-                                view.findViewById(R.id.toolbar),
+                                binding.getRoot().findViewById(R.id.toolbar),
                                 VIEW_NAME_BOOK_TOOLBAR
                         )
                 );
@@ -68,8 +68,20 @@ public class BookDetailActivity extends BaseActivity {
 
         mBinding = getBinding(ActivityBookDetailBinding.class);
         mBook = getIntent().getParcelableExtra(BookDetailFragment.ARG_BOOK_ITEM);
+        final ColorsWrapper colorsWrapper = getIntent().getParcelableExtra(ARG_COLORS_WRAPPER);
         mBinding.setBook(mBook);
-        mBinding.setColors(defaultColors);
+        mBinding.setColors(colorsWrapper);
+        mBinding.toolbar.post(new Runnable() {
+            @Override
+            public void run() {
+                boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+                if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getWindow().setStatusBarColor(colorsWrapper.getBackgroundColor());
+                }
+                ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar,
+                        colorsWrapper.getTitleTextColor(), BookDetailActivity.this);
+            }
+        });
 
         ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER);
         ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR);
@@ -107,37 +119,64 @@ public class BookDetailActivity extends BaseActivity {
                     .commit();
         }
 
-        new ImageLoader.Builder(this, mBinding.imageViewBookCover,
-                getString(R.string.url_book_cover_thumbnail, mBook.getId()))
-                .fullResolutionImageUrl(getString(R.string.url_book_cover_full, mBook.getId()))
-                .placeholderResourceId(R.drawable.ic_launcher)
-                .errorResourceId(R.drawable.ic_launcher)
-                .paletteAsyncListener(new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        int defaultColor = ContextCompat
-                                .getColor(BookDetailActivity.this, R.color.colorPrimary);
-                        ColorsWrapper colorsWrapper = ViewUtil
-                                .getVibrantPriorityColorSwatchPair(palette, defaultColor);
-                        mBinding.setColors(colorsWrapper);
-                        ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar, colorsWrapper
-                                .getTitleTextColor(), BookDetailActivity.this);
+        Picasso.with(this)
+                .load(getString(R.string.url_book_cover_thumbnail, mBook.getId()))
+                .noPlaceholder()
+                .noFade()
+                .error(R.drawable.ic_launcher)
+                .into(mBinding.imageViewBookCover);
 
-                        boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
-                        if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            getWindow().setStatusBarColor(palette
-                                    .getDarkVibrantColor(defaultColor));
-                        }
-                    }
-                })
-                .load();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener()) {
+            loadFullResolution();
+            checkBookAvailability();
+        }
+    }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkBookAvailability();
-            }
-        }, getResources().getInteger(android.R.integer.config_mediumAnimTime));
+    /**
+     * Try and add a {@link Transition.TransitionListener} to the entering shared element
+     * {@link Transition}. We do this so that we can load the full-size image after the transition
+     * has completed.
+     *
+     * @return true if we were successful in adding a listener to the enter transition
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private boolean addTransitionListener() {
+        final Transition transition = getWindow().getSharedElementEnterTransition();
+
+        if (transition != null) {
+            // There is an entering shared element transition so add a listener to it
+            transition.addListener(new SimpleTransitionListener() {
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    // As the transition has ended, we can now load the full-size image
+                    loadFullResolution();
+                    checkBookAvailability();
+
+                    // Make sure we remove ourselves as a listener
+                    transition.removeListener(this);
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+                    // Make sure we remove ourselves as a listener
+                    transition.removeListener(this);
+                }
+
+            });
+            return true;
+        }
+
+        // If we reach here then we have not added a listener
+        return false;
+    }
+
+    private void loadFullResolution() {
+        Picasso.with(mBinding.imageViewBookCover.getContext())
+                .load(getString(R.string.url_book_cover_full, mBook.getId()))
+                .noFade()
+                .noPlaceholder()
+                .error(R.drawable.ic_launcher)
+                .into(mBinding.imageViewBookCover);
     }
 
     private void checkBookAvailability() {

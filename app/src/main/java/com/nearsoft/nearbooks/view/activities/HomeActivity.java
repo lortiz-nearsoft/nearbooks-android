@@ -18,19 +18,21 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityHomeBinding;
+import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.databinding.NavHeaderHomeBinding;
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
+import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
 
 public class HomeActivity
         extends GoogleApiClientBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        LibraryFragment.OnLibraryFragmentListener {
+        BookRecyclerViewCursorAdapter.OnBookItemClickListener {
 
     private final static int ACTION_REQUEST = 0;
     private final static int ACTION_CHECK_IN = 1;
@@ -226,8 +228,7 @@ public class HomeActivity
     }
 
     @Override
-    public void onBookSelected(Book book, View view) {
-        BookDetailActivity.openWith(this, book, view);
+    public void onBookItemClicked(BookItemBinding binding) {
+        BookDetailActivity.openWith(this, binding);
     }
-
 }

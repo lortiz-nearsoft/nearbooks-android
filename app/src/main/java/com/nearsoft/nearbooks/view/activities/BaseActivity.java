@@ -18,13 +18,11 @@ import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Base activity.
@@ -32,11 +30,11 @@ import rx.Subscription;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private final CompositeSubscription mCompositeSubscription = new CompositeSubscription();
     @Inject
     protected SyncChangeHandler mSyncChangeHandler;
     @Inject
     protected Lazy<User> mLazyUser;
-    private Set<Subscription> mSubscriptions = new HashSet<>();
     private ViewDataBinding mBinding;
     private BaseActivityComponent mBaseActivityComponent;
 
@@ -124,14 +122,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void subscribeToActivity(Subscription subscription) {
-        mSubscriptions.add(subscription);
+        mCompositeSubscription.add(subscription);
     }
 
     protected void unSubscribeFromActivity() {
-        for (Subscription subscription : mSubscriptions) {
-            subscription.unsubscribe();
-        }
-        mSubscriptions.clear();
+        mCompositeSubscription.clear();
     }
 
     public BaseActivityComponent getBaseActivityComponent() {

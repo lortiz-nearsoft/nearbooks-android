@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity {
                     Toast.LENGTH_LONG)
                     .show();
             finish();
+            return;
         }
 
         getTokenForAccountCreateIfNeeded(AccountGeneral.ACCOUNT_TYPE,
