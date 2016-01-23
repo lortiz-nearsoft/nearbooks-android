@@ -2,11 +2,14 @@ package com.nearsoft.nearbooks.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.databinding.ViewDataBinding;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.ActionMenuView;
@@ -18,14 +21,102 @@ import android.widget.ImageView;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Utilities related with views.
  * Created by epool on 1/8/16.
  */
 public class ViewUtil {
+
+    public static Observable<Bitmap> loadBitmapFromUrlImage(final Context context, final String url) {
+        return Observable.create(new Observable.OnSubscribe<Bitmap>() {
+            @Override
+            public void call(Subscriber<? super Bitmap> subscriber) {
+                try {
+                    Bitmap bitmap = Picasso.with(context).load(url).get();
+                    subscriber.onNext(bitmap);
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    public static Observable<Palette> getPaletteFromUrlImage(Context context, String url) {
+        return loadBitmapFromUrlImage(context, url)
+                .map(new Func1<Bitmap, Palette>() {
+                    @Override
+                    public Palette call(Bitmap bitmap) {
+                        return Palette.from(bitmap).generate();
+                    }
+                });
+    }
+
+    public static Observable<ColorsWrapper> getColorsWrapperFromUrlImage(final Context context,
+                                                                         String url) {
+        return getPaletteFromUrlImage(context, url)
+                .map(new Func1<Palette, ColorsWrapper>() {
+                    @Override
+                    public ColorsWrapper call(Palette palette) {
+                        int defaultColor = ContextCompat
+                                .getColor(context, R.color
+                                        .colorPrimary);
+                        return ViewUtil
+                                .getVibrantPriorityColorSwatchPair(palette,
+                                        defaultColor);
+                    }
+                });
+    }
+
+    public static Observable<ColorsWrapper> loadImageFromUrl(final ImageView imageView,
+                                                             final String url) {
+        final Context context = imageView.getContext();
+        return Observable.create(new Observable.OnSubscribe<ColorsWrapper>() {
+            @Override
+            public void call(final Subscriber<? super ColorsWrapper> subscriber) {
+                RequestCreator requestCreator = Picasso.with(context).load(url);
+                requestCreator.placeholder(R.drawable.ic_launcher);
+                requestCreator.error(R.drawable.ic_launcher);
+                requestCreator.into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (subscriber.isUnsubscribed()) return;
+
+                        ViewUtil.getColorsWrapperFromUrlImage(context, url)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Action1<ColorsWrapper>() {
+                                    @Override
+                                    public void call(ColorsWrapper colorsWrapper) {
+                                        subscriber.onNext(colorsWrapper);
+                                        subscriber.onCompleted();
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError() {
+                        subscriber.onCompleted();
+                    }
+                });
+            }
+        });
+    }
 
     public static ColorsWrapper getVibrantPriorityColorSwatchPair(
             Palette palette, int defaultColor) {

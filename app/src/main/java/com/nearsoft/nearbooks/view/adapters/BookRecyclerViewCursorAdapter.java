@@ -2,10 +2,9 @@ package com.nearsoft.nearbooks.view.adapters;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -15,13 +14,14 @@ import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.util.ImageLoader;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.Where;
 
 import javax.inject.Inject;
+
+import rx.functions.Action1;
 
 /**
  * Recycler view cursor adapter.
@@ -35,10 +35,13 @@ public class BookRecyclerViewCursorAdapter
     protected ColorsWrapper defaultColors;
     private FlowCursorList<Book> mFlowCursorAdapter;
     private BookFilter mBookFilter = new BookFilter();
+    private OnBookItemClickListener mOnBookItemClickListener;
 
-    public BookRecyclerViewCursorAdapter(Where<Book> bookWhere) {
+    public BookRecyclerViewCursorAdapter(Where<Book> bookWhere,
+                                         OnBookItemClickListener onBookItemClickListener) {
         NearbooksApplication.getNearbooksApplicationComponent().inject(this);
         mFlowCursorAdapter = new FlowCursorList<>(false, bookWhere);
+        mOnBookItemClickListener = onBookItemClickListener;
     }
 
     public void updateCondition(Where<Book> bookWhere) {
@@ -80,39 +83,47 @@ public class BookRecyclerViewCursorAdapter
         return mBookFilter;
     }
 
-    public class BookViewHolder extends RecyclerView.ViewHolder {
+    public interface OnBookItemClickListener {
+
+        void onBookItemClicked(BookItemBinding binding);
+
+    }
+
+    public class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private BookItemBinding mBinding;
 
         public BookViewHolder(BookItemBinding binding) {
             super(binding.getRoot());
-            this.mBinding = binding;
+            mBinding = binding;
+            mBinding.getRoot().setOnClickListener(this);
+            mBinding.toolbar.setOnClickListener(this);
         }
 
         public void setupViewAtPosition(int position) {
-            Book book = mFlowCursorAdapter.getItem(position);
-
-            final Context context = mBinding.getRoot().getContext();
-
-            new ImageLoader.Builder(null, mBinding.imageViewBookCover,
-                    context.getString(R.string.url_book_cover_thumbnail, book.getId()))
-                    .placeholderResourceId(R.drawable.ic_launcher)
-                    .errorResourceId(R.drawable.ic_launcher)
-                    .paletteAsyncListener(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            int defaultColor = ContextCompat
-                                    .getColor(context, R.color.colorPrimary);
-                            ColorsWrapper colorsWrapper = ViewUtil
-                                    .getVibrantPriorityColorSwatchPair(palette, defaultColor);
-                            mBinding.setColors(colorsWrapper);
-                            mBinding.executePendingBindings();
-                        }
-                    })
-                    .load();
+            final Book book = mFlowCursorAdapter.getItem(position);
 
             mBinding.setBook(book);
             mBinding.setColors(defaultColors);
             mBinding.executePendingBindings();
+
+            final Context context = mBinding.getRoot().getContext();
+
+            ViewUtil.loadImageFromUrl(mBinding.imageViewBookCover,
+                    context.getString(R.string.url_book_cover_thumbnail, book.getId()))
+                    .subscribe(new Action1<ColorsWrapper>() {
+                        @Override
+                        public void call(ColorsWrapper colorsWrapper) {
+                            mBinding.setColors(colorsWrapper);
+                            mBinding.executePendingBindings();
+                        }
+                    });
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mOnBookItemClickListener != null) {
+                mOnBookItemClickListener.onBookItemClicked(mBinding);
+            }
         }
     }
 
