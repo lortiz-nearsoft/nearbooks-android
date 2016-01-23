@@ -4,6 +4,7 @@ import android.os.SystemClock;
 import android.test.ApplicationTestCase;
 
 import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent;
+import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.Borrow;
 import com.nearsoft.nearbooks.util.ErrorUtil;
@@ -11,7 +12,6 @@ import com.nearsoft.nearbooks.ws.BookService;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,7 +69,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
             book.save();
         }
 
-        Book book1 = SQLite.select().from(Book.class).querySingle();
+        Book book1 = BookModel.findByBookId("123");
 
         assertTrue(book.exists());
         assertEquals(book, book1);
