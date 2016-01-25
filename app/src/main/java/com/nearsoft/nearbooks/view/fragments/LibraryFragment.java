@@ -20,6 +20,7 @@ import android.widget.Filter;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 import com.nearsoft.nearbooks.util.SyncUtil;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
@@ -179,8 +180,9 @@ public class LibraryFragment
 
     @Override
     public void onRefresh() {
-        if (!SyncUtil.isSyncing(mUser)) {
-            SyncUtil.triggerRefresh(mUser);
+        User user = mLazyUser.get();
+        if (!SyncUtil.isSyncing(user)) {
+            SyncUtil.triggerRefresh(user);
         }
     }
 
