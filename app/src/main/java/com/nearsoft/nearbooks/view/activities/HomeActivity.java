@@ -24,10 +24,17 @@ import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.util.ErrorUtil;
+import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
+import com.nearsoft.nearbooks.ws.responses.MessageResponse;
+
+import retrofit2.Response;
+import rx.Subscriber;
 
 public class HomeActivity
         extends GoogleApiClientBaseActivity
@@ -188,7 +195,55 @@ public class HomeActivity
                                 switch (which) {
                                     case ACTION_REQUEST:
                                         subscribeToActivity(BookModel.requestBookToBorrow(
-                                                mBinding, mLazyUser.get(), qrCode, null));
+                                                mLazyUser.get(), qrCode)
+                                                .subscribe(new Subscriber<Response<Borrow>>() {
+                                                    @Override
+                                                    public void onCompleted() {
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Throwable t) {
+                                                        ViewUtil.showSnackbarMessage(mBinding,
+                                                                t.getLocalizedMessage());
+                                                    }
+
+                                                    @Override
+                                                    public void onNext(Response<Borrow> response) {
+                                                        if (response.isSuccess()) {
+                                                            Borrow borrow = response.body();
+                                                            switch (borrow.getStatus()) {
+                                                                case Borrow.STATUS_REQUESTED:
+                                                                    ViewUtil.showSnackbarMessage(
+                                                                            mBinding,
+                                                                            getString(R.string.message_book_requested));
+                                                                    break;
+                                                                case Borrow.STATUS_ACTIVE:
+                                                                    ViewUtil.showSnackbarMessage(
+                                                                            mBinding,
+                                                                            getString(R.string.message_book_active));
+                                                                    break;
+                                                                case Borrow.STATUS_CANCELLED:
+                                                                case Borrow.STATUS_COMPLETED:
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        } else {
+                                                            MessageResponse messageResponse = ErrorUtil
+                                                                    .parseError(MessageResponse.class, response);
+                                                            if (messageResponse != null) {
+                                                                ViewUtil.showSnackbarMessage(
+                                                                        mBinding,
+                                                                        messageResponse
+                                                                                .getMessage());
+                                                            } else {
+                                                                ViewUtil.showSnackbarMessage(
+                                                                        mBinding,
+                                                                        getString(R.string.error_general,
+                                                                                String.valueOf(response.code())));
+                                                            }
+                                                        }
+                                                    }
+                                                }));
                                         break;
                                     case ACTION_CHECK_IN:
                                         subscribeToActivity(BookModel.doBookCheckIn(mBinding,

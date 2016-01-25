@@ -48,9 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, layoutResourceId);
 
         Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+        setSupportActionBar(toolbar);
 
         handleIntent(getIntent());
     }
@@ -119,6 +117,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void injectComponent(BaseActivityComponent baseActivityComponent) {
         baseActivityComponent.inject(this);
+    }
+
+    public void setSupportActionBar(Toolbar toolbar) {
+        if (toolbar != null) {
+            super.setSupportActionBar(toolbar);
+        }
     }
 
     protected void subscribeToActivity(Subscription subscription) {

@@ -2,7 +2,6 @@ package com.nearsoft.nearbooks.models;
 
 import android.content.Context;
 import android.databinding.ViewDataBinding;
-import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
@@ -97,61 +96,14 @@ public class BookModel {
                 .unsubscribeOn(Schedulers.io());
     }
 
-    public static Subscription requestBookToBorrow(final ViewDataBinding binding, User user,
-                                                   String qrCode,
-                                                   final FloatingActionButton fabToHide) {
-        final Context context = binding.getRoot().getContext();
+    public static Observable<Response<Borrow>> requestBookToBorrow(User user, String qrCode) {
         RequestBody requestBody = new RequestBody();
         requestBody.setQrCode(qrCode);
         requestBody.setUserEmail(user.getEmail());
         Observable<Response<Borrow>> observable = mBookService.requestBookToBorrow(requestBody);
         return observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Response<Borrow>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        ViewUtil.showSnackbarMessage(binding, t.getLocalizedMessage());
-                    }
-
-                    @Override
-                    public void onNext(Response<Borrow> response) {
-                        if (response.isSuccess()) {
-                            Borrow borrow = response.body();
-                            switch (borrow.getStatus()) {
-                                case Borrow.STATUS_REQUESTED:
-                                    ViewUtil.showSnackbarMessage(binding,
-                                            context.getString(R.string.message_book_requested));
-                                    break;
-                                case Borrow.STATUS_ACTIVE:
-                                    ViewUtil.showSnackbarMessage(binding,
-                                            context.getString(R.string.message_book_active));
-                                    break;
-                                case Borrow.STATUS_CANCELLED:
-                                case Borrow.STATUS_COMPLETED:
-                                default:
-                                    break;
-                            }
-                            if (fabToHide != null) {
-                                fabToHide.hide();
-                            }
-                        } else {
-                            MessageResponse messageResponse = ErrorUtil
-                                    .parseError(MessageResponse.class, response);
-                            if (messageResponse != null) {
-                                ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
-                            } else {
-                                ViewUtil.showSnackbarMessage(binding,
-                                        context.getString(R.string.error_general,
-                                                String.valueOf(response.code())));
-                            }
-                        }
-                    }
-                });
+                .unsubscribeOn(Schedulers.io());
     }
 
     public static Subscription doBookCheckIn(final ViewDataBinding binding, User user,
