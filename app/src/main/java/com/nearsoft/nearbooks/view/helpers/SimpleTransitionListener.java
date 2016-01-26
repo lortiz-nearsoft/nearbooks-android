@@ -9,7 +9,7 @@ import android.transition.Transition;
  * Created by epool on 1/5/16.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class SimpleTransitionListener implements Transition.TransitionListener {
+public abstract class SimpleTransitionListener implements Transition.TransitionListener {
 
     @Override
     public void onTransitionStart(Transition transition) {
