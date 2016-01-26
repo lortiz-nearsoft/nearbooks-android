@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="shadow_top_reference" type="drawable">@null</item>
+</resources>
