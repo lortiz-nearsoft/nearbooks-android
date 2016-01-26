@@ -4,5 +4,6 @@
     <string name="content_description_nearsoft_icon">Nearsoft Icon</string>
     <string name="content_description_user_profile_picture">User Profile Picture</string>
     <string name="content_description_book_cover">Book Cover</string>
+    <string name="content_description_sign_out_icon">Sign Out Icon</string>
 
 </resources>
