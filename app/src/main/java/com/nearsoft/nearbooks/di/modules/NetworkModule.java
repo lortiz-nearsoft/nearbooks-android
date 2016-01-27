@@ -7,6 +7,7 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.picasso.OkHttp3Downloader;
+import com.nearsoft.nearbooks.config.Configuration;
 import com.nearsoft.nearbooks.gson.BookForeignKeyContainerSerializer;
 import com.nearsoft.nearbooks.other.StethoInterceptor;
 import com.nearsoft.nearbooks.ws.BookService;
@@ -33,12 +34,6 @@ import retrofit2.RxJavaCallAdapterFactory;
 public class NetworkModule {
 
     private final static long SECONDS_TIMEOUT = 20;
-
-    private String mBaseUrl;
-
-    public NetworkModule(String baseUrl) {
-        mBaseUrl = baseUrl;
-    }
 
     @Provides
     @Singleton
@@ -100,12 +95,13 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
+    public Retrofit provideRetrofit(Configuration configuration, Gson gson,
+                                    OkHttpClient okHttpClient) {
         return new Retrofit
                 .Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(mBaseUrl)
+                .baseUrl(configuration.getWebServiceUrl())
                 .client(okHttpClient)
                 .build();
     }

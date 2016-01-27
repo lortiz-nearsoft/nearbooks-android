@@ -10,6 +10,7 @@ import com.facebook.stetho.Stetho;
 import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.config.Configuration;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
@@ -38,6 +39,12 @@ public class NearbooksApplicationModule {
         }
 
         FlowManager.init(this.mNearbooksApplication.getApplicationContext());
+    }
+
+    @Provides
+    @Singleton
+    public Configuration providesConfiguration() {
+        return Configuration.getConfiguration(Configuration.DEVELOPMENT);
     }
 
     @Provides

@@ -8,10 +8,12 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.exceptions.SignInException;
 import com.nearsoft.nearbooks.models.sqlite.Book;
@@ -38,6 +40,13 @@ public class UserModel {
 
             User user = new User(googleSignInAccount);
             user.save();
+
+            if (!BuildConfig.DEBUG) {
+                Crashlytics.setUserIdentifier(user.getId());
+                Crashlytics.setUserEmail(user.getEmail());
+                Crashlytics.setUserName(user.getDisplayName());
+            }
+
             return user;
         } else if (!Util.isThereInternetConnection(context)) {
             throw new SignInException("Internet connection error.",
