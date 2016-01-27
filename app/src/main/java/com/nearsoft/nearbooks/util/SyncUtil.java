@@ -31,10 +31,10 @@ public class SyncUtil {
 
     /**
      * Helper method to trigger an immediate sync ("refresh").
-     * <p>
+     * <p/>
      * <p>This should only be used when we need to preempt the normal sync schedule. Typically, this
      * means the user has pressed the "refresh" button.
-     * <p>
+     * <p/>
      * Note that SYNC_EXTRAS_MANUAL will cause an immediate sync, without any optimization to
      * preserve battery life. If you know new data is available (perhaps via a GCM notification),
      * but the user is not actively waiting for that data, you should omit this flag; this will give

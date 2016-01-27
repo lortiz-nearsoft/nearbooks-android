@@ -16,6 +16,9 @@
 #   public *;
 #}
 
+# Android SearchView
+-keep class android.support.v7.widget.SearchView { *; }
+
 # DBFlow - https://github.com/Raizlabs/DBFlow/issues/248
 -keep class com.raizlabs.android.dbflow.config.GeneratedDatabaseHolder
 
@@ -26,17 +29,6 @@
 -keepattributes Exceptions
 
 -dontwarn okio.**
-
--dontwarn com.squareup.okhttp.**
--keep class com.squareup.okhttp.** { *; }
--keep interface com.squareup.okhttp.** { *; }
-
-# Proguard - https://github.com/bumptech/glide
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
-    **[] $VALUES;
-    public *;
-}
 
 # Gson - https://github.com/google/gson
 ##---------------Begin: proguard configuration for Gson  ----------
@@ -50,12 +42,7 @@
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
 #-keep class com.google.gson.stream.** { *; }
-
-# Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.examples.android.model.** { *; }
-
 ##---------------End: proguard configuration for Gson  ----------
-
 
 # Zxing - https://github.com/journeyapps/zxing-android-embedded
 # It looks not necessary
@@ -87,6 +74,22 @@
 # Crashlytics - https://docs.fabric.io/android/crashlytics/dex-and-proguard.html
 -keep class com.crashlytics.** { *; }
 -keep class com.crashlytics.android.**
--keepattributes SourceFile,LineNumberTable*Annotation*
+-keepattributes SourceFile,LineNumberTable,*Annotation*
 
 -keep public class * extends java.lang.Exception
+
+# RxJava - https://github.com/artem-zinnatullin/RxJavaProGuardRules/blob/master/rxjava-proguard-rules/proguard-rules.txt
+-dontwarn sun.misc.**
+
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+   long producerIndex;
+   long consumerIndex;
+}
+
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
