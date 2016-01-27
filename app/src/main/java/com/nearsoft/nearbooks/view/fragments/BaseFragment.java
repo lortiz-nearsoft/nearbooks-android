@@ -10,14 +10,20 @@ import com.nearsoft.nearbooks.view.activities.BaseActivity;
 
 import javax.inject.Inject;
 
+import dagger.Lazy;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+
 /**
  * Base fragment.
  * Created by epool on 11/18/15.
  */
 public abstract class BaseFragment extends Fragment {
 
+    private final CompositeSubscription mCompositeSubscription = new CompositeSubscription();
+
     @Inject
-    protected User mUser;
+    protected Lazy<User> mLazyUser;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +38,21 @@ public abstract class BaseFragment extends Fragment {
 
     protected void injectComponent(BaseActivityComponent baseActivityComponent) {
         baseActivityComponent.inject(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        unSubscribeFromActivity();
+
+        super.onDestroy();
+    }
+
+    protected void subscribeToFragment(Subscription subscription) {
+        mCompositeSubscription.add(subscription);
+    }
+
+    protected void unSubscribeFromActivity() {
+        mCompositeSubscription.clear();
     }
 
 }

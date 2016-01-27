@@ -27,7 +27,7 @@ public class NearbooksApplication extends Application {
         mNearbooksApplicationComponent = DaggerNearbooksApplicationComponent
                 .builder()
                 .nearbooksApplicationModule(new NearbooksApplicationModule(this))
-                .networkModule(new NetworkModule(getString(R.string.url_base_api)))
+                .networkModule(new NetworkModule())
                 .build();
         Picasso.setSingletonInstance(mNearbooksApplicationComponent.providePicasso());
     }

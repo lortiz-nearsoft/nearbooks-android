@@ -11,6 +11,7 @@
     <string name="label_id">ID: %s</string>
     <string name="label_year">Year: %s</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
+    <string name="label_book_requested">Requested by %s</string>
 
     <string name="placeholder_search_books">Search for books&#8230;</string>
 

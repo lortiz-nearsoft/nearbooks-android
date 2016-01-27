@@ -1,5 +1,6 @@
 package com.nearsoft.nearbooks.models.sqlite;
 
+import android.content.Context;
 import android.databinding.Bindable;
 import android.net.Uri;
 import android.os.Parcel;
@@ -8,6 +9,7 @@ import android.support.annotation.IntDef;
 
 import com.android.databinding.library.baseAdapters.BR;
 import com.google.gson.annotations.SerializedName;
+import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.db.NearbooksDatabase;
 import com.nearsoft.nearbooks.models.BorrowModel;
 import com.raizlabs.android.dbflow.annotation.Column;
@@ -197,6 +199,17 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     public void setCheckOutDate(Date checkOutDate) {
         this.checkOutDate = checkOutDate;
         notifyPropertyChanged(BR.checkOutDate);
+    }
+
+    public String getDisplayStatus(Context context) {
+        switch (status) {
+            case STATUS_REQUESTED:
+                return context.getString(R.string.label_book_requested, userEmail);
+            case STATUS_ACTIVE:
+                return context.getString(R.string.label_book_borrowed, userEmail);
+            default:
+                return null;
+        }
     }
 
     @Override
