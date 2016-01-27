@@ -3,7 +3,7 @@ package com.nearsoft.nearbooks.di.modules;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.config.Configuration;
 import com.nearsoft.nearbooks.di.scopes.PerActivity;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 
@@ -29,10 +29,10 @@ public class GoogleApiClientModule {
 
     @PerActivity
     @Provides
-    public GoogleSignInOptions provideGoogleSignInOptions(BaseActivity baseActivity) {
+    public GoogleSignInOptions provideGoogleSignInOptions(Configuration configuration) {
         return new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(baseActivity.getString(R.string.server_client_id))
+                .requestIdToken(configuration.getGoogleServerClientId())
                 .requestEmail()
                 .build();
     }

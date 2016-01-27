@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="current_user_id" translatable="false">com.nearsoft.nearbooks.CURRENT_USER_ID_KEY</string>
-    <string name="shared_preference_file_name" translatable="false">com.nearsoft.nearbooks.PREFERENCE_FILE_KEY</string>
-    <string name="url_base_api" translatable="false">http://nearbookdev.azurewebsites.net/api/</string>
     <string name="url_book_cover_thumbnail" translatable="false">http://covers.openlibrary.org/b/isbn/%1$s-M.jpg?default=false</string>
     <string name="url_book_cover_full" translatable="false">http://covers.openlibrary.org/b/isbn/%1$s-L.jpg?default=false</string>
-
-    <string name="server_client_id" translatable="false">130661059453-56utmg42k7ojq3a3v9sat13noojvm1uq.apps.googleusercontent.com</string>
-
-    <string name="lorem" translatable="false">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel viverra justo, vulputate convallis nisl. Nam pretium vitae enim a finibus. Sed a ex eu lectus rutrum egestas. Nullam egestas ante pretium viverra sodales. Sed sodales, massa et scelerisque dapibus, ante magna vulputate velit, mollis elementum tortor lacus vel arcu. Nullam vel turpis massa. Sed semper consequat iaculis. Aenean semper augue ac lectus faucibus aliquet. Donec aliquam, turpis a tristique dictum, leo massa tincidunt urna, sed tempus purus nisi id lacus. Morbi maximus ornare rutrum. Sed tristique lectus eu libero facilisis commodo. Vestibulum rhoncus cursus sapien eu luctus.\n
-        \n
-        Cras pharetra auctor ex, nec rutrum nisl molestie eget. Pellentesque a ex ut tellus malesuada interdum at sit amet lectus. Suspendisse viverra dictum lacus sit amet ullamcorper. Ut tempus sollicitudin est, pharetra vehicula mi pretium ac. Praesent fringilla luctus pellentesque. Duis velit enim, posuere a libero sed, pellentesque vehicula arcu. Curabitur sem erat, porttitor eget nulla vel, mollis rutrum sem.\n
-        \n
-        Sed fringilla sagittis nisi at placerat. Curabitur nibh justo, bibendum sed vestibulum non, suscipit quis est. Proin libero sem, molestie eget sollicitudin sit amet, aliquet et tellus. Fusce tempus sem et posuere viverra. Fusce ut consectetur nisi. Mauris aliquam quis est et rutrum. Suspendisse tincidunt arcu at orci hendrerit porttitor. In hac habitasse platea dictumst. Nulla facilisi. Nunc convallis nec mauris in porttitor. Pellentesque ac risus quis lectus blandit laoreet. Mauris dapibus augue ac pulvinar ullamcorper. Cras arcu elit, suscipit in sapien sit amet, porttitor luctus ante.\n
-        \n
-        Nullam lacinia massa quis maximus interdum. Curabitur posuere justo aliquam quam fermentum aliquet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent pretium, lorem id finibus sagittis, arcu odio egestas risus, a auctor lacus lorem sed massa. Morbi et nisi egestas, scelerisque enim quis, fermentum eros. Sed at fermentum justo. Proin ut varius nisl. Duis tincidunt metus nunc, quis ultrices erat laoreet vel. Morbi velit ante, dapibus sed vehicula vitae, viverra non velit. Donec nec bibendum sem. Maecenas libero mi, vulputate vel pharetra vitae, semper quis neque. Nulla dui lacus, consequat eget ligula ac, auctor tristique quam. Duis fringilla lacus nec velit volutpat semper ut a ligula. Suspendisse sed massa at erat placerat molestie eget et velit. Vivamus sed massa tincidunt felis lacinia lobortis.\n
-        \n
-        Fusce sapien enim, imperdiet non luctus at, dapibus at orci. Etiam quam ante, porta sit amet viverra id, dignissim ut nunc. Nunc eget sapien nibh. Sed quis nunc consequat, blandit elit ac, rutrum metus. Mauris a accumsan nisl. Fusce sed erat aliquam, laoreet urna in, dapibus dolor. Nullam dignissim ante malesuada, cursus ante euismod, lobortis mi. Sed nulla lorem, pretium nec ultrices sit amet, consequat sed mauris. Integer sit amet suscipit orci, ut luctus justo. Aenean convallis, urna vel malesuada tincidunt, ligula sem porttitor urna, sit amet eleifend lectus lectus pulvinar purus. Fusce vulputate tincidunt accumsan.
-    </string>
 </resources>

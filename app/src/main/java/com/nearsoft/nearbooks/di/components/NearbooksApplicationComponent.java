@@ -3,11 +3,11 @@ package com.nearsoft.nearbooks.di.components;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.nearsoft.nearbooks.config.Configuration;
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
 import com.nearsoft.nearbooks.di.modules.NetworkModule;
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
-import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.nearsoft.nearbooks.ws.BookService;
 import com.squareup.picasso.Picasso;
 
@@ -28,13 +28,13 @@ public interface NearbooksApplicationComponent {
 
     void inject(BookRecyclerViewCursorAdapter bookRecyclerViewCursorAdapter);
 
+    Configuration provideConfiguration();
+
     BookService providesBookService();
 
     Gson provideGson();
 
     SharedPreferences provideDefaultSharedPreferences();
-
-    ColorsWrapper provideDefaultColorsWrapper();
 
     Picasso providePicasso();
 
