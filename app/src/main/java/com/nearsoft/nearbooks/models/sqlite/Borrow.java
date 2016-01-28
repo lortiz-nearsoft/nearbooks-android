@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.annotation.IntDef;
 
 import com.android.databinding.library.baseAdapters.BR;
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.db.NearbooksDatabase;
@@ -239,51 +240,33 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     }
 
     @Override
-    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Borrow borrow = (Borrow) o;
-
-        if (copyNumber != borrow.copyNumber) return false;
-        if (status != borrow.status) return false;
-        if (id != null ? !id.equals(borrow.id) : borrow.id != null) return false;
-        if (bookForeignKeyContainer != null ?
-                !bookForeignKeyContainer.equals(borrow.bookForeignKeyContainer) :
-                borrow.bookForeignKeyContainer != null)
-            return false;
-        if (userEmail != null ? !userEmail.equals(borrow.userEmail) : borrow.userEmail != null)
-            return false;
-        if (initialDate != null ?
-                !initialDate.equals(borrow.initialDate) :
-                borrow.initialDate != null)
-            return false;
-        if (finalDate != null ? !finalDate.equals(borrow.finalDate) : borrow.finalDate != null)
-            return false;
-        if (checkInDate != null ?
-                !checkInDate.equals(borrow.checkInDate) :
-                borrow.checkInDate != null)
-            return false;
-        return checkOutDate != null ?
-                checkOutDate.equals(borrow.checkOutDate) :
-                borrow.checkOutDate == null;
+        return copyNumber == borrow.copyNumber &&
+                status == borrow.status &&
+                Objects.equal(id, borrow.id) &&
+                Objects.equal(bookForeignKeyContainer, borrow.bookForeignKeyContainer) &&
+                Objects.equal(userEmail, borrow.userEmail) &&
+                Objects.equal(initialDate, borrow.initialDate) &&
+                Objects.equal(finalDate, borrow.finalDate) &&
+                Objects.equal(checkInDate, borrow.checkInDate) &&
+                Objects.equal(checkOutDate, borrow.checkOutDate);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (bookForeignKeyContainer != null ?
-                bookForeignKeyContainer.hashCode() :
-                0);
-        result = 31 * result + copyNumber;
-        result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
-        result = 31 * result + status;
-        result = 31 * result + (initialDate != null ? initialDate.hashCode() : 0);
-        result = 31 * result + (finalDate != null ? finalDate.hashCode() : 0);
-        result = 31 * result + (checkInDate != null ? checkInDate.hashCode() : 0);
-        result = 31 * result + (checkOutDate != null ? checkOutDate.hashCode() : 0);
-        return result;
+        return Objects.hashCode(
+                id,
+                bookForeignKeyContainer,
+                copyNumber,
+                userEmail, status,
+                initialDate,
+                finalDate,
+                checkInDate,
+                checkOutDate
+        );
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.common.base.Objects;
 import com.nearsoft.nearbooks.BR;
 import com.nearsoft.nearbooks.db.NearbooksDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
@@ -146,31 +147,26 @@ public class User extends NearbooksBaseObservableModel implements Parcelable {
     }
 
     @Override
-    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (id != null ? !id.equals(user.id) : user.id != null) return false;
-        if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null)
-            return false;
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
-        if (photoUrl != null ? !photoUrl.equals(user.photoUrl) : user.photoUrl != null)
-            return false;
-        return idToken != null ? idToken.equals(user.idToken) : user.idToken == null;
-
+        return Objects.equal(id, user.id) &&
+                Objects.equal(displayName, user.displayName) &&
+                Objects.equal(email, user.email) &&
+                Objects.equal(photoUrl, user.photoUrl) &&
+                Objects.equal(idToken, user.idToken);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (photoUrl != null ? photoUrl.hashCode() : 0);
-        result = 31 * result + (idToken != null ? idToken.hashCode() : 0);
-        return result;
+        return Objects.hashCode(
+                id,
+                displayName,
+                email,
+                photoUrl,
+                idToken
+        );
     }
 
     @Override

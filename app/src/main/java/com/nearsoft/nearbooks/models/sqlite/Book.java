@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 import com.nearsoft.nearbooks.BR;
 import com.nearsoft.nearbooks.db.NearbooksDatabase;
@@ -202,37 +203,34 @@ public class Book extends NearbooksBaseObservableModel<Book> implements Parcelab
     }
 
     @Override
-    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Book book = (Book) o;
-
-        if (releaseYear != book.releaseYear) return false;
-        if (numberOfCopies != book.numberOfCopies) return false;
-        if (numberOfDaysAllowedForBorrowing != book.numberOfDaysAllowedForBorrowing) return false;
-        if (isAvailable != book.isAvailable) return false;
-        if (id != null ? !id.equals(book.id) : book.id != null) return false;
-        if (title != null ? !title.equals(book.title) : book.title != null) return false;
-        if (author != null ? !author.equals(book.author) : book.author != null) return false;
-        if (description != null ? !description.equals(book.description) : book.description != null)
-            return false;
-        return borrows != null ? borrows.equals(book.borrows) : book.borrows == null;
+        return releaseYear == book.releaseYear &&
+                numberOfCopies == book.numberOfCopies &&
+                numberOfDaysAllowedForBorrowing == book.numberOfDaysAllowedForBorrowing &&
+                isAvailable == book.isAvailable &&
+                Objects.equal(id, book.id) &&
+                Objects.equal(title, book.title) &&
+                Objects.equal(author, book.author) &&
+                Objects.equal(description, book.description) &&
+                Objects.equal(borrows, book.borrows);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + releaseYear;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + numberOfCopies;
-        result = 31 * result + numberOfDaysAllowedForBorrowing;
-        result = 31 * result + (isAvailable ? 1 : 0);
-        result = 31 * result + (borrows != null ? borrows.hashCode() : 0);
-        return result;
+        return Objects.hashCode(
+                id,
+                title,
+                author,
+                releaseYear,
+                description,
+                numberOfCopies,
+                numberOfDaysAllowedForBorrowing,
+                isAvailable,
+                borrows
+        );
     }
 
     @Override
