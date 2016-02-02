@@ -1,9 +1,6 @@
 # Nearbooks
 
-_Master_ -
 [![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=56b0ee2d187416010091ba9a&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/56b0ee2d187416010091ba9a/build/latest)
-_Develop_ -
-[![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=56b0ee2d187416010091ba9a&branch=develop&build=latest)](https://dashboard.buddybuild.com/apps/56b0ee2d187416010091ba9a/build/latest)
 
 Nearbooks Android client for manage the books lending in nearsoft. This Android client uses the
 [Nearbooks backend](https://github.com/Nearsoft/nearbooks) to get the books data.
