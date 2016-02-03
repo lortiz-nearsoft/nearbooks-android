@@ -7,6 +7,11 @@
             android:icon="@drawable/ic_view_week_24dp"
             android:title="@string/title_library"/>
         <item
+            android:id="@+id/nav_book_upload"
+            android:icon="@drawable/ic_cloud_upload_black_24dp"
+            android:title="@string/title_upload_book"/>
+        <item
+            android:enabled="false"
             android:orderInCategory="200"
             android:title=""/>
     </group>

@@ -5,11 +5,14 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_library">Library</string>
+    <string name="title_upload_book">Upload Book</string>
     <string name="title_social">Social</string>
     <string name="title_share">Share</string>
 
     <string name="label_id">ID: %s</string>
+    <string name="label_author">Author: %s</string>
     <string name="label_year">Year: %s</string>
+    <string name="label_description">Description: %s</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
     <string name="label_book_requested">Requested by %s</string>
 
@@ -24,6 +27,7 @@
     <string name="message_google_play_services_required">You must have Google play services installed
         to use this application</string>
     <string name="message_no_book_description">There is no book description.</string>
+    <string name="message_book_resume">Title: %1$s\nAuthors: %2$s\nPublish date: %3$s</string>
 
     <string name="error_google_api">There was an error with google api: %d</string>
     <string name="error_general">There was an error: %s</string>
@@ -36,6 +40,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_sign_out">Sign out</string>
+
+    <string name="question_register_new_book">Are you sure you want to register this book?</string>
 
     <array name="actions_book">
         <item name="title_request">Request</item>

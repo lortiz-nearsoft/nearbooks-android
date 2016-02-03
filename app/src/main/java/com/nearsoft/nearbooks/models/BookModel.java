@@ -14,6 +14,7 @@ import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
@@ -184,6 +185,13 @@ public class BookModel {
                         }
                     }
                 });
+    }
+
+    public static Observable<Response<MessageResponse>> registerNewBook(
+            GoogleBookBody googleBookBody) {
+        return mBookService.registerNewBook(googleBookBody)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 
 }

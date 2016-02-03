@@ -1,7 +1,6 @@
 package com.nearsoft.nearbooks.view.adapters;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,11 +55,7 @@ public class BookRecyclerViewCursorAdapter
 
     @Override
     public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        BookItemBinding binding = DataBindingUtil
-                .inflate(
-                        LayoutInflater.from(parent.getContext()),
-                        R.layout.book_item, parent, false
-                );
+        BookItemBinding binding = BookItemBinding.inflate(LayoutInflater.from(parent.getContext()));
         return new BookViewHolder(binding);
     }
 
