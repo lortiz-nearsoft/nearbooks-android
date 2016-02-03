@@ -14,6 +14,16 @@ Nearbooks Android client for manage the books lending in nearsoft. This Android 
 5. Do any contribution in the `develop` branch from your fork.
 6. Create a pull request from your fork to the [develop branch](https://github.com/Nearsoft/nearbooks-android/tree/develop) of this repository.
 
+## Libraries used
+- [Android data binding](developer.android.com/tools/data-binding/guide.html) for View Model binding.
+- [Dagger 2](http://google.github.io/dagger/) for dependency injection.
+- [Retrofit 2](http://square.github.io/retrofit/) for consuming REST apis.
+- [Picasso](http://square.github.io/picasso/) for images loading.
+- [Zxing](https://github.com/journeyapps/zxing-android-embedded) for scanning QR and bar codes.
+- [RxAndroid](https://github.com/ReactiveX/RxAndroid) to avoid callback hell and it is fun =p.
+- [Guava](https://github.com/google/guava) just for learning it.
+- [Crashlytics](https://www.fabric.io) for reporting app crashes.
+
 ## Beta testers
 #### How to become a beta tester?
 1. Go to [this url](https://play.google.com/apps/testing/com.nearsoft.nearbooks) and follow the instructions there.
