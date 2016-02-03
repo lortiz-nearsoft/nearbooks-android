@@ -12,23 +12,34 @@ import java.util.List;
  */
 public class GoogleBookBody {
 
+    @SerializedName("isbn")
+    private String isbn;
     @SerializedName("title")
-    protected String title;
+    private String title;
     @SerializedName("authors")
-    protected List<String> authors = new ArrayList<>();
+    private List<String> authors = new ArrayList<>();
     @SerializedName("publishedDate")
-    protected String publishedDate;
+    private String publishedDate;
     @SerializedName("description")
-    protected String description;
+    private String description;
     @SerializedName("thumbnailImageUrl")
-    protected String thumbnailImageUrl;
+    private String thumbnailImageUrl;
 
-    public GoogleBookBody(Volume volume) {
+    public GoogleBookBody(String isbn, Volume volume) {
+        this.isbn = isbn;
         title = volume.getVolumeInfo().getTitle();
         authors = volume.getVolumeInfo().getAuthors();
         publishedDate = volume.getVolumeInfo().getPublishedDate();
         description = volume.getVolumeInfo().getDescription();
         thumbnailImageUrl = volume.getVolumeInfo().getImageLinks().getThumbnail();
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public String getTitle() {

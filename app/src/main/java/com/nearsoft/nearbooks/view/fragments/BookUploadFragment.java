@@ -1,7 +1,6 @@
 package com.nearsoft.nearbooks.view.fragments;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,11 +25,6 @@ import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientatio
 import com.nearsoft.nearbooks.view.adapters.GoogleBooksVolumeAdapter;
 import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
-
-import java.util.List;
-
-import retrofit2.Response;
-import rx.functions.Action1;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,12 +73,7 @@ public class BookUploadFragment extends BaseFragment
                              Bundle savedInstanceState) {
         mBinding = FragmentUploadBookBinding
                 .inflate(inflater, container, false);
-        mBinding.fabScanQrCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startQRScanner();
-            }
-        });
+        mBinding.fabScanQrCode.setOnClickListener(v -> startQRScanner());
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -114,17 +103,9 @@ public class BookUploadFragment extends BaseFragment
 
     private void findBooksByIsbn() {
         subscribeToFragment(GoogleBooksModel.findGoogleBooksByIsbn(mCode)
-                .doOnError(new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable t) {
-                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
-                    }
-                })
-                .subscribe(new Action1<List<GoogleBookBody>>() {
-                    @Override
-                    public void call(List<GoogleBookBody> googleBookBodies) {
-                        mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies);
-                    }
+                .doOnError(t -> ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage()))
+                .subscribe(googleBookBodies -> {
+                    mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies);
                 }));
     }
 
@@ -150,39 +131,27 @@ public class BookUploadFragment extends BaseFragment
                         getString(R.string.message_book_resume, googleBookBody.getTitle(),
                                 googleBookBody.getAuthors(), googleBookBody.getPublishedDate())
                 )
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        subscribeToFragment(BookModel.registerNewBook(googleBookBody)
-                                .doOnError(new Action1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable t) {
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    subscribeToFragment(BookModel.registerNewBook(googleBookBody)
+                            .doOnError(t -> ViewUtil.showSnackbarMessage(mBinding,
+                                    t.getLocalizedMessage()))
+                            .subscribe(response -> {
+                                if (response.isSuccess()) {
+                                    Toast.makeText(getContext(), "Done!", Toast.LENGTH_LONG)
+                                            .show();
+                                } else {
+                                    MessageResponse messageResponse = ErrorUtil
+                                            .parseError(MessageResponse.class, response);
+                                    if (messageResponse != null) {
                                         ViewUtil.showSnackbarMessage(mBinding,
-                                                t.getLocalizedMessage());
+                                                messageResponse.getMessage());
+                                    } else {
+                                        ViewUtil.showSnackbarMessage(mBinding,
+                                                getString(R.string.error_general,
+                                                        String.valueOf(response.code())));
                                     }
-                                })
-                                .subscribe(new Action1<Response<MessageResponse>>() {
-                                    @Override
-                                    public void call(
-                                            Response<MessageResponse> response) {
-                                        if (response.isSuccess()) {
-                                            Toast.makeText(getContext(), "Done!", Toast.LENGTH_LONG)
-                                                    .show();
-                                        } else {
-                                            MessageResponse messageResponse = ErrorUtil
-                                                    .parseError(MessageResponse.class, response);
-                                            if (messageResponse != null) {
-                                                ViewUtil.showSnackbarMessage(mBinding,
-                                                        messageResponse.getMessage());
-                                            } else {
-                                                ViewUtil.showSnackbarMessage(mBinding,
-                                                        getString(R.string.error_general,
-                                                                String.valueOf(response.code())));
-                                            }
-                                        }
-                                    }
-                                }));
-                    }
+                                }
+                            }));
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

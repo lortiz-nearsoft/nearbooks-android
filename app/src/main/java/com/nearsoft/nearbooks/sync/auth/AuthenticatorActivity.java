@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -52,12 +51,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
             mAuthTokenType = AccountGeneral.AUTH_TOKEN_TYPE_FULL_ACCESS;
         }
 
-        mBinding.signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });
+        mBinding.signInButton.setOnClickListener(v -> signIn());
     }
 
     @Override

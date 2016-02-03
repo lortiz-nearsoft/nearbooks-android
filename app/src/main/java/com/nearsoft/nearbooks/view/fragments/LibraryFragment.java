@@ -3,7 +3,6 @@ package com.nearsoft.nearbooks.view.fragments;
 import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -99,12 +98,7 @@ public class LibraryFragment
                              ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentLibraryBinding.inflate(inflater, container, false);
 
-        mBinding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startQRScanner();
-            }
-        });
+        mBinding.fab.setOnClickListener(view -> startQRScanner());
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
         boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
@@ -117,12 +111,7 @@ public class LibraryFragment
         mBinding.recyclerViewBooks.setAdapter(mBookRecyclerViewCursorAdapter);
 
         mBinding.swipeRefreshLayout.setOnRefreshListener(this);
-        mBinding.textViewEmpty.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onRefresh();
-            }
-        });
+        mBinding.textViewEmpty.setOnClickListener(v -> onRefresh());
 
         return mBinding.getRoot();
     }
@@ -193,13 +182,10 @@ public class LibraryFragment
                                 )
                 );
         mSearchView.setIconifiedByDefault(true);
-        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    mSearchView.setIconified(true);
-                    mSearchView.setQuery("", false);
-                }
+        mSearchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                mSearchView.setIconified(true);
+                mSearchView.setQuery("", false);
             }
         });
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -229,16 +215,13 @@ public class LibraryFragment
     public void onSyncChange(final boolean isSyncing) {
         BaseActivity baseActivity = getBaseActivity();
         if (baseActivity != null) {
-            mBinding.swipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (!mBinding.swipeRefreshLayout.isRefreshing() && isSyncing) {
-                        mBinding.swipeRefreshLayout.setRefreshing(true);
-                    } else if (mBinding.swipeRefreshLayout.isRefreshing() && !isSyncing) {
-                        mBinding.swipeRefreshLayout.setRefreshing(false);
-                    }
-                    updateUI();
+            mBinding.swipeRefreshLayout.post(() -> {
+                if (!mBinding.swipeRefreshLayout.isRefreshing() && isSyncing) {
+                    mBinding.swipeRefreshLayout.setRefreshing(true);
+                } else if (mBinding.swipeRefreshLayout.isRefreshing() && !isSyncing) {
+                    mBinding.swipeRefreshLayout.setRefreshing(false);
                 }
+                updateUI();
             });
         }
     }
@@ -283,71 +266,68 @@ public class LibraryFragment
             if (book != null) {
                 new AlertDialog.Builder(getContext())
                         .setTitle(book.getTitle())
-                        .setItems(R.array.actions_book, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case ACTION_REQUEST:
-                                        subscribeToFragment(BookModel.requestBookToBorrow(
-                                                mLazyUser.get(), qrCode)
-                                                .subscribe(new Subscriber<Response<Borrow>>() {
-                                                    @Override
-                                                    public void onCompleted() {
-                                                    }
+                        .setItems(R.array.actions_book, (dialog, which) -> {
+                            switch (which) {
+                                case ACTION_REQUEST:
+                                    subscribeToFragment(BookModel.requestBookToBorrow(
+                                            mLazyUser.get(), qrCode)
+                                            .subscribe(new Subscriber<Response<Borrow>>() {
+                                                @Override
+                                                public void onCompleted() {
+                                                }
 
-                                                    @Override
-                                                    public void onError(Throwable t) {
-                                                        ViewUtil.showSnackbarMessage(mBinding,
-                                                                t.getLocalizedMessage());
-                                                    }
+                                                @Override
+                                                public void onError(Throwable t) {
+                                                    ViewUtil.showSnackbarMessage(mBinding,
+                                                            t.getLocalizedMessage());
+                                                }
 
-                                                    @Override
-                                                    public void onNext(Response<Borrow> response) {
-                                                        if (response.isSuccess()) {
-                                                            Borrow borrow = response.body();
-                                                            switch (borrow.getStatus()) {
-                                                                case Borrow.STATUS_REQUESTED:
-                                                                    ViewUtil.showSnackbarMessage(
-                                                                            mBinding,
-                                                                            getString(R.string.message_book_requested));
-                                                                    break;
-                                                                case Borrow.STATUS_ACTIVE:
-                                                                    ViewUtil.showSnackbarMessage(
-                                                                            mBinding,
-                                                                            getString(R.string.message_book_active));
-                                                                    break;
-                                                                case Borrow.STATUS_CANCELLED:
-                                                                case Borrow.STATUS_COMPLETED:
-                                                                default:
-                                                                    break;
-                                                            }
+                                                @Override
+                                                public void onNext(Response<Borrow> response) {
+                                                    if (response.isSuccess()) {
+                                                        Borrow borrow = response.body();
+                                                        switch (borrow.getStatus()) {
+                                                            case Borrow.STATUS_REQUESTED:
+                                                                ViewUtil.showSnackbarMessage(
+                                                                        mBinding,
+                                                                        getString(R.string.message_book_requested));
+                                                                break;
+                                                            case Borrow.STATUS_ACTIVE:
+                                                                ViewUtil.showSnackbarMessage(
+                                                                        mBinding,
+                                                                        getString(R.string.message_book_active));
+                                                                break;
+                                                            case Borrow.STATUS_CANCELLED:
+                                                            case Borrow.STATUS_COMPLETED:
+                                                            default:
+                                                                break;
+                                                        }
+                                                    } else {
+                                                        MessageResponse messageResponse = ErrorUtil
+                                                                .parseError(MessageResponse.class, response);
+                                                        if (messageResponse != null) {
+                                                            ViewUtil.showSnackbarMessage(
+                                                                    mBinding,
+                                                                    messageResponse
+                                                                            .getMessage());
                                                         } else {
-                                                            MessageResponse messageResponse = ErrorUtil
-                                                                    .parseError(MessageResponse.class, response);
-                                                            if (messageResponse != null) {
-                                                                ViewUtil.showSnackbarMessage(
-                                                                        mBinding,
-                                                                        messageResponse
-                                                                                .getMessage());
-                                                            } else {
-                                                                ViewUtil.showSnackbarMessage(
-                                                                        mBinding,
-                                                                        getString(R.string.error_general,
-                                                                                String.valueOf(response.code())));
-                                                            }
+                                                            ViewUtil.showSnackbarMessage(
+                                                                    mBinding,
+                                                                    getString(R.string.error_general,
+                                                                            String.valueOf(response.code())));
                                                         }
                                                     }
-                                                }));
-                                        break;
-                                    case ACTION_CHECK_IN:
-                                        subscribeToFragment(BookModel.doBookCheckIn(mBinding,
-                                                mLazyUser.get(), qrCode));
-                                        break;
-                                    case ACTION_CHECK_OUT:
-                                        subscribeToFragment(BookModel.doBookCheckOut(mBinding,
-                                                mLazyUser.get(), qrCode));
-                                        break;
-                                }
+                                                }
+                                            }));
+                                    break;
+                                case ACTION_CHECK_IN:
+                                    subscribeToFragment(BookModel.doBookCheckIn(mBinding,
+                                            mLazyUser.get(), qrCode));
+                                    break;
+                                case ACTION_CHECK_OUT:
+                                    subscribeToFragment(BookModel.doBookCheckOut(mBinding,
+                                            mLazyUser.get(), qrCode));
+                                    break;
                             }
                         })
                         .show();

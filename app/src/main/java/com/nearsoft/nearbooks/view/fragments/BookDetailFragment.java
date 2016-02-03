@@ -86,74 +86,66 @@ public class BookDetailFragment extends BaseFragment {
 
         setupActionBar(mBinding.toolbar);
 
-        mBinding.toolbar.post(new Runnable() {
-            @Override
-            public void run() {
-                boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
-                if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getBaseActivity()
-                            .getWindow().setStatusBarColor(mColorsWrapper.getBackgroundColor());
-                }
-                ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar,
-                        mColorsWrapper.getTitleTextColor(), getBaseActivity());
+        mBinding.toolbar.post(() -> {
+            boolean isLandscape = getResources().getBoolean(R.bool.isLandscape);
+            if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getBaseActivity()
+                        .getWindow().setStatusBarColor(mColorsWrapper.getBackgroundColor());
             }
+            ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar,
+                    mColorsWrapper.getTitleTextColor(), getBaseActivity());
         });
 
         ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER);
         ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR);
 
-        mBinding.fabRequestBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                subscribeToFragment(BookModel.requestBookToBorrow(mLazyUser.get(),
-                        mBook.getId() + "-0")
-                        .subscribe(new Subscriber<Response<Borrow>>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+        mBinding.fabRequestBook.setOnClickListener(view -> subscribeToFragment(BookModel.requestBookToBorrow(mLazyUser.get(),
+                mBook.getId() + "-0")
+                .subscribe(new Subscriber<Response<Borrow>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-                            @Override
-                            public void onError(Throwable t) {
-                                ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
-                            }
+                    @Override
+                    public void onError(Throwable t) {
+                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
+                    }
 
-                            @Override
-                            public void onNext(Response<Borrow> response) {
-                                if (response.isSuccess()) {
-                                    Borrow borrow = response.body();
-                                    mBinding.setBorrow(borrow);
-                                    mBinding.executePendingBindings();
-                                    switch (borrow.getStatus()) {
-                                        case Borrow.STATUS_REQUESTED:
-                                            ViewUtil.showSnackbarMessage(mBinding,
-                                                    getString(R.string.message_book_requested));
-                                            break;
-                                        case Borrow.STATUS_ACTIVE:
-                                            ViewUtil.showSnackbarMessage(mBinding,
-                                                    getString(R.string.message_book_active));
-                                            break;
-                                        case Borrow.STATUS_CANCELLED:
-                                        case Borrow.STATUS_COMPLETED:
-                                        default:
-                                            break;
-                                    }
-                                    mBinding.fabRequestBook.hide();
-                                } else {
-                                    MessageResponse messageResponse = ErrorUtil
-                                            .parseError(MessageResponse.class, response);
-                                    if (messageResponse != null) {
-                                        ViewUtil.showSnackbarMessage(mBinding,
-                                                messageResponse.getMessage());
-                                    } else {
-                                        ViewUtil.showSnackbarMessage(mBinding,
-                                                getString(R.string.error_general,
-                                                        String.valueOf(response.code())));
-                                    }
-                                }
+                    @Override
+                    public void onNext(Response<Borrow> response) {
+                        if (response.isSuccess()) {
+                            Borrow borrow = response.body();
+                            mBinding.setBorrow(borrow);
+                            mBinding.executePendingBindings();
+                            switch (borrow.getStatus()) {
+                                case Borrow.STATUS_REQUESTED:
+                                    ViewUtil.showSnackbarMessage(mBinding,
+                                            getString(R.string.message_book_requested));
+                                    break;
+                                case Borrow.STATUS_ACTIVE:
+                                    ViewUtil.showSnackbarMessage(mBinding,
+                                            getString(R.string.message_book_active));
+                                    break;
+                                case Borrow.STATUS_CANCELLED:
+                                case Borrow.STATUS_COMPLETED:
+                                default:
+                                    break;
                             }
-                        }));
-            }
-        });
+                            mBinding.fabRequestBook.hide();
+                        } else {
+                            MessageResponse messageResponse = ErrorUtil
+                                    .parseError(MessageResponse.class, response);
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(mBinding,
+                                        messageResponse.getMessage());
+                            } else {
+                                ViewUtil.showSnackbarMessage(mBinding,
+                                        getString(R.string.error_general,
+                                                String.valueOf(response.code())));
+                            }
+                        }
+                    }
+                })));
 
         Picasso.with(getContext())
                 .load(getString(R.string.url_book_cover_thumbnail, mBook.getId()))
