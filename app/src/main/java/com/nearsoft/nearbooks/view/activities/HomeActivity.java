@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityHomeBinding;
@@ -43,19 +42,12 @@ public class HomeActivity
         mBinding.drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        mBinding.linearLayoutSignOutMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserModel.signOut(HomeActivity.this, mLazyUser.get(), mGoogleApiClient, new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-            }
-        });
+        mBinding.linearLayoutSignOutMenu.setOnClickListener(v ->
+                UserModel.signOut(HomeActivity.this, mLazyUser.get(), mGoogleApiClient, () -> {
+                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }));
 
         NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
                 .inflate(getLayoutInflater());

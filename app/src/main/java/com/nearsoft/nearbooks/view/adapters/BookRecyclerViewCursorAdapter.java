@@ -20,8 +20,6 @@ import com.raizlabs.android.dbflow.sql.language.Where;
 
 import javax.inject.Inject;
 
-import rx.functions.Action1;
-
 /**
  * Recycler view cursor adapter.
  * Created by epool on 12/17/15.
@@ -105,12 +103,9 @@ public class BookRecyclerViewCursorAdapter
 
             ViewUtil.loadImageFromUrl(mBinding.imageViewBookCover,
                     context.getString(R.string.url_book_cover_thumbnail, book.getId()))
-                    .subscribe(new Action1<ColorsWrapper>() {
-                        @Override
-                        public void call(ColorsWrapper colorsWrapper) {
-                            mBinding.setColors(colorsWrapper);
-                            mBinding.executePendingBindings();
-                        }
+                    .subscribe(colorsWrapper -> {
+                        mBinding.setColors(colorsWrapper);
+                        mBinding.executePendingBindings();
                     });
         }
 
