@@ -26,6 +26,10 @@ public interface BookService {
     @GET("books")
     Observable<List<Book>> getAllBooks();
 
+    // TODO update this endpoint url if necessary after the backend implementation
+    @POST("book/new")
+    Observable<Response<MessageResponse>> registerNewBook(@Body GoogleBookBody googleBookBody);
+
     @GET("borrows/availability/codeqr/{codeQr}")
     Observable<Response<AvailabilityResponse>> getBookAvailability(@Path("codeQr") String codeQr);
 
@@ -37,8 +41,5 @@ public interface BookService {
 
     @PUT("borrows/checkout")
     Observable<Response<MessageResponse>> checkOutBook(@Body RequestBody requestBody);
-
-    @POST("book/create")
-    Observable<Response<MessageResponse>> registerNewBook(@Body GoogleBookBody googleBookBody);
 
 }

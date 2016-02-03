@@ -18,14 +18,18 @@ import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentUploadBookBinding;
 import com.nearsoft.nearbooks.databinding.ItemGoogleBooksVolumeBinding;
+import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.GoogleBooksModel;
+import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation;
 import com.nearsoft.nearbooks.view.adapters.GoogleBooksVolumeAdapter;
 import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
+import com.nearsoft.nearbooks.ws.responses.MessageResponse;
 
 import java.util.List;
 
+import retrofit2.Response;
 import rx.functions.Action1;
 
 /**
@@ -138,7 +142,7 @@ public class BookUploadFragment extends BaseFragment
 
     @Override
     public void onGoogleBookItemClicked(ItemGoogleBooksVolumeBinding binding) {
-        GoogleBookBody googleBookBody = binding.getBook();
+        final GoogleBookBody googleBookBody = binding.getBook();
         new AlertDialog
                 .Builder(getContext())
                 .setTitle(R.string.question_register_new_book)
@@ -149,8 +153,35 @@ public class BookUploadFragment extends BaseFragment
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO Send the book to save in the server
-                        Toast.makeText(getContext(), "Done!", Toast.LENGTH_LONG).show();
+                        subscribeToFragment(BookModel.registerNewBook(googleBookBody)
+                                .doOnError(new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable t) {
+                                        ViewUtil.showSnackbarMessage(mBinding,
+                                                t.getLocalizedMessage());
+                                    }
+                                })
+                                .subscribe(new Action1<Response<MessageResponse>>() {
+                                    @Override
+                                    public void call(
+                                            Response<MessageResponse> response) {
+                                        if (response.isSuccess()) {
+                                            Toast.makeText(getContext(), "Done!", Toast.LENGTH_LONG)
+                                                    .show();
+                                        } else {
+                                            MessageResponse messageResponse = ErrorUtil
+                                                    .parseError(MessageResponse.class, response);
+                                            if (messageResponse != null) {
+                                                ViewUtil.showSnackbarMessage(mBinding,
+                                                        messageResponse.getMessage());
+                                            } else {
+                                                ViewUtil.showSnackbarMessage(mBinding,
+                                                        getString(R.string.error_general,
+                                                                String.valueOf(response.code())));
+                                            }
+                                        }
+                                    }
+                                }));
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
