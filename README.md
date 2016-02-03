@@ -13,6 +13,7 @@ Nearbooks Android client for manage the books lending in nearsoft. This Android 
 4. Paste your fork URL in the `Git Repository Url` field.
 5. Do any contribution in the `develop` branch from your fork.
 6. Create a pull request from your fork to the [develop branch](https://github.com/Nearsoft/nearbooks-android/tree/develop) of this repository.
+   - See [this](http://danielkummer.github.io/git-flow-cheatsheet/) git working flow for more info.
 
 ## Libraries used
 - [Android data binding](developer.android.com/tools/data-binding/guide.html) for View Model binding.
