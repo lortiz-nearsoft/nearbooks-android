@@ -141,11 +141,10 @@ public class BookUploadFragment extends BaseFragment
         GoogleBookBody googleBookBody = binding.getBook();
         new AlertDialog
                 .Builder(getContext())
-                .setTitle("Are you sure you want to register this book?")
+                .setTitle(R.string.question_register_new_book)
                 .setMessage(
-                        "Title: " + googleBookBody.getTitle() + "\n" +
-                                "Authors: " + googleBookBody.getAuthors() + "\n" +
-                                "Publish date: " + googleBookBody.getPublishedDate()
+                        getString(R.string.message_book_resume, googleBookBody.getTitle(),
+                                googleBookBody.getAuthors(), googleBookBody.getPublishedDate())
                 )
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
