@@ -14,9 +14,11 @@ import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
+import com.nearsoft.nearbooks.ws.responses.googlebooks.Volume;
 import com.raizlabs.android.dbflow.runtime.TransactionManager;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -184,6 +186,13 @@ public class BookModel {
                         }
                     }
                 });
+    }
+
+    public static Observable<Response<MessageResponse>> registerNewBook(Volume volume) {
+        GoogleBookBody googleBookBody = new GoogleBookBody(volume);
+        return mBookService.registerNewBook(googleBookBody)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 
 }

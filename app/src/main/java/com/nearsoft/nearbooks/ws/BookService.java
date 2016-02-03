@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.ws;
 
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
@@ -36,5 +37,8 @@ public interface BookService {
 
     @PUT("borrows/checkout")
     Observable<Response<MessageResponse>> checkOutBook(@Body RequestBody requestBody);
+
+    @POST("book/create")
+    Observable<Response<MessageResponse>> registerNewBook(@Body GoogleBookBody googleBookBody);
 
 }

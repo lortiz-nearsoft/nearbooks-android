@@ -19,7 +19,7 @@ public class ErrorUtil {
 
     private static Retrofit sRetrofit = NearbooksApplication
             .getNearbooksApplicationComponent()
-            .provideRetrofit();
+            .provideNearbooksRetrofit();
 
     public static <T> T parseError(Class<T> responseClass, Response<?> response) {
         Converter<ResponseBody, T> converter = sRetrofit

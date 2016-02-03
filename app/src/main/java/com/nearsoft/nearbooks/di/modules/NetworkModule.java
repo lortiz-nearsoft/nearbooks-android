@@ -8,9 +8,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nearsoft.nearbooks.config.Configuration;
+import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gson.BookForeignKeyContainerSerializer;
 import com.nearsoft.nearbooks.other.StethoInterceptor;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.GoogleBooksService;
 import com.raizlabs.android.dbflow.structure.ModelAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -32,6 +34,9 @@ import retrofit2.RxJavaCallAdapterFactory;
  */
 @Module
 public class NetworkModule {
+
+    public final static String NAME_RETROFIT_NEARBOOKS = "NAME_RETROFIT_NEARBOOKS";
+    private final static String NAME_RETROFIT_GOOGLE_BOOKS = "NAME_RETROFIT_GOOGLE_BOOKS";
 
     private final static long SECONDS_TIMEOUT = 20;
 
@@ -95,21 +100,45 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public Retrofit provideRetrofit(Configuration configuration, Gson gson,
-                                    OkHttpClient okHttpClient) {
+    public Retrofit.Builder provideRetrofitBuilder(Gson gson, OkHttpClient okHttpClient) {
         return new Retrofit
                 .Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(okHttpClient);
+    }
+
+    @Named(NAME_RETROFIT_NEARBOOKS)
+    @Provides
+    @Singleton
+    public Retrofit provideNearbooksRetrofit(Retrofit.Builder builder,
+                                             Configuration configuration) {
+        return builder
                 .baseUrl(configuration.getWebServiceUrl())
-                .client(okHttpClient)
+                .build();
+    }
+
+    @Named(NAME_RETROFIT_GOOGLE_BOOKS)
+    @Provides
+    @Singleton
+    public Retrofit provideGoogleBooksRetrofit(Retrofit.Builder builder,
+                                               Configuration configuration) {
+        return builder
+                .baseUrl(configuration.getGoogleBooksApiUrl())
                 .build();
     }
 
     @Provides
     @Singleton
-    public BookService provideBookService(Retrofit retrofit) {
+    public BookService provideBookService(@Named(NAME_RETROFIT_NEARBOOKS) Retrofit retrofit) {
         return retrofit.create(BookService.class);
+    }
+
+    @Provides
+    @Singleton
+    public GoogleBooksService provideGoogleBooksService(
+            @Named(NAME_RETROFIT_GOOGLE_BOOKS) Retrofit retrofit) {
+        return retrofit.create(GoogleBooksService.class);
     }
 
     @Provides
