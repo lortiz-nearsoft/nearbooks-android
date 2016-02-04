@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.nearsoft.nearbooks.util.Util"/>
+
         <variable
             name="user"
             type="com.nearsoft.nearbooks.models.sqlite.User"/>
@@ -34,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/nav_header_vertical_spacing"
-            android:text="@string/app_name"
+            android:text="@{Util.getApplicationVersion(context)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
         <TextView

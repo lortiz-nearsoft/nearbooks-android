@@ -8,13 +8,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.common.Constants;
 import com.nearsoft.nearbooks.databinding.ActivityHomeBinding;
 import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.databinding.NavHeaderHomeBinding;
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
+import com.nearsoft.nearbooks.models.SharedPreferenceModel;
 import com.nearsoft.nearbooks.models.UserModel;
+import com.nearsoft.nearbooks.util.TapsEasterEggHandler;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 import com.nearsoft.nearbooks.view.fragments.BookUploadFragment;
@@ -51,6 +55,7 @@ public class HomeActivity
 
         NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
                 .inflate(getLayoutInflater());
+        setupEasterEgg(navHeaderHomeBinding.imageView);
         navHeaderHomeBinding.setUser(mLazyUser.get());
         navHeaderHomeBinding.executePendingBindings();
         mBinding.navView.addHeaderView(navHeaderHomeBinding.getRoot());
@@ -69,6 +74,27 @@ public class HomeActivity
                     )
                     .commit();
         }
+    }
+
+    private void setupEasterEgg(ImageView imageView) {
+        TapsEasterEggHandler.with(
+                this,
+                imageView,
+                SharedPreferenceModel.PREFERENCE_IS_UPLOAD_BOOKS_MENU_SHOWN
+        )
+                .enableMessageRes(R.string.message_upload_books_menu_enabled)
+                .counterMessageRes(R.string.message_steps_to_enable_upload_books_menu)
+                .password(Constants.NEARBOOKS_MANAGER_PASSWORD)
+                .actionToHandle(this::showRegisterBookMenu)
+                .build();
+    }
+
+    private void showRegisterBookMenu() {
+        mBinding
+                .navView
+                .getMenu()
+                .findItem(R.id.nav_register_book)
+                .setVisible(true);
     }
 
     @Override
@@ -101,7 +127,7 @@ public class HomeActivity
             case R.id.nav_library:
                 baseFragment = LibraryFragment.newInstance();
                 break;
-            case R.id.nav_book_upload:
+            case R.id.nav_register_book:
                 baseFragment = BookUploadFragment.newInstance();
                 break;
         }

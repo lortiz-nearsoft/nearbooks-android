@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
@@ -132,8 +133,23 @@ public class ViewUtil {
         return null;
     }
 
-    public static void showSnackbarMessage(ViewDataBinding viewDataBinding, String message) {
-        Snackbar.make(viewDataBinding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+    public static Snackbar showSnackbarMessage(ViewDataBinding viewDataBinding, String message) {
+        Snackbar snackbar = Snackbar.make(viewDataBinding.getRoot(), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
+        return snackbar;
+    }
+
+    public static Toast showToastMessage(Context context, String message) {
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+        toast.show();
+        return toast;
+    }
+
+    public static Toast showToastMessage(Context context, int messageRes, Object... formatArgs) {
+        Toast toast = Toast
+                .makeText(context, context.getString(messageRes, formatArgs), Toast.LENGTH_LONG);
+        toast.show();
+        return toast;
     }
 
     public static class Toolbar {

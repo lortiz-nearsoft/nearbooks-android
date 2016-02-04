@@ -2,7 +2,6 @@ package com.nearsoft.nearbooks.gcm;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -11,10 +10,9 @@ import com.google.android.gms.iid.InstanceID;
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.common.Constants;
+import com.nearsoft.nearbooks.models.SharedPreferenceModel;
 
 import java.io.IOException;
-
-import javax.inject.Inject;
 
 /**
  * Registration intent service.
@@ -23,9 +21,6 @@ import javax.inject.Inject;
 public class NearbooksRegistrationIntentService extends IntentService {
 
     private static final String TAG = NearbooksRegistrationIntentService.class.getSimpleName();
-
-    @Inject
-    SharedPreferences mSharedPreferences;
 
     public NearbooksRegistrationIntentService() {
         super(TAG);
@@ -40,16 +35,16 @@ public class NearbooksRegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             Log.i(TAG, "GCM Registration Token: " + token);
 
-            mSharedPreferences
-                    .edit()
-                    .putBoolean(Constants.SENT_TOKEN_TO_SERVER, registerTokenInServer(token))
-                    .apply();
+            SharedPreferenceModel.putBoolean(
+                    SharedPreferenceModel.PREFERENCE_IS_GCM_TOKEN_SENT_TO_SERVER,
+                    registerTokenInServer(token)
+            );
         } catch (IOException e) {
             e.printStackTrace();
-            mSharedPreferences
-                    .edit()
-                    .putBoolean(Constants.SENT_TOKEN_TO_SERVER, false)
-                    .apply();
+            SharedPreferenceModel.putBoolean(
+                    SharedPreferenceModel.PREFERENCE_IS_GCM_TOKEN_SENT_TO_SERVER,
+                    false
+            );
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
         Intent registrationComplete = new Intent(Constants.REGISTRATION_COMPLETE);
