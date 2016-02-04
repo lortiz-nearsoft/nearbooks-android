@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
@@ -31,8 +32,6 @@ import java.util.ArrayList;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -41,7 +40,8 @@ import rx.schedulers.Schedulers;
  */
 public class ViewUtil {
 
-    public static Observable<Bitmap> loadBitmapFromUrlImage(final Context context, final String url) {
+    public static Observable<Bitmap> loadBitmapFromUrlImage(final Context context,
+                                                            final String url) {
         return Observable.create(new Observable.OnSubscribe<Bitmap>() {
             @Override
             public void call(Subscriber<? super Bitmap> subscriber) {
@@ -59,27 +59,19 @@ public class ViewUtil {
 
     public static Observable<Palette> getPaletteFromUrlImage(Context context, String url) {
         return loadBitmapFromUrlImage(context, url)
-                .map(new Func1<Bitmap, Palette>() {
-                    @Override
-                    public Palette call(Bitmap bitmap) {
-                        return Palette.from(bitmap).generate();
-                    }
-                });
+                .map(bitmap -> Palette.from(bitmap).generate());
     }
 
     public static Observable<ColorsWrapper> getColorsWrapperFromUrlImage(final Context context,
                                                                          String url) {
         return getPaletteFromUrlImage(context, url)
-                .map(new Func1<Palette, ColorsWrapper>() {
-                    @Override
-                    public ColorsWrapper call(Palette palette) {
-                        int defaultColor = ContextCompat
-                                .getColor(context, R.color
-                                        .colorPrimary);
-                        return ViewUtil
-                                .getVibrantPriorityColorSwatchPair(palette,
-                                        defaultColor);
-                    }
+                .map(palette -> {
+                    int defaultColor = ContextCompat
+                            .getColor(context, R.color
+                                    .colorPrimary);
+                    return ViewUtil
+                            .getVibrantPriorityColorSwatchPair(palette,
+                                    defaultColor);
                 });
     }
 
@@ -100,12 +92,9 @@ public class ViewUtil {
                         ViewUtil.getColorsWrapperFromUrlImage(context, url)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Action1<ColorsWrapper>() {
-                                    @Override
-                                    public void call(ColorsWrapper colorsWrapper) {
-                                        subscriber.onNext(colorsWrapper);
-                                        subscriber.onCompleted();
-                                    }
+                                .subscribe(colorsWrapper -> {
+                                    subscriber.onNext(colorsWrapper);
+                                    subscriber.onCompleted();
                                 });
                     }
 
@@ -144,8 +133,23 @@ public class ViewUtil {
         return null;
     }
 
-    public static void showSnackbarMessage(ViewDataBinding viewDataBinding, String message) {
-        Snackbar.make(viewDataBinding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+    public static Snackbar showSnackbarMessage(ViewDataBinding viewDataBinding, String message) {
+        Snackbar snackbar = Snackbar.make(viewDataBinding.getRoot(), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
+        return snackbar;
+    }
+
+    public static Toast showToastMessage(Context context, String message) {
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+        toast.show();
+        return toast;
+    }
+
+    public static Toast showToastMessage(Context context, int messageRes, Object... formatArgs) {
+        Toast toast = Toast
+                .makeText(context, context.getString(messageRes, formatArgs), Toast.LENGTH_LONG);
+        toast.show();
+        return toast;
     }
 
     public static class Toolbar {
@@ -188,14 +192,9 @@ public class ViewUtil {
                                     //Important to set the color filter in seperate thread,
                                     //by adding it to the message queue
                                     //Won't work otherwise.
-                                    innerView.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ((ActionMenuItemView) innerView)
-                                                    .getCompoundDrawables()[finalK]
-                                                    .setColorFilter(colorFilter);
-                                        }
-                                    });
+                                    innerView.post(() -> ((ActionMenuItemView) innerView)
+                                            .getCompoundDrawables()[finalK]
+                                            .setColorFilter(colorFilter));
                                 }
                             }
                         }
@@ -225,20 +224,21 @@ public class ViewUtil {
                     .getString(R.string.abc_action_menu_overflow_description);
             final ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
             final ViewTreeObserver viewTreeObserver = decorView.getViewTreeObserver();
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    final ArrayList<View> outViews = new ArrayList<>();
-                    decorView.findViewsWithText(outViews, overflowDescription,
-                            View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
-                    if (outViews.isEmpty()) {
-                        return;
-                    }
-                    ImageView overflow = (ImageView) outViews.get(0);
-                    overflow.setColorFilter(colorFilter);
-                    removeOnGlobalLayoutListener(decorView, this);
-                }
-            });
+            viewTreeObserver.addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            final ArrayList<View> outViews = new ArrayList<>();
+                            decorView.findViewsWithText(outViews, overflowDescription,
+                                    View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+                            if (outViews.isEmpty()) {
+                                return;
+                            }
+                            ImageView overflow = (ImageView) outViews.get(0);
+                            overflow.setColorFilter(colorFilter);
+                            removeOnGlobalLayoutListener(decorView, this);
+                        }
+                    });
         }
 
         @SuppressWarnings("deprecation")

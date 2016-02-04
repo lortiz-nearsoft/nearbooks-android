@@ -1,7 +1,6 @@
 package com.nearsoft.nearbooks.view.adapters;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +19,6 @@ import com.raizlabs.android.dbflow.list.FlowCursorList;
 import com.raizlabs.android.dbflow.sql.language.Where;
 
 import javax.inject.Inject;
-
-import rx.functions.Action1;
 
 /**
  * Recycler view cursor adapter.
@@ -56,11 +53,7 @@ public class BookRecyclerViewCursorAdapter
 
     @Override
     public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        BookItemBinding binding = DataBindingUtil
-                .inflate(
-                        LayoutInflater.from(parent.getContext()),
-                        R.layout.book_item, parent, false
-                );
+        BookItemBinding binding = BookItemBinding.inflate(LayoutInflater.from(parent.getContext()));
         return new BookViewHolder(binding);
     }
 
@@ -110,12 +103,9 @@ public class BookRecyclerViewCursorAdapter
 
             ViewUtil.loadImageFromUrl(mBinding.imageViewBookCover,
                     context.getString(R.string.url_book_cover_thumbnail, book.getId()))
-                    .subscribe(new Action1<ColorsWrapper>() {
-                        @Override
-                        public void call(ColorsWrapper colorsWrapper) {
-                            mBinding.setColors(colorsWrapper);
-                            mBinding.executePendingBindings();
-                        }
+                    .subscribe(colorsWrapper -> {
+                        mBinding.setColors(colorsWrapper);
+                        mBinding.executePendingBindings();
                     });
         }
 

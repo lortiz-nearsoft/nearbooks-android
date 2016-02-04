@@ -6,8 +6,8 @@ package com.nearsoft.nearbooks.common;
  */
 public interface Constants {
 
-    String REGISTRATION_COMPLETE = "REGISTRATION_COMPLETE";
+    String NEARBOOKS_MANAGER_PASSWORD = "admin";
 
-    String SENT_TOKEN_TO_SERVER = "SENT_TOKEN_TO_SERVER";
+    String REGISTRATION_COMPLETE = "REGISTRATION_COMPLETE";
 
 }

@@ -6,9 +6,11 @@ import com.google.gson.Gson;
 import com.nearsoft.nearbooks.config.Configuration;
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
 import com.nearsoft.nearbooks.di.modules.NetworkModule;
+import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.GoogleBooksService;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
@@ -32,12 +34,15 @@ public interface NearbooksApplicationComponent {
 
     BookService providesBookService();
 
+    GoogleBooksService provideGoogleBooksService();
+
     Gson provideGson();
 
     SharedPreferences provideDefaultSharedPreferences();
 
     Picasso providePicasso();
 
-    Retrofit provideRetrofit();
+    @Named(NetworkModule.NAME_RETROFIT_NEARBOOKS)
+    Retrofit provideNearbooksRetrofit();
 
 }

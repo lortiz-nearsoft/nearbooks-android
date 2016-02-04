@@ -14,6 +14,7 @@ import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
@@ -44,14 +45,11 @@ public class BookModel {
     public static void cacheBooks(final List<Book> books) {
         if (books == null || books.isEmpty()) return;
 
-        TransactionManager.transact(NearbooksDatabase.NAME, new Runnable() {
-            @Override
-            public void run() {
-                Delete.table(Book.class);
+        TransactionManager.transact(NearbooksDatabase.NAME, () -> {
+            Delete.table(Book.class);
 
-                for (Book book : books) {
-                    book.save();
-                }
+            for (Book book : books) {
+                book.save();
             }
         });
     }
@@ -172,8 +170,8 @@ public class BookModel {
                             MessageResponse messageResponse = response.body();
                             ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
                         } else {
-                            MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class,
-                                    response);
+                            MessageResponse messageResponse = ErrorUtil
+                                    .parseError(MessageResponse.class, response);
                             if (messageResponse != null) {
                                 ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
                             } else {
@@ -184,6 +182,13 @@ public class BookModel {
                         }
                     }
                 });
+    }
+
+    public static Observable<Response<MessageResponse>> registerNewBook(
+            GoogleBookBody googleBookBody) {
+        return mBookService.registerNewBook(googleBookBody)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 
 }

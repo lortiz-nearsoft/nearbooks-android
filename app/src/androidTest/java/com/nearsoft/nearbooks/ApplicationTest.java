@@ -9,9 +9,11 @@ import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.Borrow;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.ws.BookService;
+import com.nearsoft.nearbooks.ws.GoogleBooksService;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
+import com.nearsoft.nearbooks.ws.responses.googlebooks.GoogleBooksSearchResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +28,7 @@ import rx.observers.TestSubscriber;
 public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
 
     private BookService mBookService;
+    private GoogleBooksService mGoogleBooksService;
 
     public ApplicationTest() {
         super(NearbooksApplication.class);
@@ -39,6 +42,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
         NearbooksApplicationComponent nearbooksApplicationComponent = NearbooksApplication
                 .getNearbooksApplicationComponent();
         mBookService = nearbooksApplicationComponent.providesBookService();
+        mGoogleBooksService = nearbooksApplicationComponent.provideGoogleBooksService();
     }
 
     public void testBookService() throws IOException {
@@ -169,6 +173,25 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
             MessageResponse messageResponse = ErrorUtil.parseError(MessageResponse.class, response);
             assertNotNull(messageResponse);
         }
+    }
+
+    public void testGoogleBooksFindByIsbn() throws IOException {
+        Observable<Response<GoogleBooksSearchResponse>> observable = mGoogleBooksService
+                .findBooksByIsbn("9780321534460");
+
+        TestSubscriber<Response<GoogleBooksSearchResponse>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        List<Response<GoogleBooksSearchResponse>> responses = testSubscriber.getOnNextEvents();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
+
+        Response<GoogleBooksSearchResponse> response = responses.get(0);
+        assertNotNull(response);
+        assertTrue(response.isSuccess());
+        assertNotNull(response.body());
+        assertTrue(response.body().getTotalItems() > 0);
     }
 
 }

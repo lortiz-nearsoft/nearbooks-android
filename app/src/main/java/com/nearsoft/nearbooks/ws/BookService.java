@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.ws;
 
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
@@ -24,6 +25,10 @@ public interface BookService {
 
     @GET("books")
     Observable<List<Book>> getAllBooks();
+
+    // TODO update this endpoint url if necessary after the backend implementation
+    @POST("book/new")
+    Observable<Response<MessageResponse>> registerNewBook(@Body GoogleBookBody googleBookBody);
 
     @GET("borrows/availability/codeqr/{codeQr}")
     Observable<Response<AvailabilityResponse>> getBookAvailability(@Path("codeQr") String codeQr);

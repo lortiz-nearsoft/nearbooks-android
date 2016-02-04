@@ -3,7 +3,9 @@ package com.nearsoft.nearbooks.view.models.adapters;
 import android.databinding.BindingAdapter;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -33,6 +35,11 @@ public class ViewModelAdapter {
                                 .getResources()
                                 .getIntArray(colorsResource)
                 );
+    }
+
+    @BindingAdapter({"bind:html"})
+    public static void setTextFromHtml(TextView textView, String htmlString) {
+        textView.setText(Html.fromHtml(htmlString));
     }
 
 }

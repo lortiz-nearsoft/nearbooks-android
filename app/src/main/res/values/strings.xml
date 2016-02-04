@@ -1,14 +1,17 @@
 <resources>
     <string name="app_name">Nearbooks</string>
+    <string name="app_name_with_version">Nearbooks - v%1$s(%2$d)</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_library">Library</string>
+    <string name="title_register_book">Register Book</string>
     <string name="title_social">Social</string>
     <string name="title_share">Share</string>
 
     <string name="label_id">ID: %s</string>
+    <string name="label_author">Author: %s</string>
     <string name="label_year">Year: %s</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
     <string name="label_book_requested">Requested by %s</string>
@@ -18,12 +21,14 @@
     <string name="message_nearsoft_account_needed">You must use a nearsoft account email
         =(</string>
     <string name="message_scan_book_qr_code">Scan a book QR code</string>
+    <string name="message_scan_book_isbn_bar_code">Scan a book isbn bar code</string>
     <string name="message_book_requested">Your request is pending. Please do check in with the QR
         book</string>
     <string name="message_book_active">Book assigned to you, enjoy it! =D</string>
     <string name="message_google_play_services_required">You must have Google play services installed
         to use this application</string>
     <string name="message_no_book_description">There is no book description.</string>
+    <string name="message_book_resume">Title: %1$s\nAuthors: %2$s\nPublish date: %3$s</string>
 
     <string name="error_google_api">There was an error with google api: %d</string>
     <string name="error_general">There was an error: %s</string>
@@ -36,6 +41,18 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_sign_out">Sign out</string>
+
+    <string name="question_register_new_book">Are you sure you want to register this book?</string>
+    <string name="message_upload_books_menu_enabled">You are now a nearbooks manager =p</string>
+    <string name="message_steps_to_enable_upload_books_menu">You are now %1$d step away from being
+        a nearbooks manager</string>
+    <string name="hint_password">Password</string>
+    <string name="message_wrong_password">Wrong password =(</string>
+    <string name="title_activation_password">Please write the activation password</string>
+    <string name="message_empty_google_books_info">Use the below scanner button to obtain books
+        information from a ISBN bar code</string>
+    <string name="message_done">Done!</string>
+    <string name="message_getting_book_info">Getting book info&#8230;</string>
 
     <array name="actions_book">
         <item name="title_request">Request</item>

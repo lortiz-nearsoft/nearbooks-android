@@ -2,11 +2,8 @@ package com.nearsoft.nearbooks.models;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.api.Auth;
@@ -75,22 +72,16 @@ public class UserModel {
             accountManager.removeAccount(
                     account,
                     baseActivity,
-                    new AccountManagerCallback<Bundle>() {
-                        @Override
-                        public void run(AccountManagerFuture<Bundle> future) {
-                            if (future.isDone()) signOut(user, googleApiClient, onSignOutSuccess);
-                        }
+                    future -> {
+                        if (future.isDone()) signOut(user, googleApiClient, onSignOutSuccess);
                     },
                     null
             );
         } else {
             accountManager.removeAccount(
                     account,
-                    new AccountManagerCallback<Boolean>() {
-                        @Override
-                        public void run(AccountManagerFuture<Boolean> future) {
-                            if (future.isDone()) signOut(user, googleApiClient, onSignOutSuccess);
-                        }
+                    future -> {
+                        if (future.isDone()) signOut(user, googleApiClient, onSignOutSuccess);
                     },
                     null
             );
@@ -124,6 +115,7 @@ public class UserModel {
         if (onSignOutSuccess != null) {
             onSignOutSuccess.run();
         }
+        SharedPreferenceModel.clear();
     }
 
 }

@@ -1,11 +1,14 @@
 package com.nearsoft.nearbooks.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 
 /**
@@ -14,7 +17,21 @@ import com.nearsoft.nearbooks.view.activities.BaseActivity;
  */
 public class Util {
 
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static String getApplicationVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context
+                    .getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return context.getString(
+                    R.string.app_name_with_version,
+                    packageInfo.versionName,
+                    packageInfo.versionCode
+            );
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static boolean isThereInternetConnection(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context

@@ -13,10 +13,12 @@ public class Configuration {
 
     private final String mWebServiceUrl;
     private final String mGoogleServerClientId;
+    private final String mGoogleBooksApiUrl;
 
     private Configuration(Builder builder) {
         mWebServiceUrl = builder.mWebServiceUrl;
         mGoogleServerClientId = builder.mGoogleServerClientId;
+        mGoogleBooksApiUrl = builder.mGoogleBooksApiUrl;
     }
 
     public static Configuration getConfiguration(@Environment int environment) {
@@ -24,7 +26,8 @@ public class Configuration {
             case DEVELOPMENT:
             default:
                 return new Builder("http://nearbookdev.azurewebsites.net/api/",
-                        "130661059453-56utmg42k7ojq3a3v9sat13noojvm1uq.apps.googleusercontent.com")
+                        "130661059453-56utmg42k7ojq3a3v9sat13noojvm1uq.apps.googleusercontent.com",
+                        "https://www.googleapis.com/books/v1/")
                         .build();
         }
     }
@@ -37,6 +40,10 @@ public class Configuration {
         return mGoogleServerClientId;
     }
 
+    public String getGoogleBooksApiUrl() {
+        return mGoogleBooksApiUrl;
+    }
+
     @IntDef({DEVELOPMENT})
     private @interface Environment {
     }
@@ -45,10 +52,13 @@ public class Configuration {
 
         private final String mWebServiceUrl;
         private final String mGoogleServerClientId;
+        private final String mGoogleBooksApiUrl;
 
-        private Builder(@NonNull String webServiceUrl, @NonNull String googleServerClientId) {
+        private Builder(@NonNull String webServiceUrl, @NonNull String googleServerClientId,
+                        @NonNull String googleBooksApiUrl) {
             mWebServiceUrl = webServiceUrl;
             mGoogleServerClientId = googleServerClientId;
+            mGoogleBooksApiUrl = googleBooksApiUrl;
         }
 
         private Configuration build() {

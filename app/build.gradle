@@ -2,29 +2,34 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'io.fabric'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 'Google Inc.:Google APIs:23'
     buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.nearsoft.nearbooks"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 6
-        versionName "0.0.5.a"
+        versionCode 7
+        versionName "0.0.6.a"
 
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     dataBinding {
         enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
