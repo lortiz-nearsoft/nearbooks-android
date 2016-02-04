@@ -115,6 +115,7 @@ public class UserModel {
         if (onSignOutSuccess != null) {
             onSignOutSuccess.run();
         }
+        SharedPreferenceModel.clear();
     }
 
 }
