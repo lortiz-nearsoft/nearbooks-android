@@ -15,7 +15,7 @@ Nearbooks Android client for manage the books lending in nearsoft. This Android 
 6. Create a pull request from your fork to the [develop branch](https://github.com/Nearsoft/nearbooks-android/tree/develop) of this repository.
    - See [this](http://danielkummer.github.io/git-flow-cheatsheet/) git working flow for more info.
 
-## Libraries used
+## Used libraries
 - [Android data binding](developer.android.com/tools/data-binding/guide.html) for View Model binding.
 - [Dagger 2](http://google.github.io/dagger/) for dependency injection.
 - [Retrofit 2](http://square.github.io/retrofit/) for consuming REST apis.
