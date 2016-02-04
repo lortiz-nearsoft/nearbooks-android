@@ -13,7 +13,6 @@
     <string name="label_id">ID: %s</string>
     <string name="label_author">Author: %s</string>
     <string name="label_year">Year: %s</string>
-    <string name="label_description">Description: %s</string>
     <string name="label_book_borrowed">Borrowed by %s</string>
     <string name="label_book_requested">Requested by %s</string>
 
@@ -22,6 +21,7 @@
     <string name="message_nearsoft_account_needed">You must use a nearsoft account email
         =(</string>
     <string name="message_scan_book_qr_code">Scan a book QR code</string>
+    <string name="message_scan_book_isbn_bar_code">Scan a book isbn bar code</string>
     <string name="message_book_requested">Your request is pending. Please do check in with the QR
         book</string>
     <string name="message_book_active">Book assigned to you, enjoy it! =D</string>
@@ -49,6 +49,10 @@
     <string name="hint_password">Password</string>
     <string name="message_wrong_password">Wrong password =(</string>
     <string name="title_activation_password">Please write the activation password</string>
+    <string name="message_empty_google_books_info">Use the below scanner button to obtain books
+        information from a ISBN bar code</string>
+    <string name="message_done">Done!</string>
+    <string name="message_getting_book_info">Getting book info&#8230;</string>
 
     <array name="actions_book">
         <item name="title_request">Request</item>

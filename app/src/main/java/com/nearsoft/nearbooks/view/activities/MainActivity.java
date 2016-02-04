@@ -18,6 +18,7 @@ import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
 import com.nearsoft.nearbooks.util.Util;
+import com.nearsoft.nearbooks.util.ViewUtil;
 
 import java.io.IOException;
 
@@ -36,10 +37,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (!Util.checkPlayServices(this)) {
-            Toast.makeText(this,
-                    R.string.message_google_play_services_required,
-                    Toast.LENGTH_LONG)
-                    .show();
+            ViewUtil.showToastMessage(this, R.string.message_google_play_services_required);
             finish();
             return;
         }

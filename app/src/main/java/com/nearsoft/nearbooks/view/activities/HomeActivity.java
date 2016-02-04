@@ -21,8 +21,8 @@ import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.util.TapsEasterEggHandler;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
-import com.nearsoft.nearbooks.view.fragments.BookUploadFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
+import com.nearsoft.nearbooks.view.fragments.RegisterBookFragment;
 
 public class HomeActivity
         extends GoogleApiClientBaseActivity
@@ -128,7 +128,7 @@ public class HomeActivity
                 baseFragment = LibraryFragment.newInstance();
                 break;
             case R.id.nav_register_book:
-                baseFragment = BookUploadFragment.newInstance();
+                baseFragment = RegisterBookFragment.newInstance();
                 break;
         }
 
