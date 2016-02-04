@@ -1,6 +1,7 @@
 package com.nearsoft.nearbooks.view.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,12 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
-import com.nearsoft.nearbooks.databinding.FragmentUploadBookBinding;
+import com.nearsoft.nearbooks.databinding.FragmentRegisterBookBinding;
 import com.nearsoft.nearbooks.databinding.ItemGoogleBooksVolumeBinding;
 import com.nearsoft.nearbooks.models.BookModel;
 import com.nearsoft.nearbooks.models.GoogleBooksModel;
@@ -28,19 +28,19 @@ import com.nearsoft.nearbooks.ws.responses.MessageResponse;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BookUploadFragment#newInstance} factory method to
+ * Use the {@link RegisterBookFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BookUploadFragment extends BaseFragment
+public class RegisterBookFragment extends BaseFragment
         implements GoogleBooksVolumeAdapter.OnGoogleBookItemClickListener {
 
     private final static String KEY_CODE = "KEY_CODE";
 
-    private FragmentUploadBookBinding mBinding;
+    private FragmentRegisterBookBinding mBinding;
     private GoogleBooksVolumeAdapter mGoogleBooksVolumeAdapter;
     private String mCode;
 
-    public BookUploadFragment() {
+    public RegisterBookFragment() {
         // Required empty public constructor
     }
 
@@ -48,10 +48,10 @@ public class BookUploadFragment extends BaseFragment
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment BookUploadFragment.
+     * @return A new instance of fragment RegisterBookFragment.
      */
-    public static BookUploadFragment newInstance() {
-        BookUploadFragment fragment = new BookUploadFragment();
+    public static RegisterBookFragment newInstance() {
+        RegisterBookFragment fragment = new RegisterBookFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -71,8 +71,7 @@ public class BookUploadFragment extends BaseFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentUploadBookBinding
-                .inflate(inflater, container, false);
+        mBinding = FragmentRegisterBookBinding.inflate(inflater, container, false);
         mBinding.fabScanQrCode.setOnClickListener(v -> startQRScanner());
 
         mBinding.recyclerViewBooks.setHasFixedSize(true);
@@ -102,11 +101,28 @@ public class BookUploadFragment extends BaseFragment
     }
 
     private void findBooksByIsbn() {
+        ProgressDialog progressDialog = ProgressDialog
+                .show(getContext(), getString(R.string.message_getting_book_info), null, true);
         subscribeToFragment(GoogleBooksModel.findGoogleBooksByIsbn(mCode)
-                .doOnError(t -> ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage()))
+                .doOnError(t -> {
+                    progressDialog.dismiss();
+                    ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
+                })
                 .subscribe(googleBookBodies -> {
+                    progressDialog.dismiss();
                     mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies);
+                    showResults(!googleBookBodies.isEmpty());
                 }));
+    }
+
+    private void showResults(boolean showResults) {
+        if (showResults) {
+            mBinding.recyclerViewBooks.setVisibility(View.VISIBLE);
+            mBinding.tvEmpty.setVisibility(View.GONE);
+        } else {
+            mBinding.recyclerViewBooks.setVisibility(View.GONE);
+            mBinding.tvEmpty.setVisibility(View.VISIBLE);
+        }
     }
 
     private void startQRScanner() {
@@ -114,7 +130,7 @@ public class BookUploadFragment extends BaseFragment
         integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
         integrator.setOrientationLocked(false);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
-        integrator.setPrompt(getString(R.string.message_scan_book_qr_code));
+        integrator.setPrompt(getString(R.string.message_scan_book_isbn_bar_code));
         integrator.setCameraId(0);  // Use a specific camera of the device
         integrator.setBeepEnabled(true);
         integrator.setBarcodeImageEnabled(false);
@@ -137,8 +153,7 @@ public class BookUploadFragment extends BaseFragment
                                     t.getLocalizedMessage()))
                             .subscribe(response -> {
                                 if (response.isSuccess()) {
-                                    Toast.makeText(getContext(), "Done!", Toast.LENGTH_LONG)
-                                            .show();
+                                    ViewUtil.showToastMessage(getContext(), R.string.message_done);
                                 } else {
                                     MessageResponse messageResponse = ErrorUtil
                                             .parseError(MessageResponse.class, response);
