@@ -46,13 +46,6 @@ public class HomeActivity
         mBinding.drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        mBinding.linearLayoutSignOutMenu.setOnClickListener(v ->
-                UserModel.signOut(HomeActivity.this, mLazyUser.get(), mGoogleApiClient, () -> {
-                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }));
-
         NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
                 .inflate(getLayoutInflater());
         setupEasterEgg(navHeaderHomeBinding.imageView);
@@ -157,6 +150,12 @@ public class HomeActivity
 
     @Override
     public void onConnected(Bundle bundle) {
+        mBinding.linearLayoutSignOutMenu.setOnClickListener(v ->
+                UserModel.signOut(this, mLazyUser.get(), mGoogleApiClient, () -> {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }));
     }
 
     @Override
