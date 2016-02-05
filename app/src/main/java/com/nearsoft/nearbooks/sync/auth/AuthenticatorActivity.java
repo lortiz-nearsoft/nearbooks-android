@@ -50,8 +50,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
         if (mAuthTokenType == null) {
             mAuthTokenType = AccountGeneral.AUTH_TOKEN_TYPE_FULL_ACCESS;
         }
-
-        mBinding.signInButton.setOnClickListener(v -> signIn());
     }
 
     @Override
@@ -84,8 +82,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
             createSyncAccount(UserModel.signIn(this, result));
         } catch (SignInException e) {
             ViewUtil.showSnackbarMessage(mBinding, e.getDisplayMessage(this));
-            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient);
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+            if (mGoogleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient);
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+            }
         }
     }
 
@@ -130,5 +130,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        mBinding.signInButton.setOnClickListener(v -> signIn());
     }
 }
