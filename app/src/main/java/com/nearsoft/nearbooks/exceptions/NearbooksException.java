@@ -7,7 +7,7 @@ import android.support.annotation.StringRes;
  * Base exception class.
  * Created by epool on 1/20/16.
  */
-public abstract class NearbooksException extends Exception {
+public class NearbooksException extends Exception {
 
     private final int mResourceId;
     private final Object[] mFormatArgs;

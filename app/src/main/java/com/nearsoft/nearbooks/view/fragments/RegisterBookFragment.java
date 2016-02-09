@@ -26,6 +26,10 @@ import com.nearsoft.nearbooks.view.adapters.GoogleBooksVolumeAdapter;
 import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
 
+import java.util.List;
+
+import rx.Subscriber;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link RegisterBookFragment#newInstance} factory method to
@@ -104,14 +108,24 @@ public class RegisterBookFragment extends BaseFragment
         ProgressDialog progressDialog = ProgressDialog
                 .show(getContext(), getString(R.string.message_getting_book_info), null, true);
         subscribeToFragment(GoogleBooksModel.findGoogleBooksByIsbn(mCode)
-                .doOnError(t -> {
-                    progressDialog.dismiss();
-                    ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
-                })
-                .subscribe(googleBookBodies -> {
-                    progressDialog.dismiss();
-                    mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies);
-                    showResults(!googleBookBodies.isEmpty());
+                .subscribe(new Subscriber<List<GoogleBookBody>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        progressDialog.dismiss();
+                        ViewUtil.showSnackbarMessage(mBinding, ErrorUtil
+                                .getMessageFromThrowable(t, getContext()));
+                    }
+
+                    @Override
+                    public void onNext(List<GoogleBookBody> googleBookBodies) {
+                        progressDialog.dismiss();
+                        mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies);
+                        showResults(!googleBookBodies.isEmpty());
+                    }
                 }));
     }
 
@@ -162,8 +176,8 @@ public class RegisterBookFragment extends BaseFragment
                                                 messageResponse.getMessage());
                                     } else {
                                         ViewUtil.showSnackbarMessage(mBinding,
-                                                getString(R.string.error_general,
-                                                        String.valueOf(response.code())));
+                                                ErrorUtil.getGeneralExceptionMessage(getContext(),
+                                                        response.code()));
                                     }
                                 }
                             }));

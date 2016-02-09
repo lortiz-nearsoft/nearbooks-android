@@ -12,10 +12,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.exceptions.NearbooksException;
 import com.nearsoft.nearbooks.exceptions.SignInException;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
+import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.Util;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 import com.raizlabs.android.dbflow.sql.language.Delete;
@@ -29,7 +31,7 @@ public class UserModel {
     private final static String NEARSOFT_EMAIL_DOMAIN = "@nearsoft.com";
     private final static int UNKNOWN_STATUS_CODE = 12501;
 
-    public static User signIn(Context context, GoogleSignInResult result) throws SignInException {
+    public static User signIn(Context context, GoogleSignInResult result) throws NearbooksException {
         if (result.isSuccess()) {
             GoogleSignInAccount googleSignInAccount = result.getSignInAccount();
 
@@ -46,17 +48,16 @@ public class UserModel {
 
             return user;
         } else if (!Util.isThereInternetConnection(context)) {
-            throw new SignInException("Internet connection error.",
+            throw new NearbooksException("Internet connection error.",
                     R.string.error_internet_connection);
         } else if (result.getStatus().getStatusCode() != UNKNOWN_STATUS_CODE) {
             int statusCode = result.getStatus().getStatusCode();
-            throw new SignInException(
+            throw new NearbooksException(
                     "Google api error: " + statusCode + ".",
                     R.string.error_google_api, statusCode
             );
         } else {
-            throw new SignInException("Unknown Exception.", R.string.error_general,
-                    "Unknown Exception.");
+            throw ErrorUtil.getGeneralException("Unknown Exception.");
         }
     }
 
