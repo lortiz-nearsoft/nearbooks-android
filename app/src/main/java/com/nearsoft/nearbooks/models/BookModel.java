@@ -5,7 +5,6 @@ import android.databinding.ViewDataBinding;
 import android.text.TextUtils;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
-import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.db.NearbooksDatabase;
 import com.nearsoft.nearbooks.models.sqlite.Book;
 import com.nearsoft.nearbooks.models.sqlite.Book_Table;
@@ -136,8 +135,8 @@ public class BookModel {
                                 ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
                             } else {
                                 ViewUtil.showSnackbarMessage(binding,
-                                        context.getString(R.string.error_general,
-                                                String.valueOf(response.code())));
+                                        ErrorUtil.getGeneralExceptionMessage(context,
+                                                response.code()));
                             }
                         }
                     }
@@ -176,8 +175,8 @@ public class BookModel {
                                 ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
                             } else {
                                 ViewUtil.showSnackbarMessage(binding,
-                                        context.getString(R.string.error_general,
-                                                String.valueOf(response.code())));
+                                        ErrorUtil.getGeneralExceptionMessage(context,
+                                                response.code()));
                             }
                         }
                     }

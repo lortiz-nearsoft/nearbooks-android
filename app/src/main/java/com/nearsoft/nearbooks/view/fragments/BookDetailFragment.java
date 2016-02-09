@@ -140,8 +140,8 @@ public class BookDetailFragment extends BaseFragment {
                                         messageResponse.getMessage());
                             } else {
                                 ViewUtil.showSnackbarMessage(mBinding,
-                                        getString(R.string.error_general,
-                                                String.valueOf(response.code())));
+                                        ErrorUtil.getGeneralExceptionMessage(getContext(),
+                                                response.code()));
                             }
                         }
                     }
