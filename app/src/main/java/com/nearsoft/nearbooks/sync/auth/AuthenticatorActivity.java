@@ -12,7 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.ActivityAuthenticatorBinding;
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
-import com.nearsoft.nearbooks.exceptions.SignInException;
+import com.nearsoft.nearbooks.exceptions.NearbooksException;
 import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.util.SyncUtil;
@@ -80,7 +80,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
     private void finishLogin(GoogleSignInResult result) {
         try {
             createSyncAccount(UserModel.signIn(this, result));
-        } catch (SignInException e) {
+        } catch (NearbooksException e) {
             ViewUtil.showSnackbarMessage(mBinding, e.getDisplayMessage(this));
             if (mGoogleApiClient.isConnected()) {
                 Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient);

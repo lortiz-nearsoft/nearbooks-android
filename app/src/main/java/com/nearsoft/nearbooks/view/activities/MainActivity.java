@@ -17,6 +17,7 @@ import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
 import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
+import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.Util;
 import com.nearsoft.nearbooks.util.ViewUtil;
 
@@ -84,10 +85,9 @@ public class MainActivity extends BaseActivity {
                             Toast
                                     .makeText(
                                             MainActivity.this,
-                                            getString(
-                                                    R.string.error_general,
-                                                    getString(R.string.error_user_not_found)
-                                            ),
+                                            ErrorUtil.getGeneralExceptionMessage(this,
+                                                    getString(
+                                                            R.string.error_user_not_found)),
                                             Toast.LENGTH_LONG
                                     )
                                     .show();
@@ -100,7 +100,8 @@ public class MainActivity extends BaseActivity {
                         Toast
                                 .makeText(
                                         MainActivity.this,
-                                        getString(R.string.error_general, e.getLocalizedMessage()),
+                                        ErrorUtil.getGeneralExceptionMessage(this,
+                                                e.getLocalizedMessage()),
                                         Toast.LENGTH_LONG
                                 )
                                 .show();

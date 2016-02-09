@@ -1,8 +1,12 @@
 package com.nearsoft.nearbooks.models;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
+import com.nearsoft.nearbooks.R;
+import com.nearsoft.nearbooks.exceptions.NearbooksException;
+import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.ws.GoogleBooksService;
 import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
+import com.nearsoft.nearbooks.ws.responses.googlebooks.errors.GoogleBooksErrorResponse;
 
 import java.util.List;
 
@@ -23,9 +27,25 @@ public class GoogleBooksModel {
 
     public static Observable<List<GoogleBookBody>> findGoogleBooksByIsbn(String isbn) {
         return mGoogleBooksService.findBooksByIsbn("isbn:" + isbn)
-                .filter(Response::isSuccess)
-                .map(response -> response.body().getItems())
-                .flatMap(Observable::from)
+                .flatMap(response -> {
+                    if (!response.isSuccess()) {
+                        GoogleBooksErrorResponse errorResponse = ErrorUtil
+                                .parseError(GoogleBooksErrorResponse.class, response);
+                        if (errorResponse != null) {
+                            return ErrorUtil
+                                    .getGeneralExceptionObservable(
+                                            errorResponse.getError().toString()
+                                    );
+                        } else {
+                            return ErrorUtil.getGeneralExceptionObservable(response.code());
+                        }
+                    }
+                    if (response.body().getTotalItems() == 0) {
+                        return Observable.error(new NearbooksException("Book not found",
+                                R.string.error_book_not_found));
+                    }
+                    return Observable.from(response.body().getItems());
+                })
                 .flatMap(volume -> mGoogleBooksService.getVolumeById(volume.getId()))
                 .filter(Response::isSuccess)
                 .map(volumeResponse -> new GoogleBookBody(isbn, volumeResponse.body()))

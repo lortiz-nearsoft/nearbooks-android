@@ -36,6 +36,7 @@
     <string name="error_internet_connection">Please verify your internet connection and try
         again</string>
     <string name="error_invalid_qr_code">Invalid Qr Code</string>
+    <string name="error_book_not_found">Book not found =(</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
