@@ -166,7 +166,7 @@ public class RegisterBookFragment extends BaseFragment
                             .doOnError(t -> ViewUtil.showSnackbarMessage(mBinding,
                                     t.getLocalizedMessage()))
                             .subscribe(response -> {
-                                if (response.isSuccess()) {
+                                if (response.isSuccessful()) {
                                     ViewUtil.showToastMessage(getContext(), R.string.message_done);
                                 } else {
                                     MessageResponse messageResponse = ErrorUtil

@@ -284,7 +284,7 @@ public class LibraryFragment
 
                                                 @Override
                                                 public void onNext(Response<Borrow> response) {
-                                                    if (response.isSuccess()) {
+                                                    if (response.isSuccessful()) {
                                                         Borrow borrow = response.body();
                                                         switch (borrow.getStatus()) {
                                                             case Borrow.STATUS_REQUESTED:

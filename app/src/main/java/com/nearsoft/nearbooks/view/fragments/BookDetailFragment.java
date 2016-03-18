@@ -113,7 +113,7 @@ public class BookDetailFragment extends BaseFragment {
 
                     @Override
                     public void onNext(Response<Borrow> response) {
-                        if (response.isSuccess()) {
+                        if (response.isSuccessful()) {
                             Borrow borrow = response.body();
                             mBinding.setBorrow(borrow);
                             mBinding.executePendingBindings();
@@ -233,7 +233,7 @@ public class BookDetailFragment extends BaseFragment {
 
                     @Override
                     public void onNext(Response<AvailabilityResponse> response) {
-                        if (response.isSuccess()) {
+                        if (response.isSuccessful()) {
                             AvailabilityResponse availabilityResponse = response.body();
                             mBinding.setBorrow(availabilityResponse.getActiveBorrrow());
                             mBinding.executePendingBindings();
