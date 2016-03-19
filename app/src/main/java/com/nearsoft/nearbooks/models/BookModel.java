@@ -125,7 +125,7 @@ public class BookModel {
 
                     @Override
                     public void onNext(Response<MessageResponse> response) {
-                        if (response.isSuccess()) {
+                        if (response.isSuccessful()) {
                             MessageResponse messageResponse = response.body();
                             ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
                         } else {
@@ -165,7 +165,7 @@ public class BookModel {
 
                     @Override
                     public void onNext(Response<MessageResponse> response) {
-                        if (response.isSuccess()) {
+                        if (response.isSuccessful()) {
                             MessageResponse messageResponse = response.body();
                             ViewUtil.showSnackbarMessage(binding, messageResponse.getMessage());
                         } else {

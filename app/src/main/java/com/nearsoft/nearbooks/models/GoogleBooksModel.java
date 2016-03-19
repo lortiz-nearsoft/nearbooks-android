@@ -28,7 +28,7 @@ public class GoogleBooksModel {
     public static Observable<List<GoogleBookBody>> findGoogleBooksByIsbn(String isbn) {
         return mGoogleBooksService.findBooksByIsbn("isbn:" + isbn)
                 .flatMap(response -> {
-                    if (!response.isSuccess()) {
+                    if (!response.isSuccessful()) {
                         GoogleBooksErrorResponse errorResponse = ErrorUtil
                                 .parseError(GoogleBooksErrorResponse.class, response);
                         if (errorResponse != null) {
@@ -47,7 +47,7 @@ public class GoogleBooksModel {
                     return Observable.from(response.body().getItems());
                 })
                 .flatMap(volume -> mGoogleBooksService.getVolumeById(volume.getId()))
-                .filter(Response::isSuccess)
+                .filter(Response::isSuccessful)
                 .map(volumeResponse -> new GoogleBookBody(isbn, volumeResponse.body()))
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())

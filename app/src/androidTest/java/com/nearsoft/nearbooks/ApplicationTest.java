@@ -93,7 +93,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
 
         Response<AvailabilityResponse> response = responses.get(0);
         assertNotNull(response);
-        assertTrue(response.isSuccess());
+        assertTrue(response.isSuccessful());
         assertNotNull(response.body());
     }
 
@@ -114,7 +114,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
         Response<Borrow> response = responses.get(0);
         assertNotNull(response);
 
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             Borrow borrow = response.body();
             assertNotNull(borrow);
         } else {
@@ -140,7 +140,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
         Response<MessageResponse> response = responses.get(0);
         assertNotNull(response);
 
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             MessageResponse messageResponse = response.body();
             assertNotNull(messageResponse);
         } else {
@@ -166,7 +166,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
         Response<MessageResponse> response = responses.get(0);
         assertNotNull(response);
 
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             MessageResponse messageResponse = response.body();
             assertNotNull(messageResponse);
         } else {
@@ -189,7 +189,7 @@ public class ApplicationTest extends ApplicationTestCase<NearbooksApplication> {
 
         Response<GoogleBooksSearchResponse> response = responses.get(0);
         assertNotNull(response);
-        assertTrue(response.isSuccess());
+        assertTrue(response.isSuccessful());
         assertNotNull(response.body());
         assertTrue(response.body().getTotalItems() > 0);
     }
