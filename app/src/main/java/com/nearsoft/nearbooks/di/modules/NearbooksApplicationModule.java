@@ -11,8 +11,10 @@ import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.config.Configuration;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import javax.inject.Singleton;
 
@@ -70,6 +72,15 @@ public class NearbooksApplicationModule {
         int whiteColor = ContextCompat.getColor(mNearbooksApplication,
                 R.color.white);
         return new ColorsWrapper(colorPrimaryDark, colorPrimary, whiteColor, whiteColor);
+    }
+
+    @Provides
+    @Singleton
+    public User provideUser() {
+        return SQLite
+                .select()
+                .from(User.class)
+                .querySingle();
     }
 
 }

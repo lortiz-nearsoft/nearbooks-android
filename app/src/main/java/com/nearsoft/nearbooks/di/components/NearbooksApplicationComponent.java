@@ -8,6 +8,7 @@ import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule;
 import com.nearsoft.nearbooks.di.modules.NetworkModule;
 import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.ws.BookService;
 import com.nearsoft.nearbooks.ws.GoogleBooksService;
@@ -44,5 +45,7 @@ public interface NearbooksApplicationComponent {
 
     @Named(NetworkModule.NAME_RETROFIT_NEARBOOKS)
     Retrofit provideNearbooksRetrofit();
+
+    User provideUser();
 
 }

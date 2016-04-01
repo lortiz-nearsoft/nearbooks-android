@@ -10,6 +10,7 @@ import com.jakewharton.picasso.OkHttp3Downloader;
 import com.nearsoft.nearbooks.config.Configuration;
 import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gson.BookForeignKeyContainerSerializer;
+import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.other.StethoInterceptor;
 import com.nearsoft.nearbooks.ws.BookService;
 import com.nearsoft.nearbooks.ws.GoogleBooksService;
@@ -20,10 +21,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,6 +41,8 @@ public class NetworkModule {
 
     public final static String NAME_RETROFIT_NEARBOOKS = "NAME_RETROFIT_NEARBOOKS";
     private final static String NAME_RETROFIT_GOOGLE_BOOKS = "NAME_RETROFIT_GOOGLE_BOOKS";
+    private final static String NAME_OK_HTTP_CLIENT_NEARBOOKS = "NAME_OK_HTTP_NEARBOOKS";
+    private final static String NAME_OK_HTTP_CLIENT_PICASSO = "NAME_OK_HTTP_PICASSO";
 
     private final static long SECONDS_TIMEOUT = 20;
 
@@ -71,36 +77,58 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient(Cache cache) {
+    public HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return logging;
+    }
+
+    @Provides
+    @Singleton
+    public OkHttpClient.Builder provideOkHttpClientBuilder(Cache cache) {
         return new OkHttpClient.Builder()
                 .cache(cache)
                 .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new StethoInterceptor())
-//        TODO: Add credentials.
-//                .addInterceptor(new Interceptor() {
-//                    @Override
-//                    public Response intercept(Chain chain) throws IOException {
-//                        Request request = chain.request();
-//
-//                        HttpUrl httpUrl = request.url().newBuilder()
-//                                .addQueryParameter("client_id", "f7373613c193424ba4be7f85ec6e6b2c")
-//                                .build();
-//
-//                        Request newRequest = request.newBuilder()
-//                                .url(httpUrl)
-//                                .build();
-//
-//                        return chain.proceed(newRequest);
-//                    }
-//                })
+                .addNetworkInterceptor(new StethoInterceptor());
+    }
+
+    @Named(NAME_OK_HTTP_CLIENT_NEARBOOKS)
+    @Provides
+    @Singleton
+    public OkHttpClient provideNearbooksOkHttpClient(OkHttpClient.Builder builder,
+                                                     HttpLoggingInterceptor httpLoggingInterceptor,
+                                                     Lazy<User> lazyUser) {
+        return builder
+                .addInterceptor(chain -> {
+                    User user = lazyUser.get();
+                    if (user == null) return chain.proceed(chain.request());
+
+                    Request request = chain
+                            .request()
+                            .newBuilder()
+                            .addHeader("Authorization", user.getIdToken())
+                            .build();
+
+                    return chain.proceed(request);
+                })
+                .addInterceptor(httpLoggingInterceptor)
                 .build();
+    }
+
+    @Named(NAME_OK_HTTP_CLIENT_PICASSO)
+    @Provides
+    @Singleton
+    public OkHttpClient providePicassoOkHttpClient(OkHttpClient.Builder builder) {
+        return builder.build();
     }
 
     @Provides
     @Singleton
-    public Retrofit.Builder provideRetrofitBuilder(Gson gson, OkHttpClient okHttpClient) {
+    public Retrofit.Builder provideRetrofitBuilder(
+            Gson gson,
+            @Named(NAME_OK_HTTP_CLIENT_NEARBOOKS) OkHttpClient okHttpClient) {
         return new Retrofit
                 .Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -143,7 +171,8 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public Picasso providePicasso(Context context, OkHttpClient okHttpClient) {
+    public Picasso providePicasso(Context context,
+                                  @Named(NAME_OK_HTTP_CLIENT_PICASSO) OkHttpClient okHttpClient) {
         return new Picasso.Builder(context)
                 .downloader(new OkHttp3Downloader(okHttpClient))
                 .build();
