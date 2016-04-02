@@ -11,7 +11,6 @@ import com.nearsoft.nearbooks.models.sqlite.User;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 import com.nearsoft.nearbooks.view.activities.HomeActivity;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import dagger.Lazy;
 import dagger.Module;
@@ -41,15 +40,6 @@ public class BaseActivityModule {
     @Provides
     public SyncChangeHandler provideSyncChangeHandler(Lazy<User> lazyUser) {
         return new SyncChangeHandler(lazyUser);
-    }
-
-    @PerActivity
-    @Provides
-    public User provideUser() {
-        return SQLite
-                .select()
-                .from(User.class)
-                .querySingle();
     }
 
     @PerActivity

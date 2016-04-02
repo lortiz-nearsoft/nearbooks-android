@@ -54,6 +54,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
     compile "com.google.code.gson:gson:$gsonVersion"
 
     compile "com.squareup.picasso:picasso:$picassoVersion"
