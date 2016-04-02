@@ -12,8 +12,8 @@ android {
         applicationId "com.nearsoft.nearbooks"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 11
-        versionName "0.0.10.a"
+        versionCode 12
+        versionName "0.0.11.a"
 
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
@@ -54,6 +54,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
     compile "com.google.code.gson:gson:$gsonVersion"
 
     compile "com.squareup.picasso:picasso:$picassoVersion"

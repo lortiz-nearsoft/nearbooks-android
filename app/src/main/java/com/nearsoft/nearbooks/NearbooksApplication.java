@@ -14,21 +14,21 @@ import com.squareup.picasso.Picasso;
  */
 public class NearbooksApplication extends MultiDexApplication {
 
-    private static NearbooksApplicationComponent mNearbooksApplicationComponent;
+    private static NearbooksApplicationComponent sNearbooksApplicationComponent;
 
     public static NearbooksApplicationComponent getNearbooksApplicationComponent() {
-        return mNearbooksApplicationComponent;
+        return sNearbooksApplicationComponent;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mNearbooksApplicationComponent = DaggerNearbooksApplicationComponent
+        sNearbooksApplicationComponent = DaggerNearbooksApplicationComponent
                 .builder()
                 .nearbooksApplicationModule(new NearbooksApplicationModule(this))
                 .networkModule(new NetworkModule())
                 .build();
-        Picasso.setSingletonInstance(mNearbooksApplicationComponent.providePicasso());
+        Picasso.setSingletonInstance(sNearbooksApplicationComponent.providePicasso());
     }
 }
