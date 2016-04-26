@@ -6,7 +6,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 'Google Inc.:Google APIs:23'
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.nearsoft.nearbooks"
@@ -65,8 +65,6 @@ dependencies {
 
     compile "com.google.dagger:dagger:$daggerVersion"
     apt "com.google.dagger:dagger-compiler:$daggerVersion"
-    provided "org.glassfish:javax.annotation:$javaxAnnotationVersion"
-    //provided 'javax.annotation:jsr250-api:1.0'
 
     compile "com.facebook.stetho:stetho:$stethoVersion"
     compile "com.facebook.stetho:stetho-okhttp:$stethoVersion"
