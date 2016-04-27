@@ -43,7 +43,7 @@ public class HomeActivity
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         );
-        mBinding.drawerLayout.setDrawerListener(toggle);
+        mBinding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         NavHeaderHomeBinding navHeaderHomeBinding = NavHeaderHomeBinding
