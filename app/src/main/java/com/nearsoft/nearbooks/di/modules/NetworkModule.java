@@ -43,6 +43,7 @@ public class NetworkModule {
     private final static String NAME_RETROFIT_GOOGLE_BOOKS = "NAME_RETROFIT_GOOGLE_BOOKS";
     private final static String NAME_OK_HTTP_CLIENT_NEARBOOKS = "NAME_OK_HTTP_NEARBOOKS";
     private final static String NAME_OK_HTTP_CLIENT_PICASSO = "NAME_OK_HTTP_PICASSO";
+    private final static String NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS = "NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS";
 
     private final static long SECONDS_TIMEOUT = 20;
 
@@ -97,10 +98,15 @@ public class NetworkModule {
     @Named(NAME_OK_HTTP_CLIENT_NEARBOOKS)
     @Provides
     @Singleton
-    public OkHttpClient provideNearbooksOkHttpClient(OkHttpClient.Builder builder,
+    public OkHttpClient provideNearbooksOkHttpClient(Cache cache,
                                                      HttpLoggingInterceptor httpLoggingInterceptor,
                                                      Lazy<User> lazyUser) {
-        return builder
+        return new OkHttpClient.Builder()
+                .cache(cache)
+                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new StethoInterceptor())
                 .addInterceptor(chain -> {
                     User user = lazyUser.get();
                     if (user == null) return chain.proceed(chain.request());
@@ -117,11 +123,34 @@ public class NetworkModule {
                 .build();
     }
 
+    @Named(NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS)
+    @Provides
+    @Singleton
+    public OkHttpClient provideGoogleBooksOkHttpClient(Cache cache,
+                                                       HttpLoggingInterceptor httpLoggingInterceptor) {
+        return new OkHttpClient.Builder()
+                .cache(cache)
+                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new StethoInterceptor())
+                .addInterceptor(httpLoggingInterceptor)
+                .build();
+    }
+
     @Named(NAME_OK_HTTP_CLIENT_PICASSO)
     @Provides
     @Singleton
-    public OkHttpClient providePicassoOkHttpClient(OkHttpClient.Builder builder) {
-        return builder.build();
+    public OkHttpClient providePicassoOkHttpClient(Cache cache,
+                                                   HttpLoggingInterceptor httpLoggingInterceptor) {
+        return new OkHttpClient.Builder()
+                .cache(cache)
+                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new StethoInterceptor())
+                .addInterceptor(httpLoggingInterceptor)
+                .build();
     }
 
     @Provides
@@ -140,9 +169,11 @@ public class NetworkModule {
     @Provides
     @Singleton
     public Retrofit provideNearbooksRetrofit(Retrofit.Builder builder,
+                                             @Named(NAME_OK_HTTP_CLIENT_NEARBOOKS) OkHttpClient okHttpClient,
                                              Configuration configuration) {
         return builder
                 .baseUrl(configuration.getWebServiceUrl())
+                .client(okHttpClient)
                 .build();
     }
 
@@ -150,9 +181,11 @@ public class NetworkModule {
     @Provides
     @Singleton
     public Retrofit provideGoogleBooksRetrofit(Retrofit.Builder builder,
+                                               @Named(NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS) OkHttpClient okHttpClient,
                                                Configuration configuration) {
         return builder
                 .baseUrl(configuration.getGoogleBooksApiUrl())
+                .client(okHttpClient)
                 .build();
     }
 
