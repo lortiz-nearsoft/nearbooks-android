@@ -36,7 +36,7 @@ public class BookRecyclerViewCursorAdapter
 
     public BookRecyclerViewCursorAdapter(Where<Book> bookWhere,
                                          OnBookItemClickListener onBookItemClickListener) {
-        NearbooksApplication.getNearbooksApplicationComponent().inject(this);
+        NearbooksApplication.Companion.applicationComponent().inject(this);
         mFlowCursorAdapter = new FlowCursorList<>(false, bookWhere);
         mOnBookItemClickListener = onBookItemClickListener;
     }

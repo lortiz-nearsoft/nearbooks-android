@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'io.fabric'
@@ -27,15 +28,26 @@ android {
     dataBinding {
         enabled = true
     }
+//    sourceSets {
+//        main.java.srcDirs += 'src/main/kotlin'
+//        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+//        test.java.srcDirs += 'src/test/kotlin'
+//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile "junit:junit:$junitVersion"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    kapt "com.android.databinding:compiler:$buildToolsVersion"
 
     compile "com.android.support:multidex:$multidexVersion"
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
@@ -48,6 +60,7 @@ dependencies {
     compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
 
     apt "com.github.Raizlabs.DBFlow:dbflow-processor:$dbFlowVersion"
+    kapt "com.github.Raizlabs.DBFlow:dbflow-processor:$dbFlowVersion"
     compile "com.github.Raizlabs.DBFlow:dbflow-core:$dbFlowVersion"
     compile "com.github.Raizlabs.DBFlow:dbflow:$dbFlowVersion"
 
@@ -65,6 +78,7 @@ dependencies {
 
     compile "com.google.dagger:dagger:$daggerVersion"
     apt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     compile "com.facebook.stetho:stetho:$stethoVersion"
     compile "com.facebook.stetho:stetho-okhttp:$stethoVersion"
@@ -80,6 +94,10 @@ dependencies {
     compile "io.reactivex:rxjava:$rxJavaVersion"
 
     compile "com.google.guava:guava:$guavaVersion"
+}
+
+kapt {
+    generateStubs = true
 }
 
 apply plugin: 'com.google.gms.google-services'

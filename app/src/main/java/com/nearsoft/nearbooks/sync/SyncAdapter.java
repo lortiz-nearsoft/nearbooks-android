@@ -26,15 +26,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mBookService = NearbooksApplication
-                .getNearbooksApplicationComponent()
+        mBookService = NearbooksApplication.Companion
+                .applicationComponent()
                 .providesBookService();
     }
 
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
-        mBookService = NearbooksApplication
-                .getNearbooksApplicationComponent()
+        mBookService = NearbooksApplication.Companion
+                .applicationComponent()
                 .providesBookService();
     }
 

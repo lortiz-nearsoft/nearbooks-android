@@ -142,7 +142,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected NearbooksApplicationComponent getNearbooksApplicationComponent() {
-        return NearbooksApplication.getNearbooksApplicationComponent();
+        return NearbooksApplication.Companion.applicationComponent();
     }
 
     protected BaseActivityModule getBaseActivityModule() {

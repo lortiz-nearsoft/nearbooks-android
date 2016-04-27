@@ -21,8 +21,8 @@ import rx.schedulers.Schedulers;
  */
 public class GoogleBooksModel {
 
-    private static GoogleBooksService mGoogleBooksService = NearbooksApplication
-            .getNearbooksApplicationComponent()
+    private static GoogleBooksService mGoogleBooksService = NearbooksApplication.Companion
+            .applicationComponent()
             .provideGoogleBooksService();
 
     public static Observable<List<GoogleBookBody>> findGoogleBooksByIsbn(String isbn) {

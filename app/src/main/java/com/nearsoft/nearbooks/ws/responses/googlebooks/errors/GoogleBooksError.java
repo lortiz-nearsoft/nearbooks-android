@@ -33,7 +33,7 @@ public class GoogleBooksError {
 
     @Override
     public String toString() {
-        return NearbooksApplication.getNearbooksApplicationComponent().provideGson().toJson(this);
+        return NearbooksApplication.Companion.applicationComponent().provideGson().toJson(this);
     }
 
 }

@@ -37,8 +37,8 @@ import rx.schedulers.Schedulers;
  */
 public class BookModel {
 
-    private static BookService mBookService = NearbooksApplication
-            .getNearbooksApplicationComponent()
+    private static BookService mBookService = NearbooksApplication.Companion
+            .applicationComponent()
             .providesBookService();
 
     public static void cacheBooks(final List<Book> books) {

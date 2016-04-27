@@ -77,8 +77,8 @@ public abstract class NearbooksBaseObservableModel<T extends BaseSyncableProvide
 
     @Override
     public String toString() {
-        Gson gson = NearbooksApplication
-                .getNearbooksApplicationComponent()
+        Gson gson = NearbooksApplication.Companion
+                .applicationComponent()
                 .provideGson();
         return gson.toJson(this);
     }
