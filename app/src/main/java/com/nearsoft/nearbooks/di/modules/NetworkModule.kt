@@ -112,7 +112,7 @@ class NetworkModule {
     @Named(NAME_OK_HTTP_CLIENT_DEFAULT)
     @Provides
     @Singleton
-    fun provideGoogleBooksOkHttpClient(
+    fun provideDefaultOkHttpClient(
             builder: OkHttpClient.Builder,
             httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return builder
