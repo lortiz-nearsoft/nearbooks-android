@@ -36,10 +36,9 @@ class NetworkModule {
 
     companion object {
         const val NAME_RETROFIT_NEARBOOKS = "NAME_RETROFIT_NEARBOOKS"
-        private const val NAME_RETROFIT_GOOGLE_BOOKS = "NAME_RETROFIT_GOOGLE_BOOKS"
         private const val NAME_OK_HTTP_CLIENT_NEARBOOKS = "NAME_OK_HTTP_NEARBOOKS"
-        private const val NAME_OK_HTTP_CLIENT_PICASSO = "NAME_OK_HTTP_PICASSO"
-        private const val NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS = "NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS"
+        private const val NAME_OK_HTTP_CLIENT_DEFAULT = "NAME_OK_HTTP_CLIENT_DEFAULT"
+        private const val NAME_RETROFIT_GOOGLE_BOOKS = "NAME_RETROFIT_GOOGLE_BOOKS"
 
         private val SECONDS_TIMEOUT: Long = 20
     }
@@ -79,31 +78,22 @@ class NetworkModule {
     }
 
     @Provides
-    @Singleton
-    fun provideOkHttpClientBuilder(
-            cache: Cache,
-            httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient.Builder {
+    fun provideOkHttpClientBuilder(cache: Cache): OkHttpClient.Builder {
         return OkHttpClient.Builder()
                 .cache(cache)
                 .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
                 .addNetworkInterceptor(StethoInterceptor())
-                .addInterceptor(httpLoggingInterceptor)
     }
 
     @Named(NAME_OK_HTTP_CLIENT_NEARBOOKS)
     @Provides
     @Singleton
-    fun provideNearbooksOkHttpClient(cache: Cache, httpLoggingInterceptor: HttpLoggingInterceptor,
+    fun provideNearbooksOkHttpClient(builder: OkHttpClient.Builder,
+                                     httpLoggingInterceptor: HttpLoggingInterceptor,
                                      lazyUser: Lazy<User>): OkHttpClient {
-        return OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(StethoInterceptor())
-                .addInterceptor(httpLoggingInterceptor)
+        return builder
                 .addInterceptor { chain ->
                     val user = lazyUser.get() ?: return@addInterceptor chain.proceed(chain.request())
 
@@ -115,35 +105,17 @@ class NetworkModule {
 
                     return@addInterceptor chain.proceed(request)
                 }
-                .build()
-    }
-
-    @Named(NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS)
-    @Provides
-    @Singleton
-    fun provideGoogleBooksOkHttpClient(
-            cache: Cache, httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(StethoInterceptor())
                 .addInterceptor(httpLoggingInterceptor)
                 .build()
     }
 
-    @Named(NAME_OK_HTTP_CLIENT_PICASSO)
+    @Named(NAME_OK_HTTP_CLIENT_DEFAULT)
     @Provides
     @Singleton
-    fun providePicassoOkHttpClient(cache: Cache,
-                                   httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(StethoInterceptor())
+    fun provideDefaultOkHttpClient(
+            builder: OkHttpClient.Builder,
+            httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+        return builder
                 .addInterceptor(httpLoggingInterceptor)
                 .build()
     }
@@ -173,7 +145,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideGoogleBooksRetrofit(builder: Retrofit.Builder,
-                                   @Named(NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS) okHttpClient: OkHttpClient,
+                                   @Named(NAME_OK_HTTP_CLIENT_DEFAULT) okHttpClient: OkHttpClient,
                                    configuration: Configuration): Retrofit {
         return builder
                 .baseUrl(configuration.googleBooksApiUrl)
@@ -197,7 +169,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun providePicasso(context: Context,
-                       @Named(NAME_OK_HTTP_CLIENT_PICASSO) okHttpClient: OkHttpClient): Picasso {
+                       @Named(NAME_OK_HTTP_CLIENT_DEFAULT) okHttpClient: OkHttpClient): Picasso {
         return Picasso.Builder(context).downloader(OkHttp3Downloader(okHttpClient)).build()
     }
 
