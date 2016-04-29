@@ -42,8 +42,7 @@ public class NetworkModule {
     public final static String NAME_RETROFIT_NEARBOOKS = "NAME_RETROFIT_NEARBOOKS";
     private final static String NAME_RETROFIT_GOOGLE_BOOKS = "NAME_RETROFIT_GOOGLE_BOOKS";
     private final static String NAME_OK_HTTP_CLIENT_NEARBOOKS = "NAME_OK_HTTP_NEARBOOKS";
-    private final static String NAME_OK_HTTP_CLIENT_PICASSO = "NAME_OK_HTTP_PICASSO";
-    private final static String NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS = "NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS";
+    private final static String NAME_OK_HTTP_CLIENT_DEFAULT = "NAME_OK_HTTP_CLIENT_DEFAULT";
 
     private final static long SECONDS_TIMEOUT = 20;
 
@@ -85,7 +84,6 @@ public class NetworkModule {
     }
 
     @Provides
-    @Singleton
     public OkHttpClient.Builder provideOkHttpClientBuilder(Cache cache) {
         return new OkHttpClient.Builder()
                 .cache(cache)
@@ -98,15 +96,10 @@ public class NetworkModule {
     @Named(NAME_OK_HTTP_CLIENT_NEARBOOKS)
     @Provides
     @Singleton
-    public OkHttpClient provideNearbooksOkHttpClient(Cache cache,
+    public OkHttpClient provideNearbooksOkHttpClient(OkHttpClient.Builder builder,
                                                      HttpLoggingInterceptor httpLoggingInterceptor,
                                                      Lazy<User> lazyUser) {
-        return new OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new StethoInterceptor())
+        return builder
                 .addInterceptor(chain -> {
                     User user = lazyUser.get();
                     if (user == null) return chain.proceed(chain.request());
@@ -123,32 +116,13 @@ public class NetworkModule {
                 .build();
     }
 
-    @Named(NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS)
+    @Named(NAME_OK_HTTP_CLIENT_DEFAULT)
     @Provides
     @Singleton
-    public OkHttpClient provideGoogleBooksOkHttpClient(Cache cache,
-                                                       HttpLoggingInterceptor httpLoggingInterceptor) {
-        return new OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new StethoInterceptor())
-                .addInterceptor(httpLoggingInterceptor)
-                .build();
-    }
-
-    @Named(NAME_OK_HTTP_CLIENT_PICASSO)
-    @Provides
-    @Singleton
-    public OkHttpClient providePicassoOkHttpClient(Cache cache,
-                                                   HttpLoggingInterceptor httpLoggingInterceptor) {
-        return new OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(SECONDS_TIMEOUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new StethoInterceptor())
+    public OkHttpClient provideDefaultOkHttpClient(
+            OkHttpClient.Builder builder,
+            HttpLoggingInterceptor httpLoggingInterceptor) {
+        return builder
                 .addInterceptor(httpLoggingInterceptor)
                 .build();
     }
@@ -181,7 +155,7 @@ public class NetworkModule {
     @Provides
     @Singleton
     public Retrofit provideGoogleBooksRetrofit(Retrofit.Builder builder,
-                                               @Named(NAME_OK_HTTP_CLIENT_GOOGLE_BOOKS) OkHttpClient okHttpClient,
+                                               @Named(NAME_OK_HTTP_CLIENT_DEFAULT) OkHttpClient okHttpClient,
                                                Configuration configuration) {
         return builder
                 .baseUrl(configuration.getGoogleBooksApiUrl())
@@ -205,7 +179,7 @@ public class NetworkModule {
     @Provides
     @Singleton
     public Picasso providePicasso(Context context,
-                                  @Named(NAME_OK_HTTP_CLIENT_PICASSO) OkHttpClient okHttpClient) {
+                                  @Named(NAME_OK_HTTP_CLIENT_DEFAULT) OkHttpClient okHttpClient) {
         return new Picasso.Builder(context)
                 .downloader(new OkHttp3Downloader(okHttpClient))
                 .build();
