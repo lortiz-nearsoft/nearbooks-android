@@ -64,7 +64,7 @@
 
         <provider
             android:name=".sync.NearbooksContentProvider"
-            android:authorities="com.nearsoft.nearbooks.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false" />
 
         <receiver

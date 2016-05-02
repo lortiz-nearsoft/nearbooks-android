@@ -1,5 +1,7 @@
 package com.nearsoft.nearbooks.sync.auth;
 
+import com.nearsoft.nearbooks.BuildConfig;
+
 /**
  * Account general.
  * Created by epool on 12/21/15.
@@ -7,7 +9,7 @@ package com.nearsoft.nearbooks.sync.auth;
 public class AccountGeneral {
 
     // Value below must match the account type specified in res/xml/sync_adapter.xml
-    public static final String ACCOUNT_TYPE = "com.nearsoft.nearbooks.account";
+    public static final String ACCOUNT_TYPE = BuildConfig.APPLICATION_ID + ".account";
 
     public static final long SYNC_FREQUENCY = 60 * 60;  // 1 hour (in seconds)
     public static final String PREF_SETUP_COMPLETE = "setup_complete";

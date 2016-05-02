@@ -5,12 +5,15 @@ apply plugin: 'io.fabric'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
+def final nearbooksApplicationId = 'com.nearsoft.nearbooks'
+def final nsbooksApplicationId = 'com.nearsoft.nsbooks'
+
 android {
     compileSdkVersion 'Google Inc.:Google APIs:23'
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.nearsoft.nearbooks"
+        applicationId nearbooksApplicationId
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 12
@@ -18,6 +21,20 @@ android {
 
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+    }
+    productFlavors {
+        nearbooks {
+            applicationId nearbooksApplicationId
+            resValue "string", "account_type", "${applicationId}.account"
+            resValue "string", "authority", "${applicationId}.provider"
+            buildConfigField "String", "GOOGLE_SERVER_CLIENT_ID", '"130661059453-56utmg42k7ojq3a3v9sat13noojvm1uq.apps.googleusercontent.com"'
+        }
+        nsbooks {
+            applicationId nsbooksApplicationId
+            resValue "string", "account_type", "${applicationId}.account"
+            resValue "string", "authority", "${applicationId}.provider"
+            buildConfigField "String", "GOOGLE_SERVER_CLIENT_ID", '"995671597719-kmlgpd2qd43kgnqhmsfm7k87lh5s6175.apps.googleusercontent.com"'
+        }
     }
     buildTypes {
         release {
@@ -28,11 +45,6 @@ android {
     dataBinding {
         enabled = true
     }
-//    sourceSets {
-//        main.java.srcDirs += 'src/main/kotlin'
-//        androidTest.java.srcDirs += 'src/androidTest/kotlin'
-//        test.java.srcDirs += 'src/test/kotlin'
-//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -44,50 +56,48 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile "junit:junit:$junitVersion"
+    testCompile "junit:junit:$junit_version"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    kapt "com.android.databinding:compiler:$buildToolsVersion"
+    kapt "com.android.databinding:compiler:$build_tools_version"
 
-    compile "com.android.support:multidex:$multidexVersion"
-    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
-    compile "com.android.support:design:$supportLibraryVersion"
-    compile "com.android.support:palette-v7:$supportLibraryVersion"
-    compile "com.android.support:cardview-v7:$supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    compile "com.android.support:multidex:$multidex_version"
+    compile "com.android.support:appcompat-v7:$support_library_version"
+    compile "com.android.support:design:$support_library_version"
+    compile "com.android.support:palette-v7:$support_library_version"
+    compile "com.android.support:cardview-v7:$support_library_version"
+    compile "com.android.support:recyclerview-v7:$support_library_version"
 
-    compile "com.google.android.gms:play-services-auth:$playServicesVersion"
-    compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    compile "com.google.android.gms:play-services-auth:$play_services_version"
+    compile "com.google.android.gms:play-services-gcm:$play_services_version"
 
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
-    compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
-    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
+    compile "com.squareup.okhttp3:logging-interceptor:$ok_http_version"
+    compile "com.google.code.gson:gson:$gson_version"
 
-    compile "com.squareup.picasso:picasso:$picassoVersion"
-    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:$picasso2OkHttp3Version"
+    compile "com.squareup.picasso:picasso:$picasso_version"
+    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:$picasso_2_ok_http_3_version"
 
-    compile "com.journeyapps:zxing-android-embedded:$zxingEmbeddedVersion"
-    compile "com.google.zxing:core:$zxingVersion"
+    compile "com.journeyapps:zxing-android-embedded:$zxing_embedded_version"
+    compile "com.google.zxing:core:$zxing_version"
 
-    compile "com.google.dagger:dagger:$daggerVersion"
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    compile "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
-    compile "com.facebook.stetho:stetho:$stethoVersion"
-    compile "com.facebook.stetho:stetho-okhttp:$stethoVersion"
-    compile "com.facebook.stetho:stetho-js-rhino:$stethoVersion"
+    compile "com.facebook.stetho:stetho:$stetho_version"
+    compile "com.facebook.stetho:stetho-okhttp:$stetho_version"
+    compile "com.facebook.stetho:stetho-js-rhino:$stetho_version"
 
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion") {
+    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version") {
         transitive = true;
     }
 
-    compile "io.reactivex:rxandroid:$rxAndroidVersion"
+    compile "io.reactivex:rxandroid:$rx_android_version"
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
-    compile "io.reactivex:rxjava:$rxJavaVersion"
-
-    compile "com.google.guava:guava:$guavaVersion"
+    compile "io.reactivex:rxjava:$rx_java_version"
 }
 
 kapt {

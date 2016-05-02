@@ -23,7 +23,7 @@ Nearbooks Android client for manage the books lending in nearsoft. This Android 
 - [Zxing](https://github.com/journeyapps/zxing-android-embedded) for scanning QR and bar codes.
 - [RxAndroid](https://github.com/ReactiveX/RxAndroid) to avoid callback hell and it is fun =p.
 - [Retrolambda](https://github.com/evant/gradle-retrolambda) for using lambda expressions.
-- [Guava](https://github.com/google/guava) just for learning it.
+- [Realm](https://realm.io/) for storing local data.
 - [Crashlytics](https://www.fabric.io) for reporting app crashes.
 
 ## Beta testers
