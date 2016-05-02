@@ -15,7 +15,7 @@ import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
 import com.nearsoft.nearbooks.di.components.DaggerBaseActivityComponent;
 import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent;
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 
 import javax.inject.Inject;

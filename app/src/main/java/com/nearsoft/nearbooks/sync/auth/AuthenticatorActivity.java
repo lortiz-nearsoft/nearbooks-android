@@ -14,7 +14,7 @@ import com.nearsoft.nearbooks.databinding.ActivityAuthenticatorBinding;
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
 import com.nearsoft.nearbooks.exceptions.NearbooksException;
 import com.nearsoft.nearbooks.models.UserModel;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.util.SyncUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 

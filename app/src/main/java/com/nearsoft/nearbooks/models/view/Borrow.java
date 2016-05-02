@@ -1,103 +1,70 @@
-package com.nearsoft.nearbooks.models.sqlite;
+package com.nearsoft.nearbooks.models.view;
 
 import android.content.Context;
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
 
-import com.android.databinding.library.baseAdapters.BR;
-import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
+import com.nearsoft.nearbooks.BR;
 import com.nearsoft.nearbooks.R;
-import com.nearsoft.nearbooks.db.NearbooksDatabase;
-import com.nearsoft.nearbooks.models.BorrowModel;
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.annotation.provider.ContentUri;
-import com.raizlabs.android.dbflow.annotation.provider.TableEndpoint;
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 /**
- * Borrow sqlite model.
- * Created by epool on 1/7/16.
+ * Borrow view model.
+ * Created by epool on 5/1/16.
  */
-@TableEndpoint(name = Borrow.NAME, contentProviderName = NearbooksDatabase.CONTENT_PROVIDER_NAME)
-@Table(database = NearbooksDatabase.class)
-public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
+public class Borrow extends BaseObservable implements Parcelable {
+
+    public static final Parcelable.Creator<Borrow> CREATOR = new Parcelable.Creator<Borrow>() {
+        @Override
+        public Borrow createFromParcel(Parcel source) {
+            return new Borrow(source);
+        }
+
+        @Override
+        public Borrow[] newArray(int size) {
+            return new Borrow[size];
+        }
+    };
 
     public static final int STATUS_CANCELLED = 0;
     public static final int STATUS_REQUESTED = 1;
     public static final int STATUS_ACTIVE = 2;
     public static final int STATUS_COMPLETED = 3;
 
-    public static final String NAME = "Borrow";
-
-    @ContentUri(path = NAME, type = ContentUri.ContentType.VND_MULTIPLE)
-    public static final Uri CONTENT_URI = buildUri(NAME);
-
-    public static final Parcelable.Creator<Borrow> CREATOR = new Parcelable.Creator<Borrow>() {
-        public Borrow createFromParcel(Parcel source) {
-            return new Borrow(source);
-        }
-
-        public Borrow[] newArray(int size) {
-            return new Borrow[size];
-        }
-    };
-
-    @Column
-    @PrimaryKey
-    @SerializedName("borrowID")
     protected String id;
-
-    @ForeignKey(saveForeignKeyModel = false)
-    @SerializedName("bookID")
-    protected ForeignKeyContainer<Book> bookForeignKeyContainer;
-
-    @Column
-    @SerializedName("copyNumber")
+    protected String bookId;
     protected int copyNumber;
-
-    @Column
-    @SerializedName("userEmail")
     protected String userEmail;
-
-    @Column
-    @SerializedName("status")
     protected int status;
-
-    @Column
-    @SerializedName("initialDate")
     protected Date initialDate;
-
-    @Column
-    @SerializedName("finalDate")
     protected Date finalDate;
-
-    @Column
-    @SerializedName("checkIn")
     protected Date checkInDate;
-
-    @Column
-    @SerializedName("checkOut")
     protected Date checkOutDate;
 
     public Borrow() {
     }
 
+    public Borrow(com.nearsoft.nearbooks.models.realm.Borrow borrow) {
+        id = borrow.getId();
+        bookId = borrow.getBookId();
+        copyNumber = borrow.getCopyNumber();
+        userEmail = borrow.getUserEmail();
+        status = borrow.getStatus();
+        initialDate = borrow.getInitialDate();
+        finalDate = borrow.getFinalDate();
+        checkInDate = borrow.getCheckInDate();
+        checkOutDate = borrow.getCheckOutDate();
+    }
+
     protected Borrow(Parcel in) {
         this.id = in.readString();
-        this.bookForeignKeyContainer = BorrowModel
-                .bookForeignKeyContainerFromBookId(in.readString());
+        this.bookId = in.readString();
         this.copyNumber = in.readInt();
         this.userEmail = in.readString();
         this.status = in.readInt();
@@ -122,13 +89,13 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     }
 
     @Bindable
-    public ForeignKeyContainer<Book> getBookForeignKeyContainer() {
-        return bookForeignKeyContainer;
+    public String getBookId() {
+        return bookId;
     }
 
-    public void setBookForeignKeyContainer(ForeignKeyContainer<Book> bookForeignKeyContainer) {
-        this.bookForeignKeyContainer = bookForeignKeyContainer;
-        notifyPropertyChanged(BR.bookForeignKeyContainer);
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+        notifyPropertyChanged(BR.bookId);
     }
 
     @Bindable
@@ -152,12 +119,11 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     }
 
     @Bindable
-    @Status
     public int getStatus() {
         return status;
     }
 
-    public void setStatus(@Status int status) {
+    public void setStatus(int status) {
         this.status = status;
         notifyPropertyChanged(BR.status);
     }
@@ -214,62 +180,6 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     }
 
     @Override
-    public Uri getDeleteUri() {
-        return CONTENT_URI;
-    }
-
-    @Override
-    public Uri getInsertUri() {
-        return CONTENT_URI;
-    }
-
-    @Override
-    public Uri getUpdateUri() {
-        return CONTENT_URI;
-    }
-
-    @Override
-    public Uri getQueryUri() {
-        return CONTENT_URI;
-    }
-
-    public void associateBook(Book book) {
-        bookForeignKeyContainer = FlowManager
-                .getContainerAdapter(Book.class)
-                .toForeignKeyContainer(book);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Borrow borrow = (Borrow) o;
-        return copyNumber == borrow.copyNumber &&
-                status == borrow.status &&
-                Objects.equal(id, borrow.id) &&
-                Objects.equal(bookForeignKeyContainer, borrow.bookForeignKeyContainer) &&
-                Objects.equal(userEmail, borrow.userEmail) &&
-                Objects.equal(initialDate, borrow.initialDate) &&
-                Objects.equal(finalDate, borrow.finalDate) &&
-                Objects.equal(checkInDate, borrow.checkInDate) &&
-                Objects.equal(checkOutDate, borrow.checkOutDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(
-                id,
-                bookForeignKeyContainer,
-                copyNumber,
-                userEmail, status,
-                initialDate,
-                finalDate,
-                checkInDate,
-                checkOutDate
-        );
-    }
-
-    @Override
     public int describeContents() {
         return 0;
     }
@@ -277,9 +187,7 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
-        dest.writeString(
-                BorrowModel.bookIdFromBookForeignKeyContainer(this.bookForeignKeyContainer)
-        );
+        dest.writeString(this.bookId);
         dest.writeInt(this.copyNumber);
         dest.writeString(this.userEmail);
         dest.writeInt(this.status);
@@ -298,4 +206,5 @@ public class Borrow extends NearbooksBaseObservableModel implements Parcelable {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Status {
     }
+
 }

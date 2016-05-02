@@ -6,7 +6,7 @@ import com.nearsoft.nearbooks.config.Configuration
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule
 import com.nearsoft.nearbooks.di.modules.NetworkModule
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService
-import com.nearsoft.nearbooks.models.sqlite.User
+import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter
 import com.nearsoft.nearbooks.ws.BookService
 import com.nearsoft.nearbooks.ws.GoogleBooksService
@@ -30,7 +30,7 @@ interface NearbooksApplicationComponent {
 
     fun provideConfiguration(): Configuration
 
-    fun providesBookService(): BookService
+    fun provideBookService(): BookService
 
     fun provideGoogleBooksService(): GoogleBooksService
 

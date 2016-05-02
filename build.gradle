@@ -5,7 +5,6 @@ buildscript {
     ext {
         buildToolsVersion = '2.0.0'
         kotlin_version = '1.0.1-2'
-        aptVersion = '1.8'
         gradleVersionsPluginVersion = '0.12.0'
         junitVersion = '4.12'
         fabricToolsVersion = '1.21.2'
@@ -13,7 +12,6 @@ buildscript {
         multidexVersion = '1.0.1'
         supportLibraryVersion = '23.3.0'
         playServicesVersion = '8.4.0'
-        dbFlowVersion = '3.0.0-beta2'
         retrofitVersion = '2.0.2'
         okHttpVersion = '3.2.0'
         gsonVersion = '2.6.2'
@@ -27,6 +25,7 @@ buildscript {
         rxAndroidVersion = '1.1.0'
         rxJavaVersion = '1.1.3'
         guavaVersion = '19.0'
+        realmVersion = '0.89.1'
     }
 
     repositories {
@@ -37,10 +36,10 @@ buildscript {
         classpath "com.android.tools.build:gradle:$buildToolsVersion"
         classpath "com.google.gms:google-services:$buildToolsVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.neenbedankt.gradle.plugins:android-apt:$aptVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsPluginVersion"
         classpath "io.fabric.tools:gradle:$fabricToolsVersion"
         classpath "me.tatarka:gradle-retrolambda:$retroLambdaVersion"
+        classpath "io.realm:realm-gradle-plugin:$realmVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

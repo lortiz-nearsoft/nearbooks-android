@@ -14,13 +14,13 @@ import com.nearsoft.nearbooks.BuildConfig;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.exceptions.NearbooksException;
 import com.nearsoft.nearbooks.exceptions.SignInException;
-import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.Util;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
-import com.raizlabs.android.dbflow.sql.language.Delete;
+
+import io.realm.Realm;
 
 /**
  * User model.
@@ -38,7 +38,13 @@ public class UserModel {
             validateNearsoftAccount(googleSignInAccount);
 
             User user = new User(googleSignInAccount);
-            user.save();
+
+            Realm realm = Realm.getDefaultInstance();
+            realm.executeTransaction(r -> {
+                r.delete(com.nearsoft.nearbooks.models.realm.User.class);
+                r.copyToRealm(new com.nearsoft.nearbooks.models.realm.User(user));
+            });
+            realm.close();
 
             if (!BuildConfig.DEBUG) {
                 Crashlytics.setUserIdentifier(user.getId());
@@ -74,7 +80,7 @@ public class UserModel {
                     account,
                     baseActivity,
                     future -> {
-                        if (future.isDone()) signOut(user, googleApiClient, onSignOutSuccess);
+                        if (future.isDone()) signOut(googleApiClient, onSignOutSuccess);
                     },
                     null
             );
@@ -82,7 +88,7 @@ public class UserModel {
             accountManager.removeAccount(
                     account,
                     future -> {
-                        if (future.isDone()) signOut(user, googleApiClient, onSignOutSuccess);
+                        if (future.isDone()) signOut(googleApiClient, onSignOutSuccess);
                     },
                     null
             );
@@ -103,15 +109,13 @@ public class UserModel {
         }
     }
 
-    private static void signOut(User user, GoogleApiClient googleApiClient,
-                                Runnable onSignOutSuccess) {
-
+    private static void signOut(GoogleApiClient googleApiClient, Runnable onSignOutSuccess) {
         Auth.GoogleSignInApi.revokeAccess(googleApiClient);
         Auth.GoogleSignInApi.signOut(googleApiClient);
 
-        user.delete();
-
-        Delete.tables(User.class, Book.class);
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(r -> r.delete(com.nearsoft.nearbooks.models.realm.User.class));
+        realm.close();
 
         if (onSignOutSuccess != null) {
             onSignOutSuccess.run();

@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.nearsoft.nearbooks.di.scopes.PerActivity
-import com.nearsoft.nearbooks.models.sqlite.User
+import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.sync.SyncChangeHandler
 import com.nearsoft.nearbooks.view.activities.BaseActivity
 import com.nearsoft.nearbooks.view.activities.HomeActivity

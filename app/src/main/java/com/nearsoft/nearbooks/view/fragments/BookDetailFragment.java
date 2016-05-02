@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentBookDetailBinding;
 import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.models.view.Book;
+import com.nearsoft.nearbooks.models.view.Borrow;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
@@ -101,7 +101,7 @@ public class BookDetailFragment extends BaseFragment {
 
         mBinding.fabRequestBook.setOnClickListener(view -> subscribeToFragment(BookModel.requestBookToBorrow(mLazyUser.get(),
                 mBook.getId() + "-0")
-                .subscribe(new Subscriber<Response<Borrow>>() {
+                .subscribe(new Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
                     @Override
                     public void onCompleted() {
                     }
@@ -112,9 +112,9 @@ public class BookDetailFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(Response<Borrow> response) {
+                    public void onNext(Response<com.nearsoft.nearbooks.models.realm.Borrow> response) {
                         if (response.isSuccessful()) {
-                            Borrow borrow = response.body();
+                            Borrow borrow = new Borrow(response.body());
                             mBinding.setBorrow(borrow);
                             mBinding.executePendingBindings();
                             switch (borrow.getStatus()) {
@@ -220,7 +220,7 @@ public class BookDetailFragment extends BaseFragment {
     }
 
     private void checkBookAvailability() {
-        subscribeToFragment(BookModel.checkBookAvailability(mBook)
+        subscribeToFragment(BookModel.checkBookAvailability(mBook.getId())
                 .subscribe(new Subscriber<Response<AvailabilityResponse>>() {
                     @Override
                     public void onCompleted() {
@@ -235,7 +235,10 @@ public class BookDetailFragment extends BaseFragment {
                     public void onNext(Response<AvailabilityResponse> response) {
                         if (response.isSuccessful()) {
                             AvailabilityResponse availabilityResponse = response.body();
-                            mBinding.setBorrow(availabilityResponse.getActiveBorrrow());
+                            Borrow borrow = availabilityResponse.getActiveBorrow() != null ?
+                                    new Borrow(availabilityResponse.getActiveBorrow()) :
+                                    null;
+                            mBinding.setBorrow(borrow);
                             mBinding.executePendingBindings();
                             if (availabilityResponse.isAvailable()) {
                                 mBinding.fabRequestBook.show();

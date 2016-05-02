@@ -1,23 +1,23 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".view.activities.BookDetailActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.activities.BookDetailActivity">
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="book"
-            type="com.nearsoft.nearbooks.models.sqlite.Book"/>
+            type="com.nearsoft.nearbooks.models.view.Book" />
 
         <variable
             name="borrow"
-            type="com.nearsoft.nearbooks.models.sqlite.Borrow"/>
+            type="com.nearsoft.nearbooks.models.view.Borrow" />
 
         <variable
             name="colors"
-            type="com.nearsoft.nearbooks.view.helpers.ColorsWrapper"/>
+            type="com.nearsoft.nearbooks.view.helpers.ColorsWrapper" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -41,7 +41,7 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@string/content_description_book_cover"
                     android:scaleType="centerCrop"
-                    tools:targetApi="LOLLIPOP"/>
+                    tools:targetApi="LOLLIPOP" />
 
             </com.nearsoft.nearbooks.view.widgets.SquareFrameLayout>
 
@@ -78,7 +78,7 @@
                                 android:text="@{book.author}"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                                 android:textColor="@{colors.titleTextColor}"
-                                tools:text="Author"/>
+                                tools:text="Author" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -93,7 +93,7 @@
                                     android:text="@{book.id}"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                     android:textColor="@{colors.bodyTextColor}"
-                                    tools:text="ISBN"/>
+                                    tools:text="ISBN" />
 
                                 <TextView
                                     android:id="@+id/textViewBookYear"
@@ -103,7 +103,7 @@
                                     android:text="@{String.valueOf(book.releaseYear)}"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                                     android:textColor="@{colors.bodyTextColor}"
-                                    tools:text="2015"/>
+                                    tools:text="2015" />
 
                             </LinearLayout>
 
@@ -115,7 +115,7 @@
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@{colors.bodyTextColor}"
                                 android:visibility="@{borrow != null ? View.VISIBLE : View.GONE}"
-                                tools:text="Borrowed by epool@nearsoft.com"/>
+                                tools:text="Borrowed by epool@nearsoft.com" />
 
                         </LinearLayout>
 
@@ -136,9 +136,8 @@
                         app:layout_behavior="@string/appbar_scrolling_view_behavior"
                         tools:targetApi="LOLLIPOP">
 
-                        <android.support.v7.widget.CardView
+                        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/cardViewBookDescription"
-                            xmlns:card_view="http://schemas.android.com/apk/res-auto"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
@@ -151,13 +150,13 @@
                                 android:layout_margin="16dp"
                                 android:text="@{book.description != null ? book.description : @string/message_no_book_description}"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                tools:text="Text"/>
+                                tools:text="Text" />
 
                         </android.support.v7.widget.CardView>
 
                     </android.support.v4.widget.NestedScrollView>
 
-                    <include layout="@layout/shadow_toolbar"/>
+                    <include layout="@layout/shadow_toolbar" />
 
                 </FrameLayout>
 
@@ -174,7 +173,7 @@
             android:src="@drawable/ic_pan_tool_black_24dp"
             android:visibility="gone"
             app:layout_anchor="@+id/note_detail_container"
-            app:layout_anchorGravity="top|end"/>
+            app:layout_anchorGravity="top|end" />
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

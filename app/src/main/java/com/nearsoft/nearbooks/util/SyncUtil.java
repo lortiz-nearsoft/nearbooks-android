@@ -4,8 +4,8 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.os.Bundle;
 
-import com.nearsoft.nearbooks.db.NearbooksDatabase;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.common.Constants;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
 
 /**
@@ -16,14 +16,14 @@ public class SyncUtil {
 
     public static void configSyncPeriod(Account account) {
         // Inform the system that this account supports sync
-        ContentResolver.setIsSyncable(account, NearbooksDatabase.CONTENT_AUTHORITY, 1);
+        ContentResolver.setIsSyncable(account, Constants.CONTENT_AUTHORITY, 1);
         // Inform the system that this account is eligible for auto sync when the network is up
-        ContentResolver.setSyncAutomatically(account, NearbooksDatabase.CONTENT_AUTHORITY, true);
+        ContentResolver.setSyncAutomatically(account, Constants.CONTENT_AUTHORITY, true);
         // Recommend a schedule for automatic synchronization. The system may modify this based
         // on other scheduled syncs and network utilization.
         ContentResolver.addPeriodicSync(
                 account,
-                NearbooksDatabase.CONTENT_AUTHORITY,
+                Constants.CONTENT_AUTHORITY,
                 Bundle.EMPTY,
                 AccountGeneral.SYNC_FREQUENCY
         );
@@ -46,13 +46,13 @@ public class SyncUtil {
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         Account account = new Account(user.getEmail(), AccountGeneral.ACCOUNT_TYPE);
-        ContentResolver.requestSync(account, NearbooksDatabase.CONTENT_AUTHORITY, b);
+        ContentResolver.requestSync(account, Constants.CONTENT_AUTHORITY, b);
     }
 
     public static boolean isSyncing(User user) {
         Account account = new Account(user.getEmail(), AccountGeneral.ACCOUNT_TYPE);
         return ContentResolver
-                .isSyncActive(account, NearbooksDatabase.CONTENT_AUTHORITY);
+                .isSyncActive(account, Constants.CONTENT_AUTHORITY);
     }
 
 }

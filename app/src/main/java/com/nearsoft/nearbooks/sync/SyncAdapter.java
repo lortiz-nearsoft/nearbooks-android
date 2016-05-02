@@ -9,13 +9,13 @@ import android.os.Bundle;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
 import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.realm.Book;
 import com.nearsoft.nearbooks.ws.BookService;
 
 import java.io.IOException;
 import java.util.List;
 
-import rx.Subscriber;
+import retrofit2.Response;
 
 /**
  * Sync adapter.
@@ -28,38 +28,29 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         mBookService = NearbooksApplication.Companion
                 .applicationComponent()
-                .providesBookService();
+                .provideBookService();
     }
 
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         mBookService = NearbooksApplication.Companion
                 .applicationComponent()
-                .providesBookService();
+                .provideBookService();
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, final SyncResult syncResult) {
-        mBookService
-                .getAllBooks()
-                .toBlocking()
-                .subscribe(new Subscriber<List<Book>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                        if (t instanceof IOException) syncResult.stats.numIoExceptions += 1;
-                    }
-
-                    @Override
-                    public void onNext(List<Book> books) {
-                        BookModel.cacheBooks(books);
-                    }
-                });
+        try {
+            Response<List<Book>> response = mBookService.getAllBooks().execute();
+            if (response.isSuccessful()) {
+                List<Book> books = response.body();
+                BookModel.cacheBooks(books);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            syncResult.stats.numIoExceptions += 1;
+        }
     }
 
 }
