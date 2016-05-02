@@ -2,9 +2,8 @@ package com.nearsoft.nearbooks
 
 import android.os.SystemClock
 import android.test.ApplicationTestCase
-import com.nearsoft.nearbooks.models.BookModel
-import com.nearsoft.nearbooks.models.sqlite.Book
-import com.nearsoft.nearbooks.models.sqlite.Borrow
+import com.nearsoft.nearbooks.models.realm.Book
+import com.nearsoft.nearbooks.models.realm.Borrow
 import com.nearsoft.nearbooks.util.ErrorUtil
 import com.nearsoft.nearbooks.ws.BookService
 import com.nearsoft.nearbooks.ws.GoogleBooksService
@@ -12,6 +11,7 @@ import com.nearsoft.nearbooks.ws.bodies.RequestBody
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
 import com.nearsoft.nearbooks.ws.responses.googlebooks.GoogleBooksSearchResponse
+import io.realm.Realm
 import retrofit2.Response
 import rx.observers.TestSubscriber
 import java.io.IOException
@@ -31,12 +31,11 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         SystemClock.sleep(100)
         val nearbooksApplicationComponent = NearbooksApplication.applicationComponent()
         mBookService = nearbooksApplicationComponent.providesBookService()
-        mGoogleBooksService = nearbooksApplicationComponent.provideGoogleBooksService()
     }
 
     @Throws(IOException::class)
     fun testBookService() {
-        val observable = mBookService!!.allBooks
+        val observable = mBookService!!.allBooksRx
 
         val testSubscriber = TestSubscriber<List<Book>>()
         observable.subscribe(testSubscriber)
@@ -51,22 +50,27 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
     }
 
     fun testBookModel() {
-        val book = Book()
+        val book = com.nearsoft.nearbooks.models.realm.Book()
         book.id = "123"
         book.author = "epool"
         book.isAvailable = true
         book.title = "Title"
-        book.releaseYear = 2015
+        book.releaseYear = "2015"
         book.numberOfCopies = 1
         book.numberOfDaysAllowedForBorrowing = 7
-        if (!book.exists()) {
-            book.save()
+
+        val realm = Realm.getDefaultInstance()
+        if (realm.where(com.nearsoft.nearbooks.models.realm.Book::class.java)?.count() == 0L) {
+            realm.executeTransaction { realm.copyToRealm(book) }
         }
+        realm.close()
 
-        val book1 = BookModel.findByBookId("123")
+        val book1 = realm.where(com.nearsoft.nearbooks.models.realm.Book::class.java)
+                .equalTo("id", "123")
+                .findFirst()
 
-        assertTrue(book.exists())
-        assertEquals(book, book1)
+        assertNotNull(book1)
+        assertEquals(book.id, book1?.id)
     }
 
     @Throws(IOException::class)

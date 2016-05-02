@@ -1,18 +1,14 @@
 package com.nearsoft.nearbooks.di.modules
 
 import android.content.Context
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.picasso.OkHttp3Downloader
 import com.nearsoft.nearbooks.config.Configuration
-import com.nearsoft.nearbooks.gson.BookForeignKeyContainerSerializer
-import com.nearsoft.nearbooks.models.sqlite.User
+import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.other.StethoInterceptor
 import com.nearsoft.nearbooks.ws.BookService
 import com.nearsoft.nearbooks.ws.GoogleBooksService
-import com.raizlabs.android.dbflow.structure.ModelAdapter
 import com.squareup.picasso.Picasso
 import dagger.Lazy
 import dagger.Module
@@ -55,17 +51,6 @@ class NetworkModule {
     fun provideGson(): Gson {
         val gsonBuilder = GsonBuilder()
         gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-        gsonBuilder.registerTypeAdapter(
-                BookForeignKeyContainerSerializer.TYPE, BookForeignKeyContainerSerializer())
-        gsonBuilder.setExclusionStrategies(object : ExclusionStrategy {
-            override fun shouldSkipField(f: FieldAttributes): Boolean {
-                return f.declaredClass.equals(ModelAdapter::class.java)
-            }
-
-            override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                return false
-            }
-        })
         return gsonBuilder.create()
     }
 

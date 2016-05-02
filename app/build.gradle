@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'io.fabric'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 'Google Inc.:Google APIs:23'
@@ -57,10 +58,6 @@ dependencies {
 
     compile "com.google.android.gms:play-services-auth:$playServicesVersion"
     compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
-
-    kapt "com.github.Raizlabs.DBFlow:dbflow-processor:$dbFlowVersion"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:$dbFlowVersion"
-    compile "com.github.Raizlabs.DBFlow:dbflow:$dbFlowVersion"
 
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"

@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.view.activities.BaseActivity;
 
 import javax.inject.Inject;

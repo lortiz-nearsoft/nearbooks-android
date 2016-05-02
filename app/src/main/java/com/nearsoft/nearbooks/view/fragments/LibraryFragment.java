@@ -19,16 +19,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding;
 import com.nearsoft.nearbooks.models.BookModel;
-import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.Borrow;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.view.Book;
+import com.nearsoft.nearbooks.models.view.Borrow;
 import com.nearsoft.nearbooks.sync.SyncChangeHandler;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.SyncUtil;
@@ -39,6 +37,8 @@ import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.helpers.SpacingDecoration;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
 
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import retrofit2.Response;
 import rx.Subscriber;
 
@@ -54,8 +54,7 @@ public class LibraryFragment
         extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener,
         SyncChangeHandler.OnSyncChangeListener,
-        BaseActivity.OnSearchListener,
-        Filter.FilterListener {
+        BaseActivity.OnSearchListener, RealmChangeListener {
 
     private final static int ACTION_REQUEST = 0;
     private final static int ACTION_CHECK_IN = 1;
@@ -65,6 +64,7 @@ public class LibraryFragment
     private BookRecyclerViewCursorAdapter.OnBookItemClickListener mOnBookItemClickListener;
     private FragmentLibraryBinding mBinding;
     private SearchView mSearchView;
+    private Realm mRealm;
 
     public LibraryFragment() {
         // Required empty public constructor
@@ -89,8 +89,11 @@ public class LibraryFragment
 
         setHasOptionsMenu(true);
 
+        mRealm = Realm.getDefaultInstance();
+        mRealm.addChangeListener(this);
+
         mBookRecyclerViewCursorAdapter =
-                new BookRecyclerViewCursorAdapter(BookModel.getAllBooks(), mOnBookItemClickListener);
+                new BookRecyclerViewCursorAdapter(getContext(), mRealm, mOnBookItemClickListener);
     }
 
     @Override
@@ -162,6 +165,15 @@ public class LibraryFragment
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mRealm != null) {
+            mRealm.removeChangeListener(this);
+            mRealm.close();
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
@@ -191,13 +203,15 @@ public class LibraryFragment
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mBookRecyclerViewCursorAdapter.getFilter().filter(query, LibraryFragment.this);
+                mBookRecyclerViewCursorAdapter.filterByQuery(query);
+                updateUI();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mBookRecyclerViewCursorAdapter.getFilter().filter(newText, LibraryFragment.this);
+                mBookRecyclerViewCursorAdapter.filterByQuery(newText);
+                updateUI();
                 return false;
             }
         });
@@ -205,7 +219,7 @@ public class LibraryFragment
 
     @Override
     public void onRefresh() {
-        User user = mLazyUser.get();
+        com.nearsoft.nearbooks.models.view.User user = mLazyUser.get();
         if (!SyncUtil.isSyncing(user)) {
             SyncUtil.triggerRefresh(user);
         }
@@ -234,17 +248,11 @@ public class LibraryFragment
             mBinding.recyclerViewBooks.setVisibility(View.VISIBLE);
             mBinding.textViewEmpty.setVisibility(View.GONE);
         }
-        mBookRecyclerViewCursorAdapter.notifyDataChanged();
     }
 
     @Override
     public void onSearchRequest(String query) {
         if (mSearchView != null) mSearchView.setQuery(query, false);
-    }
-
-    @Override
-    public void onFilterComplete(int count) {
-        updateUI();
     }
 
     private void startQRScanner() {
@@ -262,8 +270,9 @@ public class LibraryFragment
     private void showBookActions(@NonNull final String qrCode) {
         String[] qrCodeParts = qrCode.split("-");
         if (qrCodeParts.length == 2) {
-            Book book = BookModel.findByBookId(qrCodeParts[0]);
-            if (book != null) {
+            com.nearsoft.nearbooks.models.realm.Book realmBooks = BookModel.findByBookId(qrCodeParts[0]);
+            if (realmBooks != null) {
+                Book book = new Book(realmBooks);
                 new AlertDialog.Builder(getContext())
                         .setTitle(book.getTitle())
                         .setItems(R.array.actions_book, (dialog, which) -> {
@@ -271,7 +280,7 @@ public class LibraryFragment
                                 case ACTION_REQUEST:
                                     subscribeToFragment(BookModel.requestBookToBorrow(
                                             mLazyUser.get(), qrCode)
-                                            .subscribe(new Subscriber<Response<Borrow>>() {
+                                            .subscribe(new Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
                                                 @Override
                                                 public void onCompleted() {
                                                 }
@@ -283,9 +292,9 @@ public class LibraryFragment
                                                 }
 
                                                 @Override
-                                                public void onNext(Response<Borrow> response) {
+                                                public void onNext(Response<com.nearsoft.nearbooks.models.realm.Borrow> response) {
                                                     if (response.isSuccessful()) {
-                                                        Borrow borrow = response.body();
+                                                        Borrow borrow = new Borrow(response.body());
                                                         switch (borrow.getStatus()) {
                                                             case Borrow.STATUS_REQUESTED:
                                                                 ViewUtil.showSnackbarMessage(
@@ -350,6 +359,12 @@ public class LibraryFragment
                     )
                     .show();
         }
+    }
+
+    @Override
+    public void onChange() {
+        mBookRecyclerViewCursorAdapter.notifyDataSetChanged();
+        updateUI();
     }
 
 }

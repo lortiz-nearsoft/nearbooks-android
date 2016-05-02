@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.databinding.BookItemBinding;
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
-import com.nearsoft.nearbooks.models.sqlite.Book;
+import com.nearsoft.nearbooks.models.view.Book;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper;
 

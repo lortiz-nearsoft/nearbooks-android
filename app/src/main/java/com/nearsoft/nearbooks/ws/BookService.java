@@ -1,7 +1,7 @@
 package com.nearsoft.nearbooks.ws;
 
-import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.models.realm.Book;
+import com.nearsoft.nearbooks.models.realm.Borrow;
 import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
@@ -9,6 +9,7 @@ import com.nearsoft.nearbooks.ws.responses.MessageResponse;
 
 import java.util.List;
 
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -24,7 +25,10 @@ import rx.Observable;
 public interface BookService {
 
     @GET("books")
-    Observable<List<Book>> getAllBooks();
+    Call<List<Book>> getAllBooks();
+
+    @GET("books")
+    Observable<List<Book>> getAllBooksRx();
 
     // TODO update this endpoint url if necessary after the backend implementation
     @POST("book/new")

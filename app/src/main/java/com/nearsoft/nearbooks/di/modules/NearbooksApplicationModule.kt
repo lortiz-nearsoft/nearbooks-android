@@ -5,18 +5,19 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.nearsoft.nearbooks.BuildConfig
 import com.nearsoft.nearbooks.NearbooksApplication
 import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.config.Configuration
-import com.nearsoft.nearbooks.models.sqlite.User
+import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper
-import com.raizlabs.android.dbflow.config.FlowManager
-import com.raizlabs.android.dbflow.sql.language.SQLite
 import dagger.Module
 import dagger.Provides
 import io.fabric.sdk.android.Fabric
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import javax.inject.Singleton
 
 /**
@@ -29,12 +30,18 @@ class NearbooksApplicationModule(private val mNearbooksApplication: NearbooksApp
     init {
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(mNearbooksApplication.applicationContext)
-        } else {
-            // TODO: Add fabric configuration for debugging.
-            Fabric.with(mNearbooksApplication, Crashlytics())
         }
 
-        FlowManager.init(mNearbooksApplication.applicationContext)
+        val crashlytics = Crashlytics.Builder()
+                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build()
+        Fabric.with(mNearbooksApplication, crashlytics)
+
+        val realmConfiguration = RealmConfiguration.Builder(mNearbooksApplication.applicationContext)
+                .name("nearbooks.realm")
+                .schemaVersion(1)
+                .build()
+        Realm.setDefaultConfiguration(realmConfiguration)
     }
 
     @Provides
@@ -66,9 +73,13 @@ class NearbooksApplicationModule(private val mNearbooksApplication: NearbooksApp
     }
 
     @Provides
-    @Singleton
     fun provideUser(): User {
-        return SQLite.select().from(User::class.java).querySingle()
+        val realm = Realm.getDefaultInstance()
+        val user = realm.where(com.nearsoft.nearbooks.models.realm.User::class.java)
+                .findFirst()
+        val userView = User(user)
+        realm.close()
+        return userView
     }
 
 }

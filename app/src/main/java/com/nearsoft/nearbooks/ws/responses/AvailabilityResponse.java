@@ -1,8 +1,8 @@
 package com.nearsoft.nearbooks.ws.responses;
 
 import com.google.gson.annotations.SerializedName;
-import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.Borrow;
+import com.nearsoft.nearbooks.models.realm.Book;
+import com.nearsoft.nearbooks.models.realm.Borrow;
 
 import java.util.Date;
 
@@ -74,12 +74,12 @@ public class AvailabilityResponse {
         isAvailable = available;
     }
 
-    @Borrow.Status
+    @com.nearsoft.nearbooks.models.view.Borrow.Status
     public int getNextStatus() {
         return nextStatus;
     }
 
-    public void setNextStatus(@Borrow.Status int nextStatus) {
+    public void setNextStatus(@com.nearsoft.nearbooks.models.view.Borrow.Status int nextStatus) {
         this.nextStatus = nextStatus;
     }
 

@@ -3,7 +3,7 @@ package com.nearsoft.nearbooks.sync;
 import android.content.ContentResolver;
 import android.content.SyncStatusObserver;
 
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.util.SyncUtil;
 
 import java.util.ArrayList;
