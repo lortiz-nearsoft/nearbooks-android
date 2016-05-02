@@ -16,8 +16,8 @@ public class SharedPreferenceModel {
     public static final String PREFERENCE_IS_UPLOAD_BOOKS_MENU_SHOWN =
             "PREFERENCE_IS_UPLOAD_BOOKS_MENU_SHOWN";
 
-    private final static SharedPreferences SHARED_PREFERENCES = NearbooksApplication
-            .getNearbooksApplicationComponent()
+    private final static SharedPreferences SHARED_PREFERENCES = NearbooksApplication.Companion
+            .applicationComponent()
             .provideDefaultSharedPreferences();
 
     public static void clear() {

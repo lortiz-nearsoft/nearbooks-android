@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
-        <import type="com.nearsoft.nearbooks.util.Util"/>
+        <import type="com.nearsoft.nearbooks.util.Util" />
 
         <variable
             name="user"
-            type="com.nearsoft.nearbooks.models.sqlite.User"/>
+            type="com.nearsoft.nearbooks.models.view.User" />
     </data>
 
     <LinearLayout
@@ -30,20 +30,20 @@
             android:layout_height="48dp"
             android:contentDescription="@string/content_description_user_profile_picture"
             app:error="@{@drawable/ic_launcher}"
-            app:imageUrl="@{user.photoUrl}"/>
+            app:imageUrl="@{user.photoUrl}" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/nav_header_vertical_spacing"
             android:text="@{Util.getApplicationVersion(context)}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <TextView
             android:id="@+id/textViewEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="@{user.email}"/>
+            tools:text="@{user.email}" />
 
     </LinearLayout>
 </layout>

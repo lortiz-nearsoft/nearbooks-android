@@ -22,8 +22,8 @@ import rx.Observable;
  */
 public class ErrorUtil {
 
-    private static Retrofit sRetrofit = NearbooksApplication
-            .getNearbooksApplicationComponent()
+    private static Retrofit sRetrofit = NearbooksApplication.Companion
+            .applicationComponent()
             .provideNearbooksRetrofit();
 
     public static <T> T parseError(Class<T> responseClass, Response<?> response) {

@@ -5,11 +5,9 @@ import android.databinding.ViewDataBinding;
 import android.text.TextUtils;
 
 import com.nearsoft.nearbooks.NearbooksApplication;
-import com.nearsoft.nearbooks.db.NearbooksDatabase;
-import com.nearsoft.nearbooks.models.sqlite.Book;
-import com.nearsoft.nearbooks.models.sqlite.Book_Table;
-import com.nearsoft.nearbooks.models.sqlite.Borrow;
-import com.nearsoft.nearbooks.models.sqlite.User;
+import com.nearsoft.nearbooks.models.realm.Book;
+import com.nearsoft.nearbooks.models.realm.Borrow;
+import com.nearsoft.nearbooks.models.view.User;
 import com.nearsoft.nearbooks.util.ErrorUtil;
 import com.nearsoft.nearbooks.util.ViewUtil;
 import com.nearsoft.nearbooks.ws.BookService;
@@ -17,13 +15,13 @@ import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody;
 import com.nearsoft.nearbooks.ws.bodies.RequestBody;
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse;
 import com.nearsoft.nearbooks.ws.responses.MessageResponse;
-import com.raizlabs.android.dbflow.runtime.TransactionManager;
-import com.raizlabs.android.dbflow.sql.language.Delete;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.Where;
 
 import java.util.List;
 
+import io.realm.Case;
+import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import retrofit2.Response;
 import rx.Observable;
 import rx.Subscriber;
@@ -37,57 +35,53 @@ import rx.schedulers.Schedulers;
  */
 public class BookModel {
 
-    private static BookService mBookService = NearbooksApplication
-            .getNearbooksApplicationComponent()
-            .providesBookService();
+    private static BookService mBookService = NearbooksApplication.Companion
+            .applicationComponent()
+            .provideBookService();
 
     public static void cacheBooks(final List<Book> books) {
         if (books == null || books.isEmpty()) return;
 
-        TransactionManager.transact(NearbooksDatabase.NAME, () -> {
-            Delete.table(Book.class);
-
-            for (Book book : books) {
-                book.save();
-            }
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(r -> {
+            r.delete(Book.class);
+            r.copyToRealmOrUpdate(books);
         });
+        realm.close();
     }
 
     public static Book findByBookId(String bookId) {
-        return SQLite
-                .select()
-                .from(Book.class)
-                .where(Book_Table.id.eq(bookId))
-                .querySingle();
+        Realm realm = Realm.getDefaultInstance();
+        Book book = realm.where(Book.class)
+                .equalTo("id", bookId)
+                .findFirst();
+        realm.close();
+        return book;
     }
 
-    public static Where<Book> getAllBooks() {
-        return SQLite
-                .select()
-                .from(Book.class)
-                .orderBy(Book_Table.title, true);
+    public static RealmResults<Book> getAllBooks(Realm realm) {
+        return realm.allObjects(Book.class).sort(Book.TITLE, Sort.ASCENDING);
     }
 
-    public static Where<Book> getBooksByQuery(CharSequence charSequenceQuery) {
-        if (TextUtils.isEmpty(charSequenceQuery)) {
-            return getAllBooks();
+    public static RealmResults<Book> getBooksByQuery(Realm realm, String query) {
+        if (TextUtils.isEmpty(query)) {
+            return getAllBooks(realm);
         }
 
-        String query = "%" + charSequenceQuery.toString() + "%";
-
-        return SQLite
-                .select()
-                .from(Book.class)
-                .where(Book_Table.id.like(query))
-                .or(Book_Table.title.like(query))
-                .or(Book_Table.author.like(query))
-                .or(Book_Table.releaseYear.like(query))
-                .orderBy(Book_Table.title, true);
+        return realm.where(Book.class)
+                .contains(Book.ID, query, Case.INSENSITIVE)
+                .or()
+                .contains(Book.TITLE, query, Case.INSENSITIVE)
+                .or()
+                .contains(Book.AUTHOR, query, Case.INSENSITIVE)
+                .or()
+                .contains(Book.RELEASE_YEAR, query, Case.INSENSITIVE)
+                .findAllSorted(Book.TITLE, Sort.ASCENDING);
     }
 
-    public static Observable<Response<AvailabilityResponse>> checkBookAvailability(Book book) {
+    public static Observable<Response<AvailabilityResponse>> checkBookAvailability(String bookId) {
         Observable<Response<AvailabilityResponse>> observable
-                = mBookService.getBookAvailability(book.getId() + "-0");
+                = mBookService.getBookAvailability(bookId + "-0");
         return observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());

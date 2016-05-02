@@ -1,27 +1,27 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".view.activities.BookDetailActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.activities.BookDetailActivity">
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="book"
-            type="com.nearsoft.nearbooks.models.sqlite.Book"/>
+            type="com.nearsoft.nearbooks.models.view.Book" />
 
         <variable
             name="borrow"
-            type="com.nearsoft.nearbooks.models.sqlite.Borrow"/>
+            type="com.nearsoft.nearbooks.models.view.Borrow" />
 
         <variable
             name="colors"
-            type="com.nearsoft.nearbooks.view.helpers.ColorsWrapper"/>
+            type="com.nearsoft.nearbooks.view.helpers.ColorsWrapper" />
     </data>
 
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </layout>

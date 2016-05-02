@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.nearsoft.nearbooks"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.nearsoft.nearbooks">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".NearbooksApplication"
@@ -26,15 +26,15 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="f2d125284c1743ff103a6f079936b59e9d06001c"/>
+            android:value="f2d125284c1743ff103a6f079936b59e9d06001c" />
 
         <activity
             android:name=".view.activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -42,40 +42,40 @@
             android:label="@string/title_library"
             android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".view.activities.BookDetailActivity"
-            android:parentActivityName=".view.activities.HomeActivity"/>
+            android:parentActivityName=".view.activities.HomeActivity" />
         <activity
             android:name=".view.activities.zxing.CaptureActivityAnyOrientation"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".sync.auth.AuthenticatorActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
 
         <provider
-            android:name=".db.NearbooksDatabase_Provider"
+            android:name=".sync.NearbooksContentProvider"
             android:authorities="com.nearsoft.nearbooks.provider"
-            android:exported="false"/>
+            android:exported="false" />
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="com.nearsoft.nearbooks"/>
+                <category android:name="com.nearsoft.nearbooks" />
             </intent-filter>
         </receiver>
 
@@ -83,43 +83,42 @@
             android:name=".gcm.NearbooksGcmListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
             android:name=".gcm.NearbooksInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
             android:name=".gcm.NearbooksRegistrationIntentService"
-            android:exported="false">
-        </service>
+            android:exported="false" />
         <service
             android:name=".sync.SyncService"
             android:exported="false">
             <!-- This intent filter is required.
             It allows the system to launch our sync service as needed. -->
             <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
             <!-- This points to a required XML file which describes our SyncAdapter. -->
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_adapter"/>
+                android:resource="@xml/sync_adapter" />
         </service>
         <service
             android:name=".sync.NearbooksAuthenticatorService"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
 
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator"/>
+                android:resource="@xml/authenticator" />
         </service>
 
     </application>

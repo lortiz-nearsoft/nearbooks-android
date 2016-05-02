@@ -14,7 +14,6 @@ import com.nearsoft.nearbooks.R;
 import com.nearsoft.nearbooks.common.Constants;
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent;
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule;
-import com.nearsoft.nearbooks.di.qualifiers.Named;
 import com.nearsoft.nearbooks.gcm.NearbooksRegistrationIntentService;
 import com.nearsoft.nearbooks.sync.auth.AccountGeneral;
 import com.nearsoft.nearbooks.util.ErrorUtil;
@@ -24,6 +23,7 @@ import com.nearsoft.nearbooks.util.ViewUtil;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class MainActivity extends BaseActivity {
 

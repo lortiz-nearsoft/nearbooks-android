@@ -5,16 +5,16 @@
         <item
             android:id="@+id/nav_library"
             android:icon="@drawable/ic_view_week_24dp"
-            android:title="@string/title_library"/>
+            android:title="@string/title_library" />
         <item
             android:id="@+id/nav_register_book"
             android:icon="@drawable/ic_cloud_upload_black_24dp"
             android:title="@string/title_register_book"
-            android:visible="false"/>
+            android:visible="false" />
         <item
             android:enabled="false"
             android:orderInCategory="200"
-            android:title=""/>
+            android:title="" />
     </group>
     <!--
         <item android:title="@string/title_social">

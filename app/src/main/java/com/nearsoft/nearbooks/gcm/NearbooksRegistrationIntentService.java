@@ -24,7 +24,7 @@ public class NearbooksRegistrationIntentService extends IntentService {
 
     public NearbooksRegistrationIntentService() {
         super(TAG);
-        NearbooksApplication.getNearbooksApplicationComponent().inject(this);
+        NearbooksApplication.Companion.applicationComponent().inject(this);
     }
 
     @Override

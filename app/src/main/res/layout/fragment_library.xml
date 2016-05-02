@@ -1,7 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".view.fragments.LibraryFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.fragments.LibraryFragment">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -31,7 +31,7 @@
             android:gravity="center"
             android:text="@{@plurals/message_books_not_found(Integer.MAX_VALUE)}"
             android:visibility="visible"
-            tools:text="@{@plurals/message_books_not_found(Integer.MAX_VALUE)}"/>
+            tools:text="@{@plurals/message_books_not_found(Integer.MAX_VALUE)}" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_qr_scanner"/>
+            android:src="@drawable/ic_qr_scanner" />
 
     </android.support.design.widget.CoordinatorLayout>
 
