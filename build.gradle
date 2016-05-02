@@ -8,7 +8,8 @@ buildscript {
         gradleVersionsPluginVersion = '0.12.0'
         junitVersion = '4.12'
         fabricToolsVersion = '1.21.2'
-        retroLambdaVersion = '3.3.0-beta4'
+        retroLambdaPluginVersion = '3.3.0-beta4'
+        retroLambdaVersion = '2.3.0'
         multidexVersion = '1.0.1'
         supportLibraryVersion = '23.3.0'
         playServicesVersion = '8.4.0'
@@ -38,7 +39,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsPluginVersion"
         classpath "io.fabric.tools:gradle:$fabricToolsVersion"
-        classpath "me.tatarka:gradle-retrolambda:$retroLambdaVersion"
+        classpath "me.tatarka:gradle-retrolambda:$retroLambdaPluginVersion"
         classpath "io.realm:realm-gradle-plugin:$realmVersion"
 
         // NOTE: Do not place your application dependencies here; they belong

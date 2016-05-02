@@ -88,6 +88,8 @@ dependencies {
     compile "io.reactivex:rxjava:$rxJavaVersion"
 
     compile "com.google.guava:guava:$guavaVersion"
+
+    retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
 }
 
 kapt {
