@@ -235,8 +235,8 @@ public class BookDetailFragment extends BaseFragment {
                     public void onNext(Response<AvailabilityResponse> response) {
                         if (response.isSuccessful()) {
                             AvailabilityResponse availabilityResponse = response.body();
-                            Borrow borrow = availabilityResponse.getActiveBorrrow() != null ?
-                                    new Borrow(availabilityResponse.getActiveBorrrow()) :
+                            Borrow borrow = availabilityResponse.getActiveBorrow() != null ?
+                                    new Borrow(availabilityResponse.getActiveBorrow()) :
                                     null;
                             mBinding.setBorrow(borrow);
                             mBinding.executePendingBindings();

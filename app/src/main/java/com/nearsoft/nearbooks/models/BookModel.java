@@ -37,7 +37,7 @@ public class BookModel {
 
     private static BookService mBookService = NearbooksApplication.Companion
             .applicationComponent()
-            .providesBookService();
+            .provideBookService();
 
     public static void cacheBooks(final List<Book> books) {
         if (books == null || books.isEmpty()) return;

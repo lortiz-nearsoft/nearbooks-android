@@ -30,7 +30,7 @@ interface NearbooksApplicationComponent {
 
     fun provideConfiguration(): Configuration
 
-    fun providesBookService(): BookService
+    fun provideBookService(): BookService
 
     fun provideGoogleBooksService(): GoogleBooksService
 

@@ -30,12 +30,13 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         application
         SystemClock.sleep(100)
         val nearbooksApplicationComponent = NearbooksApplication.applicationComponent()
-        mBookService = nearbooksApplicationComponent.providesBookService()
+        mBookService = nearbooksApplicationComponent.provideBookService()
+        mGoogleBooksService = nearbooksApplicationComponent.provideGoogleBooksService()
     }
 
     @Throws(IOException::class)
     fun testBookService() {
-        val observable = mBookService!!.allBooksRx
+        val observable = mBookService!!.getAllBooksRx()
 
         val testSubscriber = TestSubscriber<List<Book>>()
         observable.subscribe(testSubscriber)
@@ -60,17 +61,19 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         book.numberOfDaysAllowedForBorrowing = 7
 
         val realm = Realm.getDefaultInstance()
-        if (realm.where(com.nearsoft.nearbooks.models.realm.Book::class.java)?.count() == 0L) {
-            realm.executeTransaction { realm.copyToRealm(book) }
-        }
-        realm.close()
+
+        realm.executeTransaction { realm.copyToRealmOrUpdate(book) }
 
         val book1 = realm.where(com.nearsoft.nearbooks.models.realm.Book::class.java)
-                .equalTo("id", "123")
+                .equalTo(Book.ID, "123")
                 .findFirst()
 
         assertNotNull(book1)
-        assertEquals(book.id, book1?.id)
+        assertEquals(book.id, book1.id)
+
+        realm.executeTransaction { book1.deleteFromRealm() }
+
+        realm.close()
     }
 
     @Throws(IOException::class)
