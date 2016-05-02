@@ -13,8 +13,8 @@ android {
         applicationId "com.nearsoft.nearbooks"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 12
-        versionName "0.0.11.a"
+        versionCode 13
+        versionName "0.0.12.a"
 
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
