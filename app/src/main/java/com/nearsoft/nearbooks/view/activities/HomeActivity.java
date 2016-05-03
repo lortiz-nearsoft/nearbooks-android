@@ -151,7 +151,7 @@ public class HomeActivity
     @Override
     public void onConnected(Bundle bundle) {
         mBinding.linearLayoutSignOutMenu.setOnClickListener(v ->
-                UserModel.signOut(this, mLazyUser.get(), mGoogleApiClient, () -> {
+                UserModel.INSTANCE.signOut(this, mLazyUser.get(), mGoogleApiClient, () -> {
                     Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
                     finish();

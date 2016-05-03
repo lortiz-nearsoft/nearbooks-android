@@ -73,11 +73,11 @@ public class TapsEasterEggHandler {
     }
 
     private boolean isActionHandled() {
-        return SharedPreferenceModel.getBoolean(mPreferenceKey);
+        return SharedPreferenceModel.INSTANCE.getBoolean(mPreferenceKey);
     }
 
     private void markActionAsHandled() {
-        SharedPreferenceModel.putBoolean(mPreferenceKey, true);
+        SharedPreferenceModel.INSTANCE.putBoolean(mPreferenceKey, true);
     }
 
     private void setupAlertDialog() {

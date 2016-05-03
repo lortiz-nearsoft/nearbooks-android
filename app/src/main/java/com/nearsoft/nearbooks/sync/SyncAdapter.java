@@ -45,7 +45,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Response<List<Book>> response = mBookService.getAllBooks().execute();
             if (response.isSuccessful()) {
                 List<Book> books = response.body();
-                BookModel.cacheBooks(books);
+                BookModel.INSTANCE.cacheBooks(books);
             }
         } catch (IOException e) {
             e.printStackTrace();

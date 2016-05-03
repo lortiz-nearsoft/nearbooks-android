@@ -107,7 +107,7 @@ public class RegisterBookFragment extends BaseFragment
     private void findBooksByIsbn() {
         ProgressDialog progressDialog = ProgressDialog
                 .show(getContext(), getString(R.string.message_getting_book_info), null, true);
-        subscribeToFragment(GoogleBooksModel.findGoogleBooksByIsbn(mCode)
+        subscribeToFragment(GoogleBooksModel.INSTANCE.findGoogleBooksByIsbn(mCode)
                 .subscribe(new Subscriber<List<GoogleBookBody>>() {
                     @Override
                     public void onCompleted() {
@@ -162,7 +162,7 @@ public class RegisterBookFragment extends BaseFragment
                                 googleBookBody.getAuthors(), googleBookBody.getPublishedDate())
                 )
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    subscribeToFragment(BookModel.registerNewBook(googleBookBody)
+                    subscribeToFragment(BookModel.INSTANCE.registerNewBook(googleBookBody)
                             .doOnError(t -> ViewUtil.showSnackbarMessage(mBinding,
                                     t.getLocalizedMessage()))
                             .subscribe(response -> {

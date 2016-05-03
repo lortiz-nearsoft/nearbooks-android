@@ -99,7 +99,7 @@ public class BookDetailFragment extends BaseFragment {
         ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER);
         ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR);
 
-        mBinding.fabRequestBook.setOnClickListener(view -> subscribeToFragment(BookModel.requestBookToBorrow(mLazyUser.get(),
+        mBinding.fabRequestBook.setOnClickListener(view -> subscribeToFragment(BookModel.INSTANCE.requestBookToBorrow(mLazyUser.get(),
                 mBook.getId() + "-0")
                 .subscribe(new Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
                     @Override
@@ -214,7 +214,7 @@ public class BookDetailFragment extends BaseFragment {
     }
 
     private void checkBookAvailability() {
-        subscribeToFragment(BookModel.checkBookAvailability(mBook.getId())
+        subscribeToFragment(BookModel.INSTANCE.checkBookAvailability(mBook.getId())
                 .subscribe(new Subscriber<Response<AvailabilityResponse>>() {
                     @Override
                     public void onCompleted() {

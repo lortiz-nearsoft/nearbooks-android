@@ -70,7 +70,7 @@ public class ErrorUtil {
     }
 
     public static <T> Observable<T> getGeneralExceptionObservable(Object... formatArgs) {
-        return Observable.error(getGeneralException(formatArgs));
+        return Observable.<T>error(getGeneralException(formatArgs));
     }
 
 }

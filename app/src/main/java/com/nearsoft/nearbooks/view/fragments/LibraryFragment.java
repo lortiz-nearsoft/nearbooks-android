@@ -270,7 +270,7 @@ public class LibraryFragment
     private void showBookActions(@NonNull final String qrCode) {
         String[] qrCodeParts = qrCode.split("-");
         if (qrCodeParts.length == 2) {
-            com.nearsoft.nearbooks.models.realm.Book realmBooks = BookModel.findByBookId(qrCodeParts[0]);
+            com.nearsoft.nearbooks.models.realm.Book realmBooks = BookModel.INSTANCE.findByBookId(qrCodeParts[0]);
             if (realmBooks != null) {
                 Book book = new Book(realmBooks);
                 new AlertDialog.Builder(getContext())
@@ -278,7 +278,7 @@ public class LibraryFragment
                         .setItems(R.array.actions_book, (dialog, which) -> {
                             switch (which) {
                                 case ACTION_REQUEST:
-                                    subscribeToFragment(BookModel.requestBookToBorrow(
+                                    subscribeToFragment(BookModel.INSTANCE.requestBookToBorrow(
                                             mLazyUser.get(), qrCode)
                                             .subscribe(new Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
                                                 @Override
@@ -295,21 +295,15 @@ public class LibraryFragment
                                                 public void onNext(Response<com.nearsoft.nearbooks.models.realm.Borrow> response) {
                                                     if (response.isSuccessful()) {
                                                         Borrow borrow = new Borrow(response.body());
-                                                        switch (borrow.getStatus()) {
-                                                            case Borrow.STATUS_REQUESTED:
-                                                                ViewUtil.showSnackbarMessage(
-                                                                        mBinding,
-                                                                        getString(R.string.message_book_requested));
-                                                                break;
-                                                            case Borrow.STATUS_ACTIVE:
-                                                                ViewUtil.showSnackbarMessage(
-                                                                        mBinding,
-                                                                        getString(R.string.message_book_active));
-                                                                break;
-                                                            case Borrow.STATUS_CANCELLED:
-                                                            case Borrow.STATUS_COMPLETED:
-                                                            default:
-                                                                break;
+                                                        int status = borrow.getStatus();
+                                                        if (status == Borrow.STATUS_REQUESTED) {
+                                                            ViewUtil.showSnackbarMessage(
+                                                                    mBinding,
+                                                                    getString(R.string.message_book_requested));
+                                                        } else if (status == Borrow.STATUS_ACTIVE) {
+                                                            ViewUtil.showSnackbarMessage(
+                                                                    mBinding,
+                                                                    getString(R.string.message_book_active));
                                                         }
                                                     } else {
                                                         MessageResponse messageResponse = ErrorUtil
@@ -330,11 +324,11 @@ public class LibraryFragment
                                             }));
                                     break;
                                 case ACTION_CHECK_IN:
-                                    subscribeToFragment(BookModel.doBookCheckIn(mBinding,
+                                    subscribeToFragment(BookModel.INSTANCE.doBookCheckIn(mBinding,
                                             mLazyUser.get(), qrCode));
                                     break;
                                 case ACTION_CHECK_OUT:
-                                    subscribeToFragment(BookModel.doBookCheckOut(mBinding,
+                                    subscribeToFragment(BookModel.INSTANCE.doBookCheckOut(mBinding,
                                             mLazyUser.get(), qrCode));
                                     break;
                             }

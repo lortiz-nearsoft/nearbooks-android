@@ -35,7 +35,7 @@ public class BookRecyclerViewCursorAdapter
     public BookRecyclerViewCursorAdapter(Context context,
                                          Realm realm,
                                          OnBookItemClickListener onBookItemClickListener) {
-        super(context, BookModel.getAllBooks(realm), true);
+        super(context, BookModel.INSTANCE.getAllBooks(realm), true);
         mRealm = realm;
         NearbooksApplication.Companion.applicationComponent().inject(this);
         mOnBookItemClickListener = onBookItemClickListener;
@@ -56,7 +56,7 @@ public class BookRecyclerViewCursorAdapter
     }
 
     public void filterByQuery(String query) {
-        RealmResults<Book> booksByQuery = BookModel.getBooksByQuery(mRealm, query);
+        RealmResults<Book> booksByQuery = BookModel.INSTANCE.getBooksByQuery(mRealm, query);
         updateData(booksByQuery);
         notifyDataSetChanged();
     }

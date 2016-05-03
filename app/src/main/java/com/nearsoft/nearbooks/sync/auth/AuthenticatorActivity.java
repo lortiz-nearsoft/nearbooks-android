@@ -79,7 +79,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorAppCompatActivity
 
     private void finishLogin(GoogleSignInResult result) {
         try {
-            createSyncAccount(UserModel.signIn(this, result));
+            createSyncAccount(UserModel.INSTANCE.signIn(this, result));
         } catch (NearbooksException e) {
             ViewUtil.showSnackbarMessage(mBinding, e.getDisplayMessage(this));
             if (mGoogleApiClient.isConnected()) {
