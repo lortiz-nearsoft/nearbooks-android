@@ -3,7 +3,7 @@
 buildscript {
 
     ext {
-        build_tools_version = '2.1.0'
+        build_tools_version = '2.0.0'
         kotlin_version = '1.0.1-2'
         gradle_versions_plugin_version = '0.12.0'
         junit_version = '4.12'
