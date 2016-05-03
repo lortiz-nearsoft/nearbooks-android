@@ -117,19 +117,13 @@ public class BookDetailFragment extends BaseFragment {
                             Borrow borrow = new Borrow(response.body());
                             mBinding.setBorrow(borrow);
                             mBinding.executePendingBindings();
-                            switch (borrow.getStatus()) {
-                                case Borrow.STATUS_REQUESTED:
-                                    ViewUtil.showSnackbarMessage(mBinding,
-                                            getString(R.string.message_book_requested));
-                                    break;
-                                case Borrow.STATUS_ACTIVE:
-                                    ViewUtil.showSnackbarMessage(mBinding,
-                                            getString(R.string.message_book_active));
-                                    break;
-                                case Borrow.STATUS_CANCELLED:
-                                case Borrow.STATUS_COMPLETED:
-                                default:
-                                    break;
+                            int status = borrow.getStatus();
+                            if (status == Borrow.STATUS_REQUESTED) {
+                                ViewUtil.showSnackbarMessage(mBinding,
+                                        getString(R.string.message_book_requested));
+                            } else if (status == Borrow.STATUS_ACTIVE) {
+                                ViewUtil.showSnackbarMessage(mBinding,
+                                        getString(R.string.message_book_active));
                             }
                             mBinding.fabRequestBook.hide();
                         } else {
