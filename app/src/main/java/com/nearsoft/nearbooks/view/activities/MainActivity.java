@@ -37,8 +37,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!Util.checkPlayServices(this)) {
-            ViewUtil.showToastMessage(this, R.string.message_google_play_services_required);
+        if (!Util.INSTANCE.checkPlayServices(this)) {
+            ViewUtil.INSTANCE.showToastMessage(this, R.string.message_google_play_services_required);
             finish();
             return;
         }
@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity {
                             Toast
                                     .makeText(
                                             MainActivity.this,
-                                            ErrorUtil.getGeneralExceptionMessage(this,
+                                            ErrorUtil.INSTANCE.getGeneralExceptionMessage(this,
                                                     getString(
                                                             R.string.error_user_not_found)),
                                             Toast.LENGTH_LONG
@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
                         Toast
                                 .makeText(
                                         MainActivity.this,
-                                        ErrorUtil.getGeneralExceptionMessage(this,
+                                        ErrorUtil.INSTANCE.getGeneralExceptionMessage(this,
                                                 e.getLocalizedMessage()),
                                         Toast.LENGTH_LONG
                                 )

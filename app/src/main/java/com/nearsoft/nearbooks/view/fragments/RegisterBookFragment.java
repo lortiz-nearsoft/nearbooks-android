@@ -116,7 +116,7 @@ public class RegisterBookFragment extends BaseFragment
                     @Override
                     public void onError(Throwable t) {
                         progressDialog.dismiss();
-                        ViewUtil.showSnackbarMessage(mBinding, ErrorUtil
+                        ViewUtil.INSTANCE.showSnackbarMessage(mBinding, ErrorUtil.INSTANCE
                                 .getMessageFromThrowable(t, getContext()));
                     }
 
@@ -163,20 +163,20 @@ public class RegisterBookFragment extends BaseFragment
                 )
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     subscribeToFragment(BookModel.INSTANCE.registerNewBook(googleBookBody)
-                            .doOnError(t -> ViewUtil.showSnackbarMessage(mBinding,
+                            .doOnError(t -> ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
                                     t.getLocalizedMessage()))
                             .subscribe(response -> {
                                 if (response.isSuccessful()) {
-                                    ViewUtil.showToastMessage(getContext(), R.string.message_done);
+                                    ViewUtil.INSTANCE.showToastMessage(getContext(), R.string.message_done);
                                 } else {
-                                    MessageResponse messageResponse = ErrorUtil
+                                    MessageResponse messageResponse = ErrorUtil.INSTANCE
                                             .parseError(MessageResponse.class, response);
                                     if (messageResponse != null) {
-                                        ViewUtil.showSnackbarMessage(mBinding,
+                                        ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
                                                 messageResponse.getMessage());
                                     } else {
-                                        ViewUtil.showSnackbarMessage(mBinding,
-                                                ErrorUtil.getGeneralExceptionMessage(getContext(),
+                                        ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
+                                                ErrorUtil.INSTANCE.getGeneralExceptionMessage(getContext(),
                                                         response.code()));
                                     }
                                 }

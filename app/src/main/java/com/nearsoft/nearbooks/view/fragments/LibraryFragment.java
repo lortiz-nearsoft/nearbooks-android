@@ -220,8 +220,8 @@ public class LibraryFragment
     @Override
     public void onRefresh() {
         com.nearsoft.nearbooks.models.view.User user = mLazyUser.get();
-        if (!SyncUtil.isSyncing(user)) {
-            SyncUtil.triggerRefresh(user);
+        if (!SyncUtil.INSTANCE.isSyncing(user)) {
+            SyncUtil.INSTANCE.triggerRefresh(user);
         }
     }
 
@@ -287,7 +287,7 @@ public class LibraryFragment
 
                                                 @Override
                                                 public void onError(Throwable t) {
-                                                    ViewUtil.showSnackbarMessage(mBinding,
+                                                    ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
                                                             t.getLocalizedMessage());
                                                 }
 
@@ -297,26 +297,26 @@ public class LibraryFragment
                                                         Borrow borrow = new Borrow(response.body());
                                                         int status = borrow.getStatus();
                                                         if (status == Borrow.STATUS_REQUESTED) {
-                                                            ViewUtil.showSnackbarMessage(
+                                                            ViewUtil.INSTANCE.showSnackbarMessage(
                                                                     mBinding,
                                                                     getString(R.string.message_book_requested));
                                                         } else if (status == Borrow.STATUS_ACTIVE) {
-                                                            ViewUtil.showSnackbarMessage(
+                                                            ViewUtil.INSTANCE.showSnackbarMessage(
                                                                     mBinding,
                                                                     getString(R.string.message_book_active));
                                                         }
                                                     } else {
-                                                        MessageResponse messageResponse = ErrorUtil
+                                                        MessageResponse messageResponse = ErrorUtil.INSTANCE
                                                                 .parseError(MessageResponse.class, response);
                                                         if (messageResponse != null) {
-                                                            ViewUtil.showSnackbarMessage(
+                                                            ViewUtil.INSTANCE.showSnackbarMessage(
                                                                     mBinding,
                                                                     messageResponse
                                                                             .getMessage());
                                                         } else {
-                                                            ViewUtil.showSnackbarMessage(
+                                                            ViewUtil.INSTANCE.showSnackbarMessage(
                                                                     mBinding,
-                                                                    ErrorUtil.getGeneralExceptionMessage(getContext(),
+                                                                    ErrorUtil.INSTANCE.getGeneralExceptionMessage(getContext(),
                                                                             response.code()));
                                                         }
                                                     }

@@ -50,7 +50,7 @@ object BookModel {
     }
 
     fun getAllBooks(realm: Realm): RealmResults<Book> {
-        return realm.allObjects(Book::class.java).sort(Book.TITLE, Sort.ASCENDING)
+        return realm.where(Book::class.java).findAll().sort(Book.TITLE, Sort.ASCENDING)
     }
 
     fun getBooksByQuery(realm: Realm, query: String): RealmResults<Book> {
@@ -86,21 +86,20 @@ object BookModel {
             }
 
             override fun onError(t: Throwable) {
-                ViewUtil.showSnackbarMessage(binding, t.message)
+                ViewUtil.showSnackbarMessage(binding, t.message!!)
             }
 
             override fun onNext(response: Response<MessageResponse>) {
                 if (response.isSuccessful) {
                     val messageResponse = response.body()
-                    ViewUtil.showSnackbarMessage(binding, messageResponse.message)
+                    ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
                 } else {
                     val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
                     if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.message)
+                        ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
                     } else {
                         ViewUtil.showSnackbarMessage(binding,
-                                ErrorUtil.getGeneralExceptionMessage(context,
-                                        response.code()))
+                                ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
                     }
                 }
             }
@@ -119,21 +118,20 @@ object BookModel {
             }
 
             override fun onError(t: Throwable) {
-                ViewUtil.showSnackbarMessage(binding, t.message)
+                ViewUtil.showSnackbarMessage(binding, t.message!!)
             }
 
             override fun onNext(response: Response<MessageResponse>) {
                 if (response.isSuccessful) {
                     val messageResponse = response.body()
-                    ViewUtil.showSnackbarMessage(binding, messageResponse.message)
+                    ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
                 } else {
                     val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
                     if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.message)
+                        ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
                     } else {
                         ViewUtil.showSnackbarMessage(binding,
-                                ErrorUtil.getGeneralExceptionMessage(context,
-                                        response.code()))
+                                ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
                     }
                 }
             }

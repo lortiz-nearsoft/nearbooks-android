@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/nav_header_vertical_spacing"
-            android:text="@{Util.getApplicationVersion(context)}"
+            android:text="@{Util.INSTANCE.getApplicationVersion(context)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <TextView

@@ -70,7 +70,7 @@ public class HomeActivity
     }
 
     private void setupEasterEgg(ImageView imageView) {
-        TapsEasterEggHandler.with(
+        TapsEasterEggHandler.Companion.with(
                 this,
                 imageView,
                 SharedPreferenceModel.PREFERENCE_IS_UPLOAD_BOOKS_MENU_SHOWN

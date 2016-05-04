@@ -92,7 +92,7 @@ public class BookDetailFragment extends BaseFragment {
                 getBaseActivity()
                         .getWindow().setStatusBarColor(mColorsWrapper.getBackgroundColor());
             }
-            ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar,
+            ViewUtil.Toolbar.INSTANCE.colorizeToolbar(mBinding.toolbar,
                     mColorsWrapper.getTitleTextColor(), getBaseActivity());
         });
 
@@ -108,7 +108,7 @@ public class BookDetailFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable t) {
-                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
+                        ViewUtil.INSTANCE.showSnackbarMessage(mBinding, t.getLocalizedMessage());
                     }
 
                     @Override
@@ -119,22 +119,22 @@ public class BookDetailFragment extends BaseFragment {
                             mBinding.executePendingBindings();
                             int status = borrow.getStatus();
                             if (status == Borrow.STATUS_REQUESTED) {
-                                ViewUtil.showSnackbarMessage(mBinding,
+                                ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
                                         getString(R.string.message_book_requested));
                             } else if (status == Borrow.STATUS_ACTIVE) {
-                                ViewUtil.showSnackbarMessage(mBinding,
+                                ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
                                         getString(R.string.message_book_active));
                             }
                             mBinding.fabRequestBook.hide();
                         } else {
-                            MessageResponse messageResponse = ErrorUtil
+                            MessageResponse messageResponse = ErrorUtil.INSTANCE
                                     .parseError(MessageResponse.class, response);
                             if (messageResponse != null) {
-                                ViewUtil.showSnackbarMessage(mBinding,
+                                ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
                                         messageResponse.getMessage());
                             } else {
-                                ViewUtil.showSnackbarMessage(mBinding,
-                                        ErrorUtil.getGeneralExceptionMessage(getContext(),
+                                ViewUtil.INSTANCE.showSnackbarMessage(mBinding,
+                                        ErrorUtil.INSTANCE.getGeneralExceptionMessage(getContext(),
                                                 response.code()));
                             }
                         }
@@ -222,7 +222,7 @@ public class BookDetailFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable t) {
-                        ViewUtil.showSnackbarMessage(mBinding, t.getLocalizedMessage());
+                        ViewUtil.INSTANCE.showSnackbarMessage(mBinding, t.getLocalizedMessage());
                     }
 
                     @Override

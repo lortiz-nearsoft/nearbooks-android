@@ -70,7 +70,7 @@ class AuthenticatorActivity : AccountAuthenticatorAppCompatActivity() {
         try {
             createSyncAccount(UserModel.signIn(this, result))
         } catch (e: NearbooksException) {
-            ViewUtil.showSnackbarMessage(mBinding, e.getDisplayMessage(this))
+            ViewUtil.showSnackbarMessage(mBinding!!, e.getDisplayMessage(this))
             if (mGoogleApiClient.isConnected) {
                 Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient)
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient)

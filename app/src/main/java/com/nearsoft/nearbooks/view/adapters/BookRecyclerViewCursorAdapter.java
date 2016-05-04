@@ -86,7 +86,7 @@ public class BookRecyclerViewCursorAdapter
 
             final Context context = mBinding.getRoot().getContext();
 
-            ViewUtil.loadImageFromUrl(mBinding.imageViewBookCover,
+            ViewUtil.INSTANCE.loadImageFromUrl(mBinding.imageViewBookCover,
                     context.getString(R.string.url_book_cover_thumbnail, book.getId()))
                     .subscribe(colorsWrapper -> {
                         mBinding.setColors(colorsWrapper);
