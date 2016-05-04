@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.nearsoft.nearbooks.BuildConfig
 import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.view.activities.BaseActivity
 
@@ -17,11 +18,10 @@ object Util {
 
     fun getApplicationVersion(context: Context): String? {
         try {
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             return context.getString(
                     R.string.app_name_with_version,
-                    packageInfo.versionName,
-                    packageInfo.versionCode
+                    BuildConfig.VERSION_NAME,
+                    BuildConfig.VERSION_CODE
             )
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
