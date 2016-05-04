@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -96,7 +97,7 @@ public class HomeActivity
     }
 
     @Override
-    protected void injectComponent(GoogleApiClientComponent googleApiClientComponent) {
+    protected void injectComponent(@NonNull GoogleApiClientComponent googleApiClientComponent) {
         super.injectComponent(googleApiClientComponent);
         googleApiClientComponent.inject(this);
     }
