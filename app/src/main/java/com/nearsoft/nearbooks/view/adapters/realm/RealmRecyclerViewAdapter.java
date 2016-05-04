@@ -15,8 +15,8 @@ import io.realm.RealmResults;
 public abstract class RealmRecyclerViewAdapter<T extends RealmObject> extends RecyclerView.Adapter {
     private RealmBaseAdapter<T> realmBaseAdapter;
 
-    public RealmRecyclerViewAdapter(Context context, RealmResults<T> realmResults, boolean automaticUpdate) {
-        realmBaseAdapter = new SimpleRealmBaseAdapter<>(context, realmResults, automaticUpdate);
+    public RealmRecyclerViewAdapter(Context context, RealmResults<T> realmResults) {
+        realmBaseAdapter = new SimpleRealmBaseAdapter<>(context, realmResults);
     }
 
     public T getItem(int position) {

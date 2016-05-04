@@ -14,8 +14,8 @@ import io.realm.RealmResults;
  */
 public class SimpleRealmBaseAdapter<T extends RealmObject> extends RealmBaseAdapter<T> {
 
-    public SimpleRealmBaseAdapter(Context context, RealmResults<T> realmResults, boolean automaticUpdate) {
-        super(context, realmResults, automaticUpdate);
+    public SimpleRealmBaseAdapter(Context context, RealmResults<T> realmResults) {
+        super(context, realmResults);
     }
 
     @Override

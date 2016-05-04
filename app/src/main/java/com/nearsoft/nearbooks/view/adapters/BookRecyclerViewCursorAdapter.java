@@ -35,7 +35,7 @@ public class BookRecyclerViewCursorAdapter
     public BookRecyclerViewCursorAdapter(Context context,
                                          Realm realm,
                                          OnBookItemClickListener onBookItemClickListener) {
-        super(context, BookModel.INSTANCE.getAllBooks(realm), true);
+        super(context, BookModel.INSTANCE.getAllBooks(realm));
         mRealm = realm;
         NearbooksApplication.Companion.applicationComponent().inject(this);
         mOnBookItemClickListener = onBookItemClickListener;

@@ -54,7 +54,7 @@ public class LibraryFragment
         extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener,
         SyncChangeHandler.OnSyncChangeListener,
-        BaseActivity.OnSearchListener, RealmChangeListener {
+        BaseActivity.OnSearchListener, RealmChangeListener<Realm> {
 
     private final static int ACTION_REQUEST = 0;
     private final static int ACTION_CHECK_IN = 1;
@@ -356,7 +356,7 @@ public class LibraryFragment
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Realm realm) {
         mBookRecyclerViewCursorAdapter.notifyDataSetChanged();
         updateUI();
     }

@@ -98,6 +98,8 @@ dependencies {
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile "io.reactivex:rxjava:$rx_java_version"
+
+    compile 'com.github.realm:realm-android-adapters:v1.0.0'
 }
 
 kapt {
