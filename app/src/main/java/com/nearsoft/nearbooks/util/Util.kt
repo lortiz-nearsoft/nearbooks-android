@@ -1,7 +1,6 @@
 package com.nearsoft.nearbooks.util
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import com.google.android.gms.common.ConnectionResult
@@ -17,16 +16,11 @@ import com.nearsoft.nearbooks.view.activities.BaseActivity
 object Util {
 
     fun getApplicationVersion(context: Context): String? {
-        try {
-            return context.getString(
-                    R.string.app_name_with_version,
-                    BuildConfig.VERSION_NAME,
-                    BuildConfig.VERSION_CODE
-            )
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-            return null
-        }
+        return context.getString(
+                R.string.app_name_with_version,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE
+        )
     }
 
     fun isThereInternetConnection(context: Context): Boolean {
