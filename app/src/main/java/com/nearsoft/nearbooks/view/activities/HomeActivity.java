@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -22,6 +25,7 @@ import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.util.TapsEasterEggHandler;
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
+import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
 import com.nearsoft.nearbooks.view.fragments.RegisterBookFragment;
 
@@ -161,6 +165,21 @@ public class HomeActivity
 
     @Override
     public void onBookItemClicked(BookItemBinding binding) {
-        BookDetailActivity.openWith(this, binding);
+        // BookDetailActivity.Companion.openWith(this, binding);
+        // TODO: Move this code for the above call.
+        Intent detailIntent = new Intent(this, BookDetailActivity.class);
+        detailIntent.putExtra(BookDetailFragment.ARG_BOOK, binding.getBook());
+        detailIntent.putExtra(BookDetailFragment.ARG_COLORS_WRAPPER, binding.getColors());
+
+        @SuppressWarnings("unchecked")
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                Pair.create(
+                        binding.getRoot().findViewById(R.id.imageViewBookCover),
+                        BookDetailFragment.VIEW_NAME_BOOK_COVER),
+                Pair.create(
+                        binding.getRoot().findViewById(R.id.toolbar),
+                        BookDetailFragment.VIEW_NAME_BOOK_TOOLBAR));
+        ActivityCompat.startActivity(this, detailIntent, options.toBundle());
     }
 }
