@@ -97,7 +97,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
                     " must implement " + mOnBookItemClickListener!!.javaClass.simpleName)
         }
 
-        val baseActivity = baseActivity
+        val baseActivity = getBaseActivity()
         val syncChangeHandler = baseActivity.syncChangeHandler
         syncChangeHandler.addOnSyncChangeListener(this)
     }
@@ -106,7 +106,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         super.onDetach()
         mOnBookItemClickListener = null
 
-        baseActivity.syncChangeHandler.removeOnSyncChangeListener(this)
+        getBaseActivity().syncChangeHandler.removeOnSyncChangeListener(this)
     }
 
     override fun onDestroy() {
@@ -130,7 +130,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         // Assumes current activity is the searchable activity
         mSearchView!!.setSearchableInfo(
                 searchManager.getSearchableInfo(
-                        baseActivity.componentName))
+                        getBaseActivity().componentName))
         mSearchView!!.setIconifiedByDefault(true)
         mSearchView!!.setOnQueryTextFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
@@ -161,7 +161,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     }
 
     override fun onSyncChange(isSyncing: Boolean) {
-        val baseActivity = baseActivity
+        val baseActivity = getBaseActivity()
         if (baseActivity != null) {
             mBinding!!.swipeRefreshLayout.post {
                 if (!mBinding!!.swipeRefreshLayout.isRefreshing && isSyncing) {
