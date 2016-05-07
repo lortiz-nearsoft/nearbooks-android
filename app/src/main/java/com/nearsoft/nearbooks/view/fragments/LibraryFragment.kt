@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
@@ -293,8 +294,8 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         // BookDetailActivity.Companion.openWith(this, binding);
         // TODO: Move this code for the above call.
         val detailIntent = Intent(getBaseActivity(), BookDetailActivity::class.java)
-        detailIntent.putExtra(BookDetailFragment.ARG_BOOK, binding.book)
-        detailIntent.putExtra(BookDetailFragment.ARG_COLORS_WRAPPER, binding.colors)
+        detailIntent.putExtra(BookDetailFragment.ARG_BOOK, binding.book as Parcelable)
+        detailIntent.putExtra(BookDetailFragment.ARG_COLORS_WRAPPER, binding.colors as Parcelable)
 
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getBaseActivity(),
