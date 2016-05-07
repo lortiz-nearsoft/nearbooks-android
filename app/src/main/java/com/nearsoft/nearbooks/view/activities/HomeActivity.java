@@ -67,7 +67,7 @@ public class HomeActivity
                     .beginTransaction()
                     .replace(
                             R.id.content,
-                            LibraryFragment.newInstance(),
+                            LibraryFragment.Companion.newInstance(),
                             LibraryFragment.class.getName()
                     )
                     .commit();
@@ -123,7 +123,7 @@ public class HomeActivity
 
         switch (item.getItemId()) {
             case R.id.nav_library:
-                baseFragment = LibraryFragment.newInstance();
+                baseFragment = LibraryFragment.Companion.newInstance();
                 break;
             case R.id.nav_register_book:
                 baseFragment = RegisterBookFragment.newInstance();
