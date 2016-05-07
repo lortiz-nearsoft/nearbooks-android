@@ -126,7 +126,7 @@ public class HomeActivity
                 baseFragment = LibraryFragment.Companion.newInstance();
                 break;
             case R.id.nav_register_book:
-                baseFragment = RegisterBookFragment.newInstance();
+                baseFragment = RegisterBookFragment.Companion.newInstance();
                 break;
         }
 

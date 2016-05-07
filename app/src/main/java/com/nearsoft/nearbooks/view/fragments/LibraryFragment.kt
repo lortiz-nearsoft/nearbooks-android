@@ -33,6 +33,26 @@ import rx.Subscriber
 
 class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, SyncChangeHandler.OnSyncChangeListener, BaseActivity.OnSearchListener, RealmChangeListener<Realm> {
 
+    companion object {
+
+        private val ACTION_REQUEST = 0
+        private val ACTION_CHECK_IN = 1
+        private val ACTION_CHECK_OUT = 2
+
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+
+         * @return A new instance of fragment LibraryFragment.
+         */
+        fun newInstance(): LibraryFragment {
+            val fragment = LibraryFragment()
+            val args = Bundle()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
     private var mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter? = null
     private var mOnBookItemClickListener: BookRecyclerViewCursorAdapter.OnBookItemClickListener? = null
     private var mBinding: FragmentLibraryBinding? = null
@@ -269,26 +289,6 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     override fun onChange(realm: Realm) {
         mBookRecyclerViewCursorAdapter!!.notifyDataSetChanged()
         updateUI()
-    }
-
-    companion object {
-
-        private val ACTION_REQUEST = 0
-        private val ACTION_CHECK_IN = 1
-        private val ACTION_CHECK_OUT = 2
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-
-         * @return A new instance of fragment LibraryFragment.
-         */
-        fun newInstance(): LibraryFragment {
-            val fragment = LibraryFragment()
-            val args = Bundle()
-            fragment.arguments = args
-            return fragment
-        }
     }
 
 }
