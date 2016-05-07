@@ -24,6 +24,7 @@ import com.nearsoft.nearbooks.util.ViewUtil
 import com.nearsoft.nearbooks.view.activities.BaseActivity
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter
+import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener
 import com.nearsoft.nearbooks.view.helpers.SpacingDecoration
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
 import io.realm.Realm
@@ -54,7 +55,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     }
 
     private var mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter? = null
-    private var mOnBookItemClickListener: BookRecyclerViewCursorAdapter.OnBookItemClickListener? = null
+    private var mOnBookItemClickListener: OnBookItemClickListener? = null
     private var mBinding: FragmentLibraryBinding? = null
     private var mSearchView: SearchView? = null
     private var mRealm: Realm? = null
@@ -67,7 +68,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         mRealm = Realm.getDefaultInstance()
         mRealm!!.addChangeListener(this)
 
-        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm, mOnBookItemClickListener)
+        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm!!, mOnBookItemClickListener!!)
     }
 
     override fun onCreateView(inflater: LayoutInflater?,
@@ -111,7 +112,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         try {
-            mOnBookItemClickListener = context as BookRecyclerViewCursorAdapter.OnBookItemClickListener?
+            mOnBookItemClickListener = context as OnBookItemClickListener?
         } catch (e: ClassCastException) {
             throw ClassCastException(context!!.toString() +
                     " must implement " + mOnBookItemClickListener!!.javaClass.simpleName)

@@ -23,7 +23,7 @@ import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent;
 import com.nearsoft.nearbooks.models.SharedPreferenceModel;
 import com.nearsoft.nearbooks.models.UserModel;
 import com.nearsoft.nearbooks.util.TapsEasterEggHandler;
-import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter;
+import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener;
 import com.nearsoft.nearbooks.view.fragments.BaseFragment;
 import com.nearsoft.nearbooks.view.fragments.BookDetailFragment;
 import com.nearsoft.nearbooks.view.fragments.LibraryFragment;
@@ -32,7 +32,7 @@ import com.nearsoft.nearbooks.view.fragments.RegisterBookFragment;
 public class HomeActivity
         extends GoogleApiClientBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        BookRecyclerViewCursorAdapter.OnBookItemClickListener {
+        OnBookItemClickListener {
 
     private ActivityHomeBinding mBinding;
 
@@ -164,7 +164,7 @@ public class HomeActivity
     }
 
     @Override
-    public void onBookItemClicked(BookItemBinding binding) {
+    public void onBookItemClicked(@NonNull BookItemBinding binding) {
         // BookDetailActivity.Companion.openWith(this, binding);
         // TODO: Move this code for the above call.
         Intent detailIntent = new Intent(this, BookDetailActivity.class);
@@ -182,4 +182,5 @@ public class HomeActivity
                         BookDetailFragment.VIEW_NAME_BOOK_TOOLBAR));
         ActivityCompat.startActivity(this, detailIntent, options.toBundle());
     }
+
 }
