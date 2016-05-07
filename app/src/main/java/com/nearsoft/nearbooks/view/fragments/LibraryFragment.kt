@@ -6,6 +6,9 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.util.Pair
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
@@ -13,6 +16,7 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.google.zxing.integration.android.IntentIntegrator
 import com.nearsoft.nearbooks.R
+import com.nearsoft.nearbooks.databinding.BookItemBinding
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding
 import com.nearsoft.nearbooks.models.BookModel
 import com.nearsoft.nearbooks.models.view.Book
@@ -22,6 +26,7 @@ import com.nearsoft.nearbooks.util.ErrorUtil
 import com.nearsoft.nearbooks.util.SyncUtil
 import com.nearsoft.nearbooks.util.ViewUtil
 import com.nearsoft.nearbooks.view.activities.BaseActivity
+import com.nearsoft.nearbooks.view.activities.BookDetailActivity
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter
 import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener
@@ -32,7 +37,7 @@ import io.realm.RealmChangeListener
 import retrofit2.Response
 import rx.Subscriber
 
-class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, SyncChangeHandler.OnSyncChangeListener, BaseActivity.OnSearchListener, RealmChangeListener<Realm> {
+class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, SyncChangeHandler.OnSyncChangeListener, BaseActivity.OnSearchListener, RealmChangeListener<Realm>, OnBookItemClickListener {
 
     companion object {
 
@@ -55,7 +60,6 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     }
 
     private var mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter? = null
-    private var mOnBookItemClickListener: OnBookItemClickListener? = null
     private var mBinding: FragmentLibraryBinding? = null
     private var mSearchView: SearchView? = null
     private var mRealm: Realm? = null
@@ -68,7 +72,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         mRealm = Realm.getDefaultInstance()
         mRealm!!.addChangeListener(this)
 
-        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm!!, mOnBookItemClickListener!!)
+        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm!!, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?,
@@ -111,12 +115,6 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        try {
-            mOnBookItemClickListener = context as OnBookItemClickListener?
-        } catch (e: ClassCastException) {
-            throw ClassCastException(context!!.toString() +
-                    " must implement " + mOnBookItemClickListener!!.javaClass.simpleName)
-        }
 
         val baseActivity = getBaseActivity()
         val syncChangeHandler = baseActivity.syncChangeHandler
@@ -125,7 +123,6 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
 
     override fun onDetach() {
         super.onDetach()
-        mOnBookItemClickListener = null
 
         getBaseActivity().syncChangeHandler.removeOnSyncChangeListener(this)
     }
@@ -290,6 +287,24 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     override fun onChange(realm: Realm) {
         mBookRecyclerViewCursorAdapter!!.notifyDataSetChanged()
         updateUI()
+    }
+
+    override fun onBookItemClicked(binding: BookItemBinding) {
+        // BookDetailActivity.Companion.openWith(this, binding);
+        // TODO: Move this code for the above call.
+        val detailIntent = Intent(getBaseActivity(), BookDetailActivity::class.java)
+        detailIntent.putExtra(BookDetailFragment.ARG_BOOK, binding.book)
+        detailIntent.putExtra(BookDetailFragment.ARG_COLORS_WRAPPER, binding.colors)
+
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getBaseActivity(),
+                Pair.create(
+                        binding.root.findViewById(R.id.imageViewBookCover),
+                        BookDetailFragment.VIEW_NAME_BOOK_COVER),
+                Pair.create(
+                        binding.root.findViewById(R.id.toolbar),
+                        BookDetailFragment.VIEW_NAME_BOOK_TOOLBAR))
+        ActivityCompat.startActivity(getBaseActivity(), detailIntent, options.toBundle())
     }
 
 }
