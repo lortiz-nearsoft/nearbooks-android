@@ -27,7 +27,7 @@ Nearbooks Android client for manage the books lending in nearsoft. This Android 
 
 ## Beta testers
 #### How to become a beta tester?
-1. Go to [this url](https://play.google.com/apps/testing/com.nearsoft.nearbooks) and follow the instructions there.
-2. Download the application from the [Google play store](https://play.google.com/store/apps/details?id=com.nearsoft.nearbooks).
+1. Go to [this url](https://play.google.com/apps/testing/com.nearsoft.nsbooks) and follow the instructions there with your nearsoft account(`...@nearsoft.com`).
+2. Download the application from the [Google play store](https://play.google.com/store/apps/details?id=com.nearsoft.nsbooks).
 3. Please report any bug or suggestion [here](https://github.com/Nearsoft/nearbooks-android/issues).
 4. Thank you for testing Nearbooks! =D
