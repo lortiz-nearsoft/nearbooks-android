@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'io.fabric'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
 def final nearbooksApplicationId = 'com.nearsoft.nearbooks'
@@ -44,10 +43,6 @@ android {
     }
     dataBinding {
         enabled = true
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
     dexOptions {
         javaMaxHeapSize "4g"
@@ -99,7 +94,7 @@ dependencies {
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile "io.reactivex:rxjava:$rx_java_version"
 
-    compile 'com.github.realm:realm-android-adapters:v1.0.0'
+    compile "io.realm:android-adapters:$realm_adapters_version"
 }
 
 kapt {
