@@ -1,7 +1,6 @@
 package com.nearsoft.nearbooks
 
-import android.support.multidex.MultiDexApplication
-
+import android.app.Application
 import com.nearsoft.nearbooks.di.components.DaggerNearbooksApplicationComponent
 import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule
@@ -12,7 +11,7 @@ import com.squareup.picasso.Picasso
  * Base Nearbooks application.
  * Created by epool on 11/17/15.
  */
-class NearbooksApplication : MultiDexApplication() {
+class NearbooksApplication : Application() {
 
     companion object {
         private var sApplicationComponent: NearbooksApplicationComponent? = null
