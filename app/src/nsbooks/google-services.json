@@ -1,0 +1,92 @@
+{
+  "project_info": {
+    "project_number": "995671597719",
+    "project_id": "nearbooks-app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995671597719:android:cad4d70d911cc2b2",
+        "android_client_info": {
+          "package_name": "com.nearsoft.nearbooks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995671597719-kmlgpd2qd43kgnqhmsfm7k87lh5s6175.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgIl_jS96nHR6fOWbr9uxqCWTXwaHzmTs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995671597719:android:fb38902d5f86f300",
+        "android_client_info": {
+          "package_name": "com.nearsoft.nsbooks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995671597719-j2ofiki2uquk5eclic8niglns33hqf63.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nearsoft.nsbooks",
+            "certificate_hash": "CECDAA3D769FA474AFF989264F26D008DC61F5D2"
+          }
+        },
+        {
+          "client_id": "995671597719-ga98ld16b6m23vla4cf7r4gm7l27gh7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nearsoft.nsbooks",
+            "certificate_hash": "285ED184412DB624AC3D80DAA35281A1FC06C5F1"
+          }
+        },
+        {
+          "client_id": "995671597719-kmlgpd2qd43kgnqhmsfm7k87lh5s6175.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgIl_jS96nHR6fOWbr9uxqCWTXwaHzmTs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995671597719-kmlgpd2qd43kgnqhmsfm7k87lh5s6175.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

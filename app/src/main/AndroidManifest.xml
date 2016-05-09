@@ -18,7 +18,7 @@
 
     <application
         android:name=".NearbooksApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -64,7 +64,7 @@
 
         <provider
             android:name=".sync.NearbooksContentProvider"
-            android:authorities="com.nearsoft.nearbooks.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false" />
 
         <receiver

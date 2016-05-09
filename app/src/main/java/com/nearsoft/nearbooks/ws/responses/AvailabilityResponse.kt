@@ -10,14 +10,14 @@ import java.util.*
  * Created by epool on 1/12/16.
  */
 data class AvailabilityResponse(
-        @SerializedName("codeQRID") val codeQrId: String,
-        @SerializedName("bookID") val bookId: String,
+        @SerializedName("codeQRID") val codeQrId: String? = null,
+        @SerializedName("bookID") val bookId: String? = null,
         @SerializedName("copyNumber") val copyNumber: Int,
         @SerializedName("isAvailable") val isAvailable: Boolean,
         @SerializedName("nextStatus") val nextStatus: Int,
-        @SerializedName("initialDateAvailability") val initialDateAvailability: Date,
-        @SerializedName("finalDateAvailability") val finalDateAvailability: Date,
-        @SerializedName("message") val message: String,
-        @SerializedName("activeBorrrow") val activeBorrow: Borrow,
-        @SerializedName("book") val book: Book
+        @SerializedName("initialDateAvailability") val initialDateAvailability: Date? = null,
+        @SerializedName("finalDateAvailability") val finalDateAvailability: Date? = null,
+        @SerializedName("message") val message: String? = null,
+        @SerializedName("activeBorrrow") val activeBorrow: Borrow? = null,
+        @SerializedName("book") val book: Book? = null
 )

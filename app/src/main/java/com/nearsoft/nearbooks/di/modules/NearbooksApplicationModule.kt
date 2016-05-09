@@ -2,6 +2,7 @@ package com.nearsoft.nearbooks.di.modules
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.databinding.DataBindingUtil
 import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import com.crashlytics.android.Crashlytics
@@ -13,6 +14,7 @@ import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.config.Configuration
 import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper
+import com.nearsoft.nearbooks.view.models.adapters.ViewModelAdapter
 import dagger.Module
 import dagger.Provides
 import io.fabric.sdk.android.Fabric
@@ -42,6 +44,8 @@ class NearbooksApplicationModule(private val mNearbooksApplication: NearbooksApp
                 .schemaVersion(1)
                 .build()
         Realm.setDefaultConfiguration(realmConfiguration)
+
+        DataBindingUtil.setDefaultComponent { ViewModelAdapter() }
     }
 
     @Provides
