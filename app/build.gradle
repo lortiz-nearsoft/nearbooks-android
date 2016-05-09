@@ -16,8 +16,11 @@ android {
         applicationId nearbooksApplicationId
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 32
-        versionName "0.0.12.a"
+        versionCode 33
+        versionName "0.0.13.a"
+
+        multiDexEnabled true
+        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
     }
     productFlavors {
         nearbooks {
@@ -43,7 +46,7 @@ android {
         enabled = true
     }
     dexOptions {
-        jumboMode true
+        javaMaxHeapSize "4g"
     }
 }
 
@@ -54,6 +57,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     kapt "com.android.databinding:compiler:$build_tools_version"
 
+    compile "com.android.support:multidex:$multidex_version"
     compile "com.android.support:appcompat-v7:$support_library_version"
     compile "com.android.support:design:$support_library_version"
     compile "com.android.support:palette-v7:$support_library_version"
