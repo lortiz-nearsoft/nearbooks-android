@@ -56,10 +56,12 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         }
     }
 
-    private lateinit var mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter
     private lateinit var mBinding: FragmentLibraryBinding
     private lateinit var mSearchView: SearchView
     private lateinit var mRealm: Realm
+    private val mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter by lazy {
+        BookRecyclerViewCursorAdapter(context, mRealm, this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +70,6 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
 
         mRealm = Realm.getDefaultInstance()
         mRealm.addChangeListener(this)
-
-        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?,

@@ -31,8 +31,13 @@ abstract class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit protected var mLazyUser: Lazy<User>
     private lateinit var mBinding: ViewDataBinding
-    var baseActivityComponent: BaseActivityComponent? = null
-        private set
+    val baseActivityComponent: BaseActivityComponent by lazy {
+        DaggerBaseActivityComponent
+                .builder()
+                .nearbooksApplicationComponent(NearbooksApplication.applicationComponent)
+                .baseActivityModule(BaseActivityModule(this))
+                .build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDependencies()
@@ -49,12 +54,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun initDependencies() {
-        baseActivityComponent = DaggerBaseActivityComponent
-                .builder()
-                .nearbooksApplicationComponent(NearbooksApplication.applicationComponent)
-                .baseActivityModule(BaseActivityModule(this))
-                .build()
-        injectComponent(baseActivityComponent!!)
+        injectComponent(baseActivityComponent)
     }
 
     override fun onResume() {

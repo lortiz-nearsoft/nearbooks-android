@@ -45,13 +45,14 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
     }
 
     private lateinit var mBinding: FragmentRegisterBookBinding
-    private lateinit var mGoogleBooksVolumeAdapter: GoogleBooksVolumeAdapter
     private var mCode: String? = null
+    private val mGoogleBooksVolumeAdapter: GoogleBooksVolumeAdapter by lazy {
+        GoogleBooksVolumeAdapter(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mGoogleBooksVolumeAdapter = GoogleBooksVolumeAdapter(this)
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_CODE)) {
             mCode = savedInstanceState.getString(KEY_CODE)
             findBooksByIsbn()
