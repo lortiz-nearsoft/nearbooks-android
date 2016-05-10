@@ -17,7 +17,7 @@ import rx.schedulers.Schedulers
  */
 object GoogleBooksModel {
 
-    private val mGoogleBooksService = NearbooksApplication.applicationComponent().provideGoogleBooksService()
+    private val mGoogleBooksService = NearbooksApplication.applicationComponent.provideGoogleBooksService()
 
     fun findGoogleBooksByIsbn(isbn: String): Observable<List<GoogleBookBody>> {
         return mGoogleBooksService.findBooksByIsbn("isbn:" + isbn)

@@ -29,7 +29,7 @@ import rx.schedulers.Schedulers
  */
 object BookModel {
 
-    private val sBookService = NearbooksApplication.applicationComponent().provideBookService()
+    private val sBookService = NearbooksApplication.applicationComponent.provideBookService()
 
     fun cacheBooks(books: List<Book>?) {
         if (books?.isEmpty() ?: true) return

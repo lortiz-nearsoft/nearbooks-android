@@ -4,6 +4,7 @@ import android.os.Bundle
 
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.nearsoft.nearbooks.NearbooksApplication
 import com.nearsoft.nearbooks.di.components.DaggerGoogleApiClientComponent
 import com.nearsoft.nearbooks.di.components.GoogleApiClientComponent
 import com.nearsoft.nearbooks.di.modules.GoogleApiClientModule
@@ -24,7 +25,7 @@ abstract class GoogleApiClientBaseActivity : BaseActivity(), GoogleApiClient.OnC
 
         val googleApiClientComponent = DaggerGoogleApiClientComponent
                 .builder()
-                .nearbooksApplicationComponent(nearbooksApplicationComponent)
+                .nearbooksApplicationComponent(NearbooksApplication.applicationComponent)
                 .baseActivityModule(baseActivityModule)
                 .googleApiClientModule(GoogleApiClientModule(this, this))
                 .build()

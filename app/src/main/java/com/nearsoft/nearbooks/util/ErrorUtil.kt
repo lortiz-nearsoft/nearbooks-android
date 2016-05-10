@@ -16,7 +16,7 @@ import java.io.InputStreamReader
  */
 object ErrorUtil {
 
-    private val sRetrofit = NearbooksApplication.applicationComponent().provideNearbooksRetrofit()
+    private val sRetrofit = NearbooksApplication.applicationComponent.provideNearbooksRetrofit()
 
     fun <T> parseError(responseClass: Class<T>, response: Response<*>): T? {
         val converter = sRetrofit.responseBodyConverter<T>(responseClass, responseClass.annotations)

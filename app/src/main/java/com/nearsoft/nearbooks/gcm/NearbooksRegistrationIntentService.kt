@@ -19,7 +19,7 @@ import java.io.IOException
 class NearbooksRegistrationIntentService : IntentService("NearbooksRegistrationIntentService") {
 
     init {
-        NearbooksApplication.applicationComponent().inject(this)
+        NearbooksApplication.applicationComponent.inject(this)
     }
 
     override fun onHandleIntent(intent: Intent) {

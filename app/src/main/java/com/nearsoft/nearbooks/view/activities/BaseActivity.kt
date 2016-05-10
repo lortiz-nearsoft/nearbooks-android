@@ -11,7 +11,6 @@ import com.nearsoft.nearbooks.NearbooksApplication
 import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent
 import com.nearsoft.nearbooks.di.components.DaggerBaseActivityComponent
-import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule
 import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.sync.SyncChangeHandler
@@ -52,7 +51,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun initDependencies() {
         baseActivityComponent = DaggerBaseActivityComponent
                 .builder()
-                .nearbooksApplicationComponent(nearbooksApplicationComponent)
+                .nearbooksApplicationComponent(NearbooksApplication.applicationComponent)
                 .baseActivityModule(BaseActivityModule(this))
                 .build()
         injectComponent(baseActivityComponent!!)
@@ -120,9 +119,6 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun unSubscribeFromActivity() {
         mCompositeSubscription.clear()
     }
-
-    protected val nearbooksApplicationComponent: NearbooksApplicationComponent
-        get() = NearbooksApplication.applicationComponent()
 
     protected val baseActivityModule: BaseActivityModule
         get() = BaseActivityModule(this)

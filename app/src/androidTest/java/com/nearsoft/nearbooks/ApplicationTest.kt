@@ -29,7 +29,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         super.setUp()
         application
         SystemClock.sleep(100)
-        val nearbooksApplicationComponent = NearbooksApplication.applicationComponent()
+        val nearbooksApplicationComponent = NearbooksApplication.applicationComponent
         mBookService = nearbooksApplicationComponent.provideBookService()
         mGoogleBooksService = nearbooksApplicationComponent.provideGoogleBooksService()
     }
