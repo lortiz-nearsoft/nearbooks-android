@@ -30,7 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
     lateinit var syncChangeHandler: SyncChangeHandler
     @Inject
     lateinit protected var mLazyUser: Lazy<User>
-    private var mBinding: ViewDataBinding? = null
+    private lateinit var mBinding: ViewDataBinding
     var baseActivityComponent: BaseActivityComponent? = null
         private set
 

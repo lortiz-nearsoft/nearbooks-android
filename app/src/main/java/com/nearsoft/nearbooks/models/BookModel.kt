@@ -42,7 +42,7 @@ object BookModel {
         realm.close()
     }
 
-    fun findByBookId(bookId: String): Book {
+    fun findByBookId(bookId: String): Book? {
         val realm = Realm.getDefaultInstance()
         val book = realm.where(Book::class.java).equalTo("id", bookId).findFirst()
         realm.close()

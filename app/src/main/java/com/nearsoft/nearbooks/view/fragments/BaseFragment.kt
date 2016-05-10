@@ -24,10 +24,10 @@ abstract class BaseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        injectComponent(getBaseActivity().baseActivityComponent!!)
+        injectComponent(getBaseActivity()?.baseActivityComponent!!)
     }
 
-    protected fun getBaseActivity(): BaseActivity = activity as BaseActivity
+    protected fun getBaseActivity(): BaseActivity? = activity as BaseActivity
 
     protected fun injectComponent(baseActivityComponent: BaseActivityComponent) {
         baseActivityComponent.inject(this)

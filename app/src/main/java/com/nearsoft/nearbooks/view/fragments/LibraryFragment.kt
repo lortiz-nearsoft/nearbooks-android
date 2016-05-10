@@ -60,10 +60,10 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         }
     }
 
-    private var mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter? = null
-    private var mBinding: FragmentLibraryBinding? = null
-    private var mSearchView: SearchView? = null
-    private var mRealm: Realm? = null
+    private lateinit var mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter
+    private lateinit var mBinding: FragmentLibraryBinding
+    private lateinit var mSearchView: SearchView
+    private lateinit var mRealm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,31 +71,31 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         setHasOptionsMenu(true)
 
         mRealm = Realm.getDefaultInstance()
-        mRealm!!.addChangeListener(this)
+        mRealm.addChangeListener(this)
 
-        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm!!, this)
+        mBookRecyclerViewCursorAdapter = BookRecyclerViewCursorAdapter(context, mRealm, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?,
                               container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_library, container, false)
 
-        mBinding!!.fab.setOnClickListener { view -> startQRScanner() }
+        mBinding.fab.setOnClickListener { view -> startQRScanner() }
 
-        mBinding!!.recyclerViewBooks.setHasFixedSize(true)
+        mBinding.recyclerViewBooks.setHasFixedSize(true)
         val isLandscape = resources.getBoolean(R.bool.isLandscape)
         val isTablet = resources.getBoolean(R.bool.isTable)
         val layoutManager = GridLayoutManager(context,
                 if (isTablet) if (isLandscape) 6 else 4 else if (isLandscape) 4 else 2)
-        mBinding!!.recyclerViewBooks.layoutManager = layoutManager
+        mBinding.recyclerViewBooks.layoutManager = layoutManager
         val margin = resources.getDimensionPixelSize(R.dimen.books_margin)
-        mBinding!!.recyclerViewBooks.addItemDecoration(SpacingDecoration(margin, margin, true))
-        mBinding!!.recyclerViewBooks.adapter = mBookRecyclerViewCursorAdapter
+        mBinding.recyclerViewBooks.addItemDecoration(SpacingDecoration(margin, margin, true))
+        mBinding.recyclerViewBooks.adapter = mBookRecyclerViewCursorAdapter
 
-        mBinding!!.swipeRefreshLayout.setOnRefreshListener(this)
-        mBinding!!.textViewEmpty.setOnClickListener { v -> onRefresh() }
+        mBinding.swipeRefreshLayout.setOnRefreshListener(this)
+        mBinding.textViewEmpty.setOnClickListener { v -> onRefresh() }
 
-        return mBinding!!.root
+        return mBinding.root
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -118,22 +118,21 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         super.onAttach(context)
 
         val baseActivity = getBaseActivity()
-        val syncChangeHandler = baseActivity.syncChangeHandler
-        syncChangeHandler.addOnSyncChangeListener(this)
+        val syncChangeHandler = baseActivity?.syncChangeHandler
+        syncChangeHandler?.addOnSyncChangeListener(this)
     }
 
     override fun onDetach() {
         super.onDetach()
 
-        getBaseActivity().syncChangeHandler.removeOnSyncChangeListener(this)
+        getBaseActivity()?.syncChangeHandler?.removeOnSyncChangeListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mRealm != null) {
-            mRealm!!.removeChangeListener(this)
-            mRealm!!.close()
-        }
+
+        mRealm.removeChangeListener(this)
+        mRealm.close()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -147,25 +146,25 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         val searchMenuItem = menu!!.findItem(R.id.menu_search)
         mSearchView = searchMenuItem.actionView as SearchView
         // Assumes current activity is the searchable activity
-        mSearchView!!.setSearchableInfo(
+        mSearchView.setSearchableInfo(
                 searchManager.getSearchableInfo(
-                        getBaseActivity().componentName))
-        mSearchView!!.setIconifiedByDefault(true)
-        mSearchView!!.setOnQueryTextFocusChangeListener { v, hasFocus ->
+                        getBaseActivity()?.componentName))
+        mSearchView.setIconifiedByDefault(true)
+        mSearchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                mSearchView!!.isIconified = true
-                mSearchView!!.setQuery("", false)
+                mSearchView.isIconified = true
+                mSearchView.setQuery("", false)
             }
         }
-        mSearchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                mBookRecyclerViewCursorAdapter!!.filterByQuery(query)
+                mBookRecyclerViewCursorAdapter.filterByQuery(query)
                 updateUI()
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                mBookRecyclerViewCursorAdapter!!.filterByQuery(newText)
+                mBookRecyclerViewCursorAdapter.filterByQuery(newText)
                 updateUI()
                 return false
             }
@@ -182,11 +181,11 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     override fun onSyncChange(isSyncing: Boolean) {
         val baseActivity = getBaseActivity()
         if (baseActivity != null) {
-            mBinding!!.swipeRefreshLayout.post {
-                if (!mBinding!!.swipeRefreshLayout.isRefreshing && isSyncing) {
-                    mBinding!!.swipeRefreshLayout.isRefreshing = true
-                } else if (mBinding!!.swipeRefreshLayout.isRefreshing && !isSyncing) {
-                    mBinding!!.swipeRefreshLayout.isRefreshing = false
+            mBinding.swipeRefreshLayout.post {
+                if (!mBinding.swipeRefreshLayout.isRefreshing && isSyncing) {
+                    mBinding.swipeRefreshLayout.isRefreshing = true
+                } else if (mBinding.swipeRefreshLayout.isRefreshing && !isSyncing) {
+                    mBinding.swipeRefreshLayout.isRefreshing = false
                 }
                 updateUI()
             }
@@ -194,17 +193,17 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     }
 
     private fun updateUI() {
-        if (mBookRecyclerViewCursorAdapter!!.itemCount == 0) {
-            mBinding!!.recyclerViewBooks.visibility = View.GONE
-            mBinding!!.textViewEmpty.visibility = View.VISIBLE
+        if (mBookRecyclerViewCursorAdapter.itemCount == 0) {
+            mBinding.recyclerViewBooks.visibility = View.GONE
+            mBinding.textViewEmpty.visibility = View.VISIBLE
         } else {
-            mBinding!!.recyclerViewBooks.visibility = View.VISIBLE
-            mBinding!!.textViewEmpty.visibility = View.GONE
+            mBinding.recyclerViewBooks.visibility = View.VISIBLE
+            mBinding.textViewEmpty.visibility = View.GONE
         }
     }
 
     override fun onSearchRequest(query: String) {
-        if (mSearchView != null) mSearchView!!.setQuery(query, false)
+        mSearchView.setQuery(query, false)
     }
 
     private fun startQRScanner() {
@@ -233,7 +232,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
                             }
 
                             override fun onError(t: Throwable) {
-                                ViewUtil.showSnackbarMessage(mBinding!!,
+                                ViewUtil.showSnackbarMessage(mBinding,
                                         t.message!!)
                             }
 
@@ -243,50 +242,50 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
                                     val status = borrow.status
                                     if (status == Borrow.STATUS_REQUESTED) {
                                         ViewUtil.showSnackbarMessage(
-                                                mBinding!!,
+                                                mBinding,
                                                 getString(R.string.message_book_requested))
                                     } else if (status == Borrow.STATUS_ACTIVE) {
                                         ViewUtil.showSnackbarMessage(
-                                                mBinding!!,
+                                                mBinding,
                                                 getString(R.string.message_book_active))
                                     }
                                 } else {
                                     val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
                                     if (messageResponse != null) {
                                         ViewUtil.showSnackbarMessage(
-                                                mBinding!!,
+                                                mBinding,
                                                 messageResponse.message!!)
                                     } else {
                                         ViewUtil.showSnackbarMessage(
-                                                mBinding!!,
+                                                mBinding,
                                                 ErrorUtil.getGeneralExceptionMessage(context,
                                                         response.code())!!)
                                     }
                                 }
                             }
                         }))
-                        ACTION_CHECK_IN -> subscribeToFragment(BookModel.doBookCheckIn(mBinding!!,
+                        ACTION_CHECK_IN -> subscribeToFragment(BookModel.doBookCheckIn(mBinding,
                                 mLazyUser.get(), qrCode))
-                        ACTION_CHECK_OUT -> subscribeToFragment(BookModel.doBookCheckOut(mBinding!!,
+                        ACTION_CHECK_OUT -> subscribeToFragment(BookModel.doBookCheckOut(mBinding,
                                 mLazyUser.get(), qrCode))
                     }
                 }.show()
             } else {
                 Snackbar.make(
-                        mBinding!!.root,
+                        mBinding.root,
                         resources.getQuantityString(R.plurals.message_books_not_found, 1),
                         Snackbar.LENGTH_LONG).show()
             }
         } else {
             Snackbar.make(
-                    mBinding!!.root,
+                    mBinding.root,
                     getString(R.string.error_invalid_qr_code),
                     Snackbar.LENGTH_LONG).show()
         }
     }
 
     override fun onChange(realm: Realm) {
-        mBookRecyclerViewCursorAdapter!!.notifyDataSetChanged()
+        mBookRecyclerViewCursorAdapter.notifyDataSetChanged()
         updateUI()
     }
 
