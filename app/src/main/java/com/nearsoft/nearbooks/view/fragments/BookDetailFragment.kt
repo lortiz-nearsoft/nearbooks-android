@@ -78,10 +78,10 @@ class BookDetailFragment : BaseFragment() {
         mBinding.toolbar.post {
             val isLandscape = resources.getBoolean(R.bool.isLandscape)
             if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getBaseActivity()?.window?.statusBarColor = mColorsWrapper.backgroundColor
+                baseActivity.window?.statusBarColor = mColorsWrapper.backgroundColor
             }
             ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar,
-                    mColorsWrapper.titleTextColor, getBaseActivity()!!)
+                    mColorsWrapper.titleTextColor, baseActivity)
         }
 
         ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER)
@@ -131,7 +131,7 @@ class BookDetailFragment : BaseFragment() {
                 .noPlaceholder().noFade().error(R.drawable.ic_launcher)
                 .into(mBinding.imageViewBookCover)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener(getBaseActivity()!!)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener(baseActivity)) {
             loadFullResolution()
             checkBookAvailability()
         }
@@ -141,9 +141,8 @@ class BookDetailFragment : BaseFragment() {
 
     private fun setupActionBar(toolbar: Toolbar) {
         // Show the Up button in the action bar.
-        getBaseActivity()?.setSupportActionBar(toolbar)
-        val actionBar = getBaseActivity()?.supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        baseActivity.setSupportActionBar(toolbar)
+        baseActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     /**

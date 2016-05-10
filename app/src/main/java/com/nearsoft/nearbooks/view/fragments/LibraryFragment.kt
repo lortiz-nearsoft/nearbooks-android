@@ -5,11 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.util.Pair
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
@@ -117,15 +113,13 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        val baseActivity = getBaseActivity()
-        val syncChangeHandler = baseActivity?.syncChangeHandler
-        syncChangeHandler?.addOnSyncChangeListener(this)
+        baseActivity.syncChangeHandler.addOnSyncChangeListener(this)
     }
 
     override fun onDetach() {
         super.onDetach()
 
-        getBaseActivity()?.syncChangeHandler?.removeOnSyncChangeListener(this)
+        baseActivity.syncChangeHandler.removeOnSyncChangeListener(this)
     }
 
     override fun onDestroy() {
@@ -146,9 +140,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
         val searchMenuItem = menu!!.findItem(R.id.menu_search)
         mSearchView = searchMenuItem.actionView as SearchView
         // Assumes current activity is the searchable activity
-        mSearchView.setSearchableInfo(
-                searchManager.getSearchableInfo(
-                        getBaseActivity()?.componentName))
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(baseActivity.componentName))
         mSearchView.setIconifiedByDefault(true)
         mSearchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
@@ -179,16 +171,13 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     }
 
     override fun onSyncChange(isSyncing: Boolean) {
-        val baseActivity = getBaseActivity()
-        if (baseActivity != null) {
-            mBinding.swipeRefreshLayout.post {
-                if (!mBinding.swipeRefreshLayout.isRefreshing && isSyncing) {
-                    mBinding.swipeRefreshLayout.isRefreshing = true
-                } else if (mBinding.swipeRefreshLayout.isRefreshing && !isSyncing) {
-                    mBinding.swipeRefreshLayout.isRefreshing = false
-                }
-                updateUI()
+        mBinding.swipeRefreshLayout.post {
+            if (!mBinding.swipeRefreshLayout.isRefreshing && isSyncing) {
+                mBinding.swipeRefreshLayout.isRefreshing = true
+            } else if (mBinding.swipeRefreshLayout.isRefreshing && !isSyncing) {
+                mBinding.swipeRefreshLayout.isRefreshing = false
             }
+            updateUI()
         }
     }
 
@@ -280,7 +269,8 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
             Snackbar.make(
                     mBinding.root,
                     getString(R.string.error_invalid_qr_code),
-                    Snackbar.LENGTH_LONG).show()
+                    Snackbar.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -290,21 +280,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     }
 
     override fun onBookItemClicked(binding: BookItemBinding) {
-        // BookDetailActivity.Companion.openWith(this, binding);
-        // TODO: Move this code for the above call.
-        val detailIntent = Intent(getBaseActivity(), BookDetailActivity::class.java)
-        detailIntent.putExtra(BookDetailFragment.ARG_BOOK, binding.book as Parcelable)
-        detailIntent.putExtra(BookDetailFragment.ARG_COLORS_WRAPPER, binding.colors as Parcelable)
-
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                getBaseActivity(),
-                Pair.create(
-                        binding.root.findViewById(R.id.imageViewBookCover),
-                        BookDetailFragment.VIEW_NAME_BOOK_COVER),
-                Pair.create(
-                        binding.root.findViewById(R.id.toolbar),
-                        BookDetailFragment.VIEW_NAME_BOOK_TOOLBAR))
-        ActivityCompat.startActivity(getBaseActivity(), detailIntent, options.toBundle())
+        BookDetailActivity.openWith(baseActivity, binding);
     }
 
 }
