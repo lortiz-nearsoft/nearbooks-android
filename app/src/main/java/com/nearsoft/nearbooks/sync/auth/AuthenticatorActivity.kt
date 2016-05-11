@@ -25,17 +25,15 @@ import javax.inject.Inject
  */
 class AuthenticatorActivity : AccountAuthenticatorAppCompatActivity() {
     @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    private var mBinding: ActivityAuthenticatorBinding? = null
-    private var mAccountManager: AccountManager? = null
+    protected lateinit var sharedPreferences: SharedPreferences
+    private lateinit var mBinding: ActivityAuthenticatorBinding
+    private val mAccountManager: AccountManager by lazy { AccountManager.get(baseContext) }
     private var mAuthTokenType: String? = null
     private var mAccountType: String? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = getBinding(ActivityAuthenticatorBinding::class.java)
-
-        mAccountManager = AccountManager.get(baseContext)
 
         mAuthTokenType = intent.getStringExtra(ARG_AUTH_TOKEN_TYPE)
         mAccountType = intent.getStringExtra(ARG_ACCOUNT_TYPE)
@@ -70,7 +68,7 @@ class AuthenticatorActivity : AccountAuthenticatorAppCompatActivity() {
         try {
             createSyncAccount(UserModel.signIn(this, result))
         } catch (e: NearbooksException) {
-            ViewUtil.showSnackbarMessage(mBinding!!, e.getDisplayMessage(this))
+            ViewUtil.showSnackbarMessage(mBinding, e.getDisplayMessage(this))
             if (mGoogleApiClient.isConnected) {
                 Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient)
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient)
@@ -88,8 +86,8 @@ class AuthenticatorActivity : AccountAuthenticatorAppCompatActivity() {
 
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         val account = Account(user.email, mAccountType)
-        if (mAccountManager!!.addAccountExplicitly(account, null, null)) {
-            mAccountManager!!.setAuthToken(account, mAuthTokenType, user.idToken)
+        if (mAccountManager.addAccountExplicitly(account, null, null)) {
+            mAccountManager.setAuthToken(account, mAuthTokenType, user.idToken)
 
             SyncUtil.configSyncPeriod(account)
             newAccount = true
@@ -116,7 +114,7 @@ class AuthenticatorActivity : AccountAuthenticatorAppCompatActivity() {
     }
 
     override fun onConnected(bundle: Bundle?) {
-        mBinding!!.signInButton.setOnClickListener { v -> signIn() }
+        mBinding.signInButton.setOnClickListener { v -> signIn() }
     }
 
     companion object {

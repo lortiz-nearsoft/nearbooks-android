@@ -1,7 +1,6 @@
 package com.nearsoft.nearbooks.di.components
 
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import com.nearsoft.nearbooks.config.Configuration
 import com.nearsoft.nearbooks.di.modules.NearbooksApplicationModule
 import com.nearsoft.nearbooks.di.modules.NetworkModule
@@ -33,8 +32,6 @@ interface NearbooksApplicationComponent {
     fun provideBookService(): BookService
 
     fun provideGoogleBooksService(): GoogleBooksService
-
-    fun provideGson(): Gson
 
     fun provideDefaultSharedPreferences(): SharedPreferences
 

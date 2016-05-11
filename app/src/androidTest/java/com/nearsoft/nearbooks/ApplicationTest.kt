@@ -21,8 +21,8 @@ import java.io.IOException
  */
 class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksApplication::class.java) {
 
-    private var mBookService: BookService? = null
-    private var mGoogleBooksService: GoogleBooksService? = null
+    private lateinit var mBookService: BookService
+    private lateinit var mGoogleBooksService: GoogleBooksService
 
     @Throws(Exception::class)
     override fun setUp() {
@@ -36,7 +36,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
 
     @Throws(IOException::class)
     fun testBookService() {
-        val observable = mBookService!!.getAllBooksRx()
+        val observable = mBookService.getAllBooksRx()
 
         val testSubscriber = TestSubscriber<List<Book>>()
         observable.subscribe(testSubscriber)
@@ -78,7 +78,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
 
     @Throws(IOException::class)
     fun testBookAvailability() {
-        val observable = mBookService!!.getBookAvailability("0321534468-0")
+        val observable = mBookService.getBookAvailability("0321534468-0")
 
         val testSubscriber = TestSubscriber<Response<AvailabilityResponse>>()
         observable.subscribe(testSubscriber)
@@ -99,7 +99,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         val requestBody = RequestBody()
         requestBody.qrCode = "0321534468-0"
         requestBody.userEmail = "epool@nearsoft.com"
-        val observable = mBookService!!.requestBookToBorrow(requestBody)
+        val observable = mBookService.requestBookToBorrow(requestBody)
 
         val testSubscriber = TestSubscriber<Response<Borrow>>()
         observable.subscribe(testSubscriber)
@@ -126,7 +126,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         val requestBody = RequestBody()
         requestBody.qrCode = "0321534468-1"
         requestBody.userEmail = "epool@nearsoft.com"
-        val observable = mBookService!!.checkInBook(requestBody)
+        val observable = mBookService.checkInBook(requestBody)
 
         val testSubscriber = TestSubscriber<Response<MessageResponse>>()
         observable.subscribe(testSubscriber)
@@ -153,7 +153,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
         val requestBody = RequestBody()
         requestBody.qrCode = "0321534468-1"
         requestBody.userEmail = "epool@nearsoft.com"
-        val observable = mBookService!!.checkOutBook(requestBody)
+        val observable = mBookService.checkOutBook(requestBody)
 
         val testSubscriber = TestSubscriber<Response<MessageResponse>>()
         observable.subscribe(testSubscriber)
@@ -177,7 +177,7 @@ class ApplicationTest : ApplicationTestCase<NearbooksApplication>(NearbooksAppli
 
     @Throws(IOException::class)
     fun testGoogleBooksFindByIsbn() {
-        val observable = mGoogleBooksService!!.findBooksByIsbn("9780321534460")
+        val observable = mGoogleBooksService.findBooksByIsbn("9780321534460")
 
         val testSubscriber = TestSubscriber<Response<GoogleBooksSearchResponse>>()
         observable.subscribe(testSubscriber)
