@@ -14,18 +14,18 @@ import com.squareup.picasso.Picasso
 class NearbooksApplication : MultiDexApplication() {
 
     companion object {
-        private var sApplicationComponent: NearbooksApplicationComponent? = null
-        fun applicationComponent() = sApplicationComponent!!
+        lateinit var applicationComponent: NearbooksApplicationComponent
+            private set
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        sApplicationComponent = DaggerNearbooksApplicationComponent.builder()
+        applicationComponent = DaggerNearbooksApplicationComponent.builder()
                 .nearbooksApplicationModule(NearbooksApplicationModule(this))
                 .networkModule(NetworkModule())
                 .build()
 
-        Picasso.setSingletonInstance(applicationComponent().providePicasso())
+        Picasso.setSingletonInstance(applicationComponent.providePicasso())
     }
 }

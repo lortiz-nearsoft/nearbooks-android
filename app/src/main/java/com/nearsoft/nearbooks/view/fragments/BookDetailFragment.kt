@@ -49,10 +49,10 @@ class BookDetailFragment : BaseFragment() {
         }
     }
 
-    private var mBinding: FragmentBookDetailBinding? = null
+    private lateinit var mBinding: FragmentBookDetailBinding
 
-    private var mBook: Book? = null
-    private var mColorsWrapper: ColorsWrapper? = null
+    private lateinit var mBook: Book
+    private lateinit var mColorsWrapper: ColorsWrapper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,54 +70,54 @@ class BookDetailFragment : BaseFragment() {
                               container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mBinding = FragmentBookDetailBinding.inflate(inflater, container, false)
-        mBinding!!.setBook(mBook)
-        mBinding!!.setColors(mColorsWrapper)
+        mBinding.setBook(mBook)
+        mBinding.setColors(mColorsWrapper)
 
-        setupActionBar(mBinding!!.toolbar)
+        setupActionBar(mBinding.toolbar)
 
-        mBinding!!.toolbar.post {
+        mBinding.toolbar.post {
             val isLandscape = resources.getBoolean(R.bool.isLandscape)
             if (isLandscape && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getBaseActivity().window.statusBarColor = mColorsWrapper!!.backgroundColor
+                baseActivity.window?.statusBarColor = mColorsWrapper.backgroundColor
             }
-            ViewUtil.Toolbar.colorizeToolbar(mBinding!!.toolbar,
-                    mColorsWrapper!!.titleTextColor, getBaseActivity())
+            ViewUtil.Toolbar.colorizeToolbar(mBinding.toolbar,
+                    mColorsWrapper.titleTextColor, baseActivity)
         }
 
-        ViewCompat.setTransitionName(mBinding!!.imageViewBookCover, VIEW_NAME_BOOK_COVER)
-        ViewCompat.setTransitionName(mBinding!!.toolbar, VIEW_NAME_BOOK_TOOLBAR)
+        ViewCompat.setTransitionName(mBinding.imageViewBookCover, VIEW_NAME_BOOK_COVER)
+        ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR)
 
-        mBinding!!.fabRequestBook.setOnClickListener { view ->
+        mBinding.fabRequestBook.setOnClickListener { view ->
             subscribeToFragment(BookModel.requestBookToBorrow(mLazyUser.get(),
-                    mBook!!.id!! + "-0").subscribe(object : Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
+                    mBook.id!! + "-0").subscribe(object : Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
                 override fun onCompleted() {
                 }
 
                 override fun onError(t: Throwable) {
-                    ViewUtil.showSnackbarMessage(mBinding!!, t.message!!)
+                    ViewUtil.showSnackbarMessage(mBinding, t.message!!)
                 }
 
                 override fun onNext(response: Response<com.nearsoft.nearbooks.models.realm.Borrow>) {
                     if (response.isSuccessful) {
                         val borrow = Borrow(response.body())
-                        mBinding!!.setBorrow(borrow)
-                        mBinding!!.executePendingBindings()
+                        mBinding.setBorrow(borrow)
+                        mBinding.executePendingBindings()
                         val status = borrow.status
                         if (status == Borrow.STATUS_REQUESTED) {
-                            ViewUtil.showSnackbarMessage(mBinding!!,
+                            ViewUtil.showSnackbarMessage(mBinding,
                                     getString(R.string.message_book_requested))
                         } else if (status == Borrow.STATUS_ACTIVE) {
-                            ViewUtil.showSnackbarMessage(mBinding!!,
+                            ViewUtil.showSnackbarMessage(mBinding,
                                     getString(R.string.message_book_active))
                         }
-                        mBinding!!.fabRequestBook.hide()
+                        mBinding.fabRequestBook.hide()
                     } else {
                         val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
                         if (messageResponse != null) {
-                            ViewUtil.showSnackbarMessage(mBinding!!,
+                            ViewUtil.showSnackbarMessage(mBinding,
                                     messageResponse.message!!)
                         } else {
-                            ViewUtil.showSnackbarMessage(mBinding!!,
+                            ViewUtil.showSnackbarMessage(mBinding,
                                     ErrorUtil.getGeneralExceptionMessage(context,
                                             response.code())!!)
                         }
@@ -126,21 +126,23 @@ class BookDetailFragment : BaseFragment() {
             }))
         }
 
-        Picasso.with(context).load(getString(R.string.url_book_cover_thumbnail, mBook!!.id)).noPlaceholder().noFade().error(R.drawable.ic_launcher).into(mBinding!!.imageViewBookCover)
+        Picasso.with(context)
+                .load(getString(R.string.url_book_cover_thumbnail, mBook.id))
+                .noPlaceholder().noFade().error(R.drawable.ic_launcher)
+                .into(mBinding.imageViewBookCover)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener(getBaseActivity())) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener(baseActivity)) {
             loadFullResolution()
             checkBookAvailability()
         }
 
-        return mBinding!!.root
+        return mBinding.root
     }
 
     private fun setupActionBar(toolbar: Toolbar) {
         // Show the Up button in the action bar.
-        getBaseActivity().setSupportActionBar(toolbar)
-        val actionBar = getBaseActivity().supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        baseActivity.setSupportActionBar(toolbar)
+        baseActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     /**
@@ -180,16 +182,21 @@ class BookDetailFragment : BaseFragment() {
     }
 
     private fun loadFullResolution() {
-        Picasso.with(mBinding!!.imageViewBookCover.context).load(getString(R.string.url_book_cover_full, mBook!!.id)).noFade().noPlaceholder().error(R.drawable.ic_launcher).into(mBinding!!.imageViewBookCover)
+        Picasso.with(mBinding.imageViewBookCover.context)
+                .load(getString(R.string.url_book_cover_full, mBook.id))
+                .noFade()
+                .noPlaceholder()
+                .error(R.drawable.ic_launcher)
+                .into(mBinding.imageViewBookCover)
     }
 
     private fun checkBookAvailability() {
-        subscribeToFragment(BookModel.checkBookAvailability(mBook!!.id!!).subscribe(object : Subscriber<Response<AvailabilityResponse>>() {
+        subscribeToFragment(BookModel.checkBookAvailability(mBook.id!!).subscribe(object : Subscriber<Response<AvailabilityResponse>>() {
             override fun onCompleted() {
             }
 
             override fun onError(t: Throwable) {
-                ViewUtil.showSnackbarMessage(mBinding!!, t.message!!)
+                ViewUtil.showSnackbarMessage(mBinding, t.message!!)
             }
 
             override fun onNext(response: Response<AvailabilityResponse>) {
@@ -199,12 +206,12 @@ class BookDetailFragment : BaseFragment() {
                         Borrow(availabilityResponse.activeBorrow)
                     else
                         null
-                    mBinding!!.setBorrow(borrow)
-                    mBinding!!.executePendingBindings()
+                    mBinding.setBorrow(borrow)
+                    mBinding.executePendingBindings()
                     if (availabilityResponse.isAvailable) {
-                        mBinding!!.fabRequestBook.show()
+                        mBinding.fabRequestBook.show()
                     } else {
-                        mBinding!!.fabRequestBook.hide()
+                        mBinding.fabRequestBook.hide()
                     }
                 }
             }

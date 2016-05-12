@@ -29,7 +29,7 @@ import rx.schedulers.Schedulers
  */
 object BookModel {
 
-    private val sBookService = NearbooksApplication.applicationComponent().provideBookService()
+    private val sBookService = NearbooksApplication.applicationComponent.provideBookService()
 
     fun cacheBooks(books: List<Book>?) {
         if (books?.isEmpty() ?: true) return
@@ -42,7 +42,7 @@ object BookModel {
         realm.close()
     }
 
-    fun findByBookId(bookId: String): Book {
+    fun findByBookId(bookId: String): Book? {
         val realm = Realm.getDefaultInstance()
         val book = realm.where(Book::class.java).equalTo("id", bookId).findFirst()
         realm.close()

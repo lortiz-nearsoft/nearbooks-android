@@ -11,7 +11,6 @@ import com.nearsoft.nearbooks.NearbooksApplication
 import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent
 import com.nearsoft.nearbooks.di.components.DaggerBaseActivityComponent
-import com.nearsoft.nearbooks.di.components.NearbooksApplicationComponent
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule
 import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.sync.SyncChangeHandler
@@ -31,9 +30,14 @@ abstract class BaseActivity : AppCompatActivity() {
     lateinit var syncChangeHandler: SyncChangeHandler
     @Inject
     lateinit protected var mLazyUser: Lazy<User>
-    private var mBinding: ViewDataBinding? = null
-    var baseActivityComponent: BaseActivityComponent? = null
-        private set
+    private lateinit var mBinding: ViewDataBinding
+    val baseActivityComponent: BaseActivityComponent by lazy {
+        DaggerBaseActivityComponent
+                .builder()
+                .nearbooksApplicationComponent(NearbooksApplication.applicationComponent)
+                .baseActivityModule(BaseActivityModule(this))
+                .build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDependencies()
@@ -50,12 +54,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun initDependencies() {
-        baseActivityComponent = DaggerBaseActivityComponent
-                .builder()
-                .nearbooksApplicationComponent(nearbooksApplicationComponent)
-                .baseActivityModule(BaseActivityModule(this))
-                .build()
-        injectComponent(baseActivityComponent!!)
+        injectComponent(baseActivityComponent)
     }
 
     override fun onResume() {
@@ -120,9 +119,6 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun unSubscribeFromActivity() {
         mCompositeSubscription.clear()
     }
-
-    protected val nearbooksApplicationComponent: NearbooksApplicationComponent
-        get() = NearbooksApplication.applicationComponent()
 
     protected val baseActivityModule: BaseActivityModule
         get() = BaseActivityModule(this)

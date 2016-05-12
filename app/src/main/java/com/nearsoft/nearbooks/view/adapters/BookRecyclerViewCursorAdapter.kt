@@ -31,7 +31,7 @@ class BookRecyclerViewCursorAdapter(
     lateinit protected var defaultColors: ColorsWrapper
 
     init {
-        NearbooksApplication.applicationComponent().inject(this)
+        NearbooksApplication.applicationComponent.inject(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {

@@ -21,7 +21,7 @@ import com.nearsoft.nearbooks.view.fragments.RegisterBookFragment
 
 class HomeActivity : GoogleApiClientBaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private var mBinding: ActivityHomeBinding? = null
+    private lateinit var mBinding: ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,22 +29,22 @@ class HomeActivity : GoogleApiClientBaseActivity(), NavigationView.OnNavigationI
 
         val toggle = ActionBarDrawerToggle(
                 this,
-                mBinding!!.drawerLayout,
-                mBinding!!.appBarHome.toolbar,
+                mBinding.drawerLayout,
+                mBinding.appBarHome.toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close)
-        mBinding!!.drawerLayout.addDrawerListener(toggle)
+        mBinding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
         val navHeaderHomeBinding = NavHeaderHomeBinding.inflate(layoutInflater)
         setupEasterEgg(navHeaderHomeBinding.imageView)
         navHeaderHomeBinding.user = mLazyUser.get()
         navHeaderHomeBinding.executePendingBindings()
-        mBinding!!.navView.addHeaderView(navHeaderHomeBinding.root)
+        mBinding.navView.addHeaderView(navHeaderHomeBinding.root)
 
-        mBinding!!.navView.setNavigationItemSelectedListener(this)
+        mBinding.navView.setNavigationItemSelectedListener(this)
 
-        mBinding!!.navView.setCheckedItem(R.id.nav_library)
+        mBinding.navView.setCheckedItem(R.id.nav_library)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(
@@ -62,7 +62,7 @@ class HomeActivity : GoogleApiClientBaseActivity(), NavigationView.OnNavigationI
     }
 
     private fun showRegisterBookMenu() {
-        mBinding!!.navView.menu.findItem(R.id.nav_register_book).isVisible = true
+        mBinding.navView.menu.findItem(R.id.nav_register_book).isVisible = true
     }
 
     override fun getLayoutResourceId(): Int {
@@ -75,8 +75,8 @@ class HomeActivity : GoogleApiClientBaseActivity(), NavigationView.OnNavigationI
     }
 
     override fun onBackPressed() {
-        if (mBinding!!.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mBinding!!.drawerLayout.closeDrawer(GravityCompat.START)
+        if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -106,12 +106,12 @@ class HomeActivity : GoogleApiClientBaseActivity(), NavigationView.OnNavigationI
             title = item.title
         }
 
-        mBinding!!.drawerLayout.closeDrawer(GravityCompat.START)
+        mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
     override fun onConnected(bundle: Bundle?) {
-        mBinding!!.linearLayoutSignOutMenu.setOnClickListener { v ->
+        mBinding.linearLayoutSignOutMenu.setOnClickListener { v ->
             UserModel.signOut(this, mLazyUser.get(), mGoogleApiClient, Runnable {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)

@@ -16,7 +16,8 @@ import java.io.IOException
  * Created by epool on 12/21/15.
  */
 class SyncAdapter : AbstractThreadedSyncAdapter {
-    private var mBookService: BookService = NearbooksApplication.applicationComponent().provideBookService()
+
+    private val mBookService: BookService = NearbooksApplication.applicationComponent.provideBookService()
 
     constructor(context: Context, autoInitialize: Boolean) : super(context, autoInitialize) {
     }

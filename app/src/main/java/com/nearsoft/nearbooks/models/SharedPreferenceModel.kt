@@ -12,7 +12,7 @@ object SharedPreferenceModel {
 
     const val PREFERENCE_IS_UPLOAD_BOOKS_MENU_SHOWN = "PREFERENCE_IS_UPLOAD_BOOKS_MENU_SHOWN"
 
-    private val SHARED_PREFERENCES = NearbooksApplication.applicationComponent().provideDefaultSharedPreferences()
+    private val SHARED_PREFERENCES = NearbooksApplication.applicationComponent.provideDefaultSharedPreferences()
 
     fun clear() {
         SHARED_PREFERENCES.edit().clear().apply()

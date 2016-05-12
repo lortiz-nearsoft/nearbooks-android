@@ -4,13 +4,11 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
 import android.os.Build
-
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.nearsoft.nearbooks.BuildConfig
 import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.exceptions.NearbooksException
 import com.nearsoft.nearbooks.exceptions.SignInException
@@ -19,7 +17,6 @@ import com.nearsoft.nearbooks.sync.auth.AccountGeneral
 import com.nearsoft.nearbooks.util.ErrorUtil
 import com.nearsoft.nearbooks.util.Util
 import com.nearsoft.nearbooks.view.activities.BaseActivity
-
 import io.realm.Realm
 
 /**
@@ -47,11 +44,9 @@ object UserModel {
             }
             realm.close()
 
-            if (!BuildConfig.DEBUG) {
-                Crashlytics.setUserIdentifier(user.id)
-                Crashlytics.setUserEmail(user.email)
-                Crashlytics.setUserName(user.displayName)
-            }
+            Crashlytics.setUserIdentifier(user.id)
+            Crashlytics.setUserEmail(user.email)
+            Crashlytics.setUserName(user.displayName)
 
             return user
         } else if (!Util.isThereInternetConnection(context)) {

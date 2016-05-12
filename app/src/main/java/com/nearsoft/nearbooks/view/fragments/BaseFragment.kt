@@ -20,14 +20,13 @@ abstract class BaseFragment : Fragment() {
 
     @Inject
     lateinit protected var mLazyUser: Lazy<User>
+    protected val baseActivity: BaseActivity by lazy { activity!! as BaseActivity }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        injectComponent(getBaseActivity().baseActivityComponent!!)
+        injectComponent(baseActivity.baseActivityComponent)
     }
-
-    protected fun getBaseActivity(): BaseActivity = activity as BaseActivity
 
     protected fun injectComponent(baseActivityComponent: BaseActivityComponent) {
         baseActivityComponent.inject(this)

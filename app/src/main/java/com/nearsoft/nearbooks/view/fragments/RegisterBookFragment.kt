@@ -44,14 +44,15 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
         }
     }
 
-    private var mBinding: FragmentRegisterBookBinding? = null
-    private var mGoogleBooksVolumeAdapter: GoogleBooksVolumeAdapter? = null
+    private lateinit var mBinding: FragmentRegisterBookBinding
     private var mCode: String? = null
+    private val mGoogleBooksVolumeAdapter: GoogleBooksVolumeAdapter by lazy {
+        GoogleBooksVolumeAdapter(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mGoogleBooksVolumeAdapter = GoogleBooksVolumeAdapter(this)
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_CODE)) {
             mCode = savedInstanceState.getString(KEY_CODE)
             findBooksByIsbn()
@@ -61,18 +62,18 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_register_book, container, false)
-        mBinding!!.fabScanQrCode.setOnClickListener { v -> startQRScanner() }
+        mBinding.fabScanQrCode.setOnClickListener { v -> startQRScanner() }
 
-        mBinding!!.recyclerViewBooks.setHasFixedSize(true)
+        mBinding.recyclerViewBooks.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(context)
-        mBinding!!.recyclerViewBooks.layoutManager = layoutManager
-        mBinding!!.recyclerViewBooks.adapter = mGoogleBooksVolumeAdapter
+        mBinding.recyclerViewBooks.layoutManager = layoutManager
+        mBinding.recyclerViewBooks.adapter = mGoogleBooksVolumeAdapter
 
-        return mBinding!!.root
+        return mBinding.root
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        outState!!.putString(KEY_CODE, mCode)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(KEY_CODE, mCode)
         super.onSaveInstanceState(outState)
     }
 
@@ -94,12 +95,12 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
 
             override fun onError(t: Throwable) {
                 progressDialog.dismiss()
-                ViewUtil.showSnackbarMessage(mBinding!!, ErrorUtil.getMessageFromThrowable(t, context)!!)
+                ViewUtil.showSnackbarMessage(mBinding, ErrorUtil.getMessageFromThrowable(t, context)!!)
             }
 
             override fun onNext(googleBookBodies: List<GoogleBookBody>) {
                 progressDialog.dismiss()
-                mGoogleBooksVolumeAdapter!!.setGoogleBookBodies(googleBookBodies)
+                mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies)
                 showResults(!googleBookBodies.isEmpty())
             }
         }))
@@ -107,11 +108,11 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
 
     private fun showResults(showResults: Boolean) {
         if (showResults) {
-            mBinding!!.recyclerViewBooks.visibility = View.VISIBLE
-            mBinding!!.tvEmpty.visibility = View.GONE
+            mBinding.recyclerViewBooks.visibility = View.VISIBLE
+            mBinding.tvEmpty.visibility = View.GONE
         } else {
-            mBinding!!.recyclerViewBooks.visibility = View.GONE
-            mBinding!!.tvEmpty.visibility = View.VISIBLE
+            mBinding.recyclerViewBooks.visibility = View.GONE
+            mBinding.tvEmpty.visibility = View.VISIBLE
         }
     }
 
@@ -133,7 +134,7 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
                 getString(R.string.message_book_resume, googleBookBody.title,
                         googleBookBody.authors, googleBookBody.publishedDate)).setPositiveButton(android.R.string.ok) { dialog, which ->
             subscribeToFragment(BookModel.registerNewBook(googleBookBody).doOnError { t ->
-                ViewUtil.showSnackbarMessage(mBinding!!,
+                ViewUtil.showSnackbarMessage(mBinding,
                         t.message!!)
             }.subscribe { response ->
                 if (response.isSuccessful) {
@@ -141,10 +142,10 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
                 } else {
                     val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
                     if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(mBinding!!,
+                        ViewUtil.showSnackbarMessage(mBinding,
                                 messageResponse.message!!)
                     } else {
-                        ViewUtil.showSnackbarMessage(mBinding!!,
+                        ViewUtil.showSnackbarMessage(mBinding,
                                 ErrorUtil.getGeneralExceptionMessage(context,
                                         response.code())!!)
                     }
