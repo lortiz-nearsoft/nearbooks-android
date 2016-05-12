@@ -22,6 +22,7 @@ import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientatio
 import com.nearsoft.nearbooks.view.adapters.GoogleBooksVolumeAdapter
 import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import rx.Subscriber
 
 class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBookItemClickListener {
@@ -89,21 +90,23 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
 
     private fun findBooksByIsbn() {
         val progressDialog = ProgressDialog.show(context, getString(R.string.message_getting_book_info), null, true)
-        subscribeToFragment(GoogleBooksModel.findGoogleBooksByIsbn(mCode!!).subscribe(object : Subscriber<List<GoogleBookBody>>() {
-            override fun onCompleted() {
-            }
+        GoogleBooksModel.findGoogleBooksByIsbn(mCode!!)
+                .bindToLifecycle(this)
+                .subscribe(object : Subscriber<List<GoogleBookBody>>() {
+                    override fun onCompleted() {
+                    }
 
-            override fun onError(t: Throwable) {
-                progressDialog.dismiss()
-                ViewUtil.showSnackbarMessage(mBinding, ErrorUtil.getMessageFromThrowable(t, context)!!)
-            }
+                    override fun onError(t: Throwable) {
+                        progressDialog.dismiss()
+                        ViewUtil.showSnackbarMessage(mBinding, ErrorUtil.getMessageFromThrowable(t, context)!!)
+                    }
 
-            override fun onNext(googleBookBodies: List<GoogleBookBody>) {
-                progressDialog.dismiss()
-                mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies)
-                showResults(!googleBookBodies.isEmpty())
-            }
-        }))
+                    override fun onNext(googleBookBodies: List<GoogleBookBody>) {
+                        progressDialog.dismiss()
+                        mGoogleBooksVolumeAdapter.setGoogleBookBodies(googleBookBodies)
+                        showResults(!googleBookBodies.isEmpty())
+                    }
+                })
     }
 
     private fun showResults(showResults: Boolean) {
@@ -130,28 +133,29 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
 
     override fun onGoogleBookItemClicked(binding: ItemGoogleBooksVolumeBinding) {
         val googleBookBody = binding.book
-        AlertDialog.Builder(context).setTitle(R.string.question_register_new_book).setMessage(
-                getString(R.string.message_book_resume, googleBookBody.title,
-                        googleBookBody.authors, googleBookBody.publishedDate)).setPositiveButton(android.R.string.ok) { dialog, which ->
-            subscribeToFragment(BookModel.registerNewBook(googleBookBody).doOnError { t ->
-                ViewUtil.showSnackbarMessage(mBinding,
-                        t.message!!)
-            }.subscribe { response ->
-                if (response.isSuccessful) {
-                    ViewUtil.showToastMessage(context, R.string.message_done)
-                } else {
-                    val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
-                    if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(mBinding,
-                                messageResponse.message!!)
-                    } else {
-                        ViewUtil.showSnackbarMessage(mBinding,
-                                ErrorUtil.getGeneralExceptionMessage(context,
-                                        response.code())!!)
-                    }
+        AlertDialog.Builder(context)
+                .setTitle(R.string.question_register_new_book)
+                .setMessage(getString(R.string.message_book_resume, googleBookBody.title, googleBookBody.authors, googleBookBody.publishedDate))
+                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    BookModel.registerNewBook(googleBookBody)
+                            .doOnError { ViewUtil.showSnackbarMessage(mBinding, it.message!!) }
+                            .bindToLifecycle(this)
+                            .subscribe { response ->
+                                if (response.isSuccessful) {
+                                    ViewUtil.showToastMessage(context, R.string.message_done)
+                                } else {
+                                    val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
+                                    if (messageResponse != null) {
+                                        ViewUtil.showSnackbarMessage(mBinding,
+                                                messageResponse.message!!)
+                                    } else {
+                                        ViewUtil.showSnackbarMessage(mBinding,
+                                                ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
+                                    }
+                                }
+                            }
                 }
-            })
-        }.setNegativeButton(android.R.string.cancel, null).show()
+                .setNegativeButton(android.R.string.cancel, null).show()
     }
 
 }

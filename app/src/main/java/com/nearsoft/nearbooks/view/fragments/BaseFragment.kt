@@ -1,22 +1,18 @@
 package com.nearsoft.nearbooks.view.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import com.nearsoft.nearbooks.di.components.BaseActivityComponent
 import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.view.activities.BaseActivity
+import com.trello.rxlifecycle.components.support.RxFragment
 import dagger.Lazy
-import rx.Subscription
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 /**
  * Base fragment.
  * Created by epool on 11/18/15.
  */
-abstract class BaseFragment : Fragment() {
-
-    private val mCompositeSubscription = CompositeSubscription()
+abstract class BaseFragment : RxFragment() {
 
     @Inject
     lateinit protected var mLazyUser: Lazy<User>
@@ -30,20 +26,6 @@ abstract class BaseFragment : Fragment() {
 
     protected fun injectComponent(baseActivityComponent: BaseActivityComponent) {
         baseActivityComponent.inject(this)
-    }
-
-    override fun onDestroy() {
-        unSubscribeFromActivity()
-
-        super.onDestroy()
-    }
-
-    protected fun subscribeToFragment(subscription: Subscription) {
-        mCompositeSubscription.add(subscription)
-    }
-
-    protected fun unSubscribeFromActivity() {
-        mCompositeSubscription.clear()
     }
 
 }

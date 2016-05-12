@@ -8,9 +8,9 @@ import android.util.Log
  */
 
 fun Any.logD(message: String) {
-    Log.d(this.javaClass.simpleName, message)
+    Log.d(this.javaClass.simpleName, "===========> $message")
 }
 
 fun Any.logI(message: String) {
-    Log.d(this.javaClass.simpleName, message)
+    Log.d(this.javaClass.simpleName, "===========> $message")
 }

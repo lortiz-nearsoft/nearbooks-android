@@ -96,6 +96,10 @@ dependencies {
     compile "io.reactivex:rxjava:$rx_java_version"
 
     compile "io.realm:android-adapters:$realm_adapters_version"
+
+    compile "com.trello:rxlifecycle:$rx_lifecycle_version"
+    compile "com.trello:rxlifecycle-components:$rx_lifecycle_version"
+    compile "com.trello:rxlifecycle-kotlin:$rx_lifecycle_version"
 }
 
 kapt {

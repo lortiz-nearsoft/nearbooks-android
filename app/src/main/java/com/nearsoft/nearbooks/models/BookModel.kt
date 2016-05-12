@@ -12,6 +12,7 @@ import com.nearsoft.nearbooks.ws.bodies.GoogleBookBody
 import com.nearsoft.nearbooks.ws.bodies.RequestBody
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import io.realm.Case
 import io.realm.Realm
 import io.realm.RealmResults
@@ -19,7 +20,6 @@ import io.realm.Sort
 import retrofit2.Response
 import rx.Observable
 import rx.Subscriber
-import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
@@ -74,68 +74,76 @@ object BookModel {
         return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io())
     }
 
-    fun doBookCheckIn(binding: ViewDataBinding, user: User,
-                      codeQr: String): Subscription {
+    fun doBookCheckIn(binding: ViewDataBinding, user: User, codeQr: String) {
         val context = binding.root.context
         val requestBody = RequestBody()
         requestBody.qrCode = codeQr
         requestBody.userEmail = user.email
         val observable = sBookService.checkInBook(requestBody)
-        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()).subscribe(object : Subscriber<Response<MessageResponse>>() {
-            override fun onCompleted() {
-            }
-
-            override fun onError(t: Throwable) {
-                ViewUtil.showSnackbarMessage(binding, t.message!!)
-            }
-
-            override fun onNext(response: Response<MessageResponse>) {
-                if (response.isSuccessful) {
-                    val messageResponse = response.body()
-                    ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
-                } else {
-                    val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
-                    if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
-                    } else {
-                        ViewUtil.showSnackbarMessage(binding,
-                                ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
+        observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .bindToLifecycle(binding.root)
+                .subscribe(object : Subscriber<Response<MessageResponse>>() {
+                    override fun onCompleted() {
                     }
-                }
-            }
-        })
+
+                    override fun onError(t: Throwable) {
+                        ViewUtil.showSnackbarMessage(binding, t.message!!)
+                    }
+
+                    override fun onNext(response: Response<MessageResponse>) {
+                        if (response.isSuccessful) {
+                            val messageResponse = response.body()
+                            ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
+                        } else {
+                            val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
+                            }
+                        }
+                    }
+                })
     }
 
-    fun doBookCheckOut(binding: ViewDataBinding, user: User,
-                       codeQr: String): Subscription {
+    fun doBookCheckOut(binding: ViewDataBinding, user: User, codeQr: String) {
         val context = binding.root.context
         val requestBody = RequestBody()
         requestBody.qrCode = codeQr
         requestBody.userEmail = user.email
         val observable = sBookService.checkOutBook(requestBody)
-        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io()).subscribe(object : Subscriber<Response<MessageResponse>>() {
-            override fun onCompleted() {
-            }
-
-            override fun onError(t: Throwable) {
-                ViewUtil.showSnackbarMessage(binding, t.message!!)
-            }
-
-            override fun onNext(response: Response<MessageResponse>) {
-                if (response.isSuccessful) {
-                    val messageResponse = response.body()
-                    ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
-                } else {
-                    val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
-                    if (messageResponse != null) {
-                        ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
-                    } else {
-                        ViewUtil.showSnackbarMessage(binding,
-                                ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
+        observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .bindToLifecycle(binding.root)
+                .subscribe(object : Subscriber<Response<MessageResponse>>() {
+                    override fun onCompleted() {
                     }
-                }
-            }
-        })
+
+                    override fun onError(t: Throwable) {
+                        ViewUtil.showSnackbarMessage(binding, t.message!!)
+                    }
+
+                    override fun onNext(response: Response<MessageResponse>) {
+                        if (response.isSuccessful) {
+                            val messageResponse = response.body()
+                            ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
+                        } else {
+                            val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
+                            if (messageResponse != null) {
+                                ViewUtil.showSnackbarMessage(binding, messageResponse.message!!)
+                            } else {
+                                ViewUtil.showSnackbarMessage(binding,
+                                        ErrorUtil.getGeneralExceptionMessage(context, response.code())!!)
+                            }
+                        }
+                    }
+                })
     }
 
     fun registerNewBook(

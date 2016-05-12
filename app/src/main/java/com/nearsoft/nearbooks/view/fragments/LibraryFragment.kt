@@ -29,6 +29,7 @@ import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter
 import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener
 import com.nearsoft.nearbooks.view.helpers.SpacingDecoration
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import retrofit2.Response
@@ -215,48 +216,47 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
                 val book = Book(realmBooks)
                 AlertDialog.Builder(context).setTitle(book.title).setItems(R.array.actions_book) { dialog, which ->
                     when (which) {
-                        ACTION_REQUEST -> subscribeToFragment(BookModel.requestBookToBorrow(
-                                mLazyUser.get(), qrCode).subscribe(object : Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
-                            override fun onCompleted() {
-                            }
-
-                            override fun onError(t: Throwable) {
-                                ViewUtil.showSnackbarMessage(mBinding,
-                                        t.message!!)
-                            }
-
-                            override fun onNext(response: Response<com.nearsoft.nearbooks.models.realm.Borrow>) {
-                                if (response.isSuccessful) {
-                                    val borrow = Borrow(response.body())
-                                    val status = borrow.status
-                                    if (status == Borrow.STATUS_REQUESTED) {
-                                        ViewUtil.showSnackbarMessage(
-                                                mBinding,
-                                                getString(R.string.message_book_requested))
-                                    } else if (status == Borrow.STATUS_ACTIVE) {
-                                        ViewUtil.showSnackbarMessage(
-                                                mBinding,
-                                                getString(R.string.message_book_active))
+                        ACTION_REQUEST -> BookModel.requestBookToBorrow(mLazyUser.get(), qrCode)
+                                .bindToLifecycle(this)
+                                .subscribe(object : Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
+                                    override fun onCompleted() {
                                     }
-                                } else {
-                                    val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
-                                    if (messageResponse != null) {
-                                        ViewUtil.showSnackbarMessage(
-                                                mBinding,
-                                                messageResponse.message!!)
-                                    } else {
-                                        ViewUtil.showSnackbarMessage(
-                                                mBinding,
-                                                ErrorUtil.getGeneralExceptionMessage(context,
-                                                        response.code())!!)
+
+                                    override fun onError(t: Throwable) {
+                                        ViewUtil.showSnackbarMessage(mBinding,
+                                                t.message!!)
                                     }
-                                }
-                            }
-                        }))
-                        ACTION_CHECK_IN -> subscribeToFragment(BookModel.doBookCheckIn(mBinding,
-                                mLazyUser.get(), qrCode))
-                        ACTION_CHECK_OUT -> subscribeToFragment(BookModel.doBookCheckOut(mBinding,
-                                mLazyUser.get(), qrCode))
+
+                                    override fun onNext(response: Response<com.nearsoft.nearbooks.models.realm.Borrow>) {
+                                        if (response.isSuccessful) {
+                                            val borrow = Borrow(response.body())
+                                            val status = borrow.status
+                                            if (status == Borrow.STATUS_REQUESTED) {
+                                                ViewUtil.showSnackbarMessage(
+                                                        mBinding,
+                                                        getString(R.string.message_book_requested))
+                                            } else if (status == Borrow.STATUS_ACTIVE) {
+                                                ViewUtil.showSnackbarMessage(
+                                                        mBinding,
+                                                        getString(R.string.message_book_active))
+                                            }
+                                        } else {
+                                            val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
+                                            if (messageResponse != null) {
+                                                ViewUtil.showSnackbarMessage(
+                                                        mBinding,
+                                                        messageResponse.message!!)
+                                            } else {
+                                                ViewUtil.showSnackbarMessage(
+                                                        mBinding,
+                                                        ErrorUtil.getGeneralExceptionMessage(context,
+                                                                response.code())!!)
+                                            }
+                                        }
+                                    }
+                                })
+                        ACTION_CHECK_IN -> BookModel.doBookCheckIn(mBinding, mLazyUser.get(), qrCode)
+                        ACTION_CHECK_OUT -> BookModel.doBookCheckOut(mBinding, mLazyUser.get(), qrCode)
                     }
                 }.show()
             } else {

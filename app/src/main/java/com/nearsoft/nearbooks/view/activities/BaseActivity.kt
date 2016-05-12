@@ -5,7 +5,6 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import com.nearsoft.nearbooks.NearbooksApplication
 import com.nearsoft.nearbooks.R
@@ -14,18 +13,16 @@ import com.nearsoft.nearbooks.di.components.DaggerBaseActivityComponent
 import com.nearsoft.nearbooks.di.modules.BaseActivityModule
 import com.nearsoft.nearbooks.models.view.User
 import com.nearsoft.nearbooks.sync.SyncChangeHandler
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity
 import dagger.Lazy
-import rx.Subscription
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 /**
  * Base activity.
  * Created by epool on 11/17/15.
  */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : RxAppCompatActivity() {
 
-    private val mCompositeSubscription = CompositeSubscription()
     @Inject
     lateinit var syncChangeHandler: SyncChangeHandler
     @Inject
@@ -69,12 +66,6 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    override fun onDestroy() {
-        unSubscribeFromActivity()
-
-        super.onDestroy()
-    }
-
     override fun onNewIntent(intent: Intent) {
         setIntent(intent)
         handleIntent(intent)
@@ -110,14 +101,6 @@ abstract class BaseActivity : AppCompatActivity() {
         if (toolbar != null) {
             super.setSupportActionBar(toolbar)
         }
-    }
-
-    protected fun subscribeToActivity(subscription: Subscription) {
-        mCompositeSubscription.add(subscription)
-    }
-
-    protected fun unSubscribeFromActivity() {
-        mCompositeSubscription.clear()
     }
 
     protected val baseActivityModule: BaseActivityModule

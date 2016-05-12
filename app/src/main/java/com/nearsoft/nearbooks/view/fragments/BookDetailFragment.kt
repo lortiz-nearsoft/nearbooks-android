@@ -22,6 +22,7 @@ import com.nearsoft.nearbooks.view.helpers.SimpleTransitionListener
 import com.nearsoft.nearbooks.ws.responses.AvailabilityResponse
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
 import com.squareup.picasso.Picasso
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import retrofit2.Response
 import rx.Subscriber
 
@@ -88,42 +89,43 @@ class BookDetailFragment : BaseFragment() {
         ViewCompat.setTransitionName(mBinding.toolbar, VIEW_NAME_BOOK_TOOLBAR)
 
         mBinding.fabRequestBook.setOnClickListener { view ->
-            subscribeToFragment(BookModel.requestBookToBorrow(mLazyUser.get(),
-                    mBook.id!! + "-0").subscribe(object : Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
-                override fun onCompleted() {
-                }
-
-                override fun onError(t: Throwable) {
-                    ViewUtil.showSnackbarMessage(mBinding, t.message!!)
-                }
-
-                override fun onNext(response: Response<com.nearsoft.nearbooks.models.realm.Borrow>) {
-                    if (response.isSuccessful) {
-                        val borrow = Borrow(response.body())
-                        mBinding.setBorrow(borrow)
-                        mBinding.executePendingBindings()
-                        val status = borrow.status
-                        if (status == Borrow.STATUS_REQUESTED) {
-                            ViewUtil.showSnackbarMessage(mBinding,
-                                    getString(R.string.message_book_requested))
-                        } else if (status == Borrow.STATUS_ACTIVE) {
-                            ViewUtil.showSnackbarMessage(mBinding,
-                                    getString(R.string.message_book_active))
+            BookModel.requestBookToBorrow(mLazyUser.get(), mBook.id!! + "-0")
+                    .bindToLifecycle(this)
+                    .subscribe(object : Subscriber<Response<com.nearsoft.nearbooks.models.realm.Borrow>>() {
+                        override fun onCompleted() {
                         }
-                        mBinding.fabRequestBook.hide()
-                    } else {
-                        val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
-                        if (messageResponse != null) {
-                            ViewUtil.showSnackbarMessage(mBinding,
-                                    messageResponse.message!!)
-                        } else {
-                            ViewUtil.showSnackbarMessage(mBinding,
-                                    ErrorUtil.getGeneralExceptionMessage(context,
-                                            response.code())!!)
+
+                        override fun onError(t: Throwable) {
+                            ViewUtil.showSnackbarMessage(mBinding, t.message!!)
                         }
-                    }
-                }
-            }))
+
+                        override fun onNext(response: Response<com.nearsoft.nearbooks.models.realm.Borrow>) {
+                            if (response.isSuccessful) {
+                                val borrow = Borrow(response.body())
+                                mBinding.setBorrow(borrow)
+                                mBinding.executePendingBindings()
+                                val status = borrow.status
+                                if (status == Borrow.STATUS_REQUESTED) {
+                                    ViewUtil.showSnackbarMessage(mBinding,
+                                            getString(R.string.message_book_requested))
+                                } else if (status == Borrow.STATUS_ACTIVE) {
+                                    ViewUtil.showSnackbarMessage(mBinding,
+                                            getString(R.string.message_book_active))
+                                }
+                                mBinding.fabRequestBook.hide()
+                            } else {
+                                val messageResponse = ErrorUtil.parseError(MessageResponse::class.java, response)
+                                if (messageResponse != null) {
+                                    ViewUtil.showSnackbarMessage(mBinding,
+                                            messageResponse.message!!)
+                                } else {
+                                    ViewUtil.showSnackbarMessage(mBinding,
+                                            ErrorUtil.getGeneralExceptionMessage(context,
+                                                    response.code())!!)
+                                }
+                            }
+                        }
+                    })
         }
 
         Picasso.with(context)
@@ -191,31 +193,33 @@ class BookDetailFragment : BaseFragment() {
     }
 
     private fun checkBookAvailability() {
-        subscribeToFragment(BookModel.checkBookAvailability(mBook.id!!).subscribe(object : Subscriber<Response<AvailabilityResponse>>() {
-            override fun onCompleted() {
-            }
-
-            override fun onError(t: Throwable) {
-                ViewUtil.showSnackbarMessage(mBinding, t.message!!)
-            }
-
-            override fun onNext(response: Response<AvailabilityResponse>) {
-                if (response.isSuccessful) {
-                    val availabilityResponse = response.body()
-                    val borrow = if (availabilityResponse.activeBorrow != null)
-                        Borrow(availabilityResponse.activeBorrow)
-                    else
-                        null
-                    mBinding.setBorrow(borrow)
-                    mBinding.executePendingBindings()
-                    if (availabilityResponse.isAvailable) {
-                        mBinding.fabRequestBook.show()
-                    } else {
-                        mBinding.fabRequestBook.hide()
+        BookModel.checkBookAvailability(mBook.id!!)
+                .bindToLifecycle(this)
+                .subscribe(object : Subscriber<Response<AvailabilityResponse>>() {
+                    override fun onCompleted() {
                     }
-                }
-            }
-        }))
+
+                    override fun onError(t: Throwable) {
+                        ViewUtil.showSnackbarMessage(mBinding, t.message!!)
+                    }
+
+                    override fun onNext(response: Response<AvailabilityResponse>) {
+                        if (response.isSuccessful) {
+                            val availabilityResponse = response.body()
+                            val borrow = if (availabilityResponse.activeBorrow != null)
+                                Borrow(availabilityResponse.activeBorrow)
+                            else
+                                null
+                            mBinding.setBorrow(borrow)
+                            mBinding.executePendingBindings()
+                            if (availabilityResponse.isAvailable) {
+                                mBinding.fabRequestBook.show()
+                            } else {
+                                mBinding.fabRequestBook.hide()
+                            }
+                        }
+                    }
+                })
     }
 
 }
