@@ -13,7 +13,6 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.google.zxing.integration.android.IntentIntegrator
 import com.nearsoft.nearbooks.R
-import com.nearsoft.nearbooks.databinding.BookItemBinding
 import com.nearsoft.nearbooks.databinding.FragmentLibraryBinding
 import com.nearsoft.nearbooks.models.BookModel
 import com.nearsoft.nearbooks.models.view.Book
@@ -26,7 +25,6 @@ import com.nearsoft.nearbooks.view.activities.BaseActivity
 import com.nearsoft.nearbooks.view.activities.BookDetailActivity
 import com.nearsoft.nearbooks.view.activities.zxing.CaptureActivityAnyOrientation
 import com.nearsoft.nearbooks.view.adapters.BookRecyclerViewCursorAdapter
-import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener
 import com.nearsoft.nearbooks.view.helpers.SpacingDecoration
 import com.nearsoft.nearbooks.ws.responses.MessageResponse
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
@@ -35,7 +33,7 @@ import io.realm.RealmChangeListener
 import retrofit2.Response
 import rx.Subscriber
 
-class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, SyncChangeHandler.OnSyncChangeListener, BaseActivity.OnSearchListener, RealmChangeListener<Realm>, OnBookItemClickListener {
+class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, SyncChangeHandler.OnSyncChangeListener, BaseActivity.OnSearchListener, RealmChangeListener<Realm> {
 
     companion object {
 
@@ -61,7 +59,7 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     private lateinit var mSearchView: SearchView
     private lateinit var mRealm: Realm
     private val mBookRecyclerViewCursorAdapter: BookRecyclerViewCursorAdapter by lazy {
-        BookRecyclerViewCursorAdapter(context, mRealm, this)
+        BookRecyclerViewCursorAdapter(context, mRealm) { BookDetailActivity.openWith(baseActivity, it) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -277,10 +275,6 @@ class LibraryFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener, Sy
     override fun onChange(realm: Realm) {
         mBookRecyclerViewCursorAdapter.notifyDataSetChanged()
         updateUI()
-    }
-
-    override fun onBookItemClicked(binding: BookItemBinding) {
-        BookDetailActivity.openWith(baseActivity, binding);
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.*
  * Google books volume adapter.
  * Created by epool on 2/2/16.
  */
-class GoogleBooksVolumeAdapter(private val mOnGoogleBookItemClickListener: GoogleBooksVolumeAdapter.OnGoogleBookItemClickListener?) : RecyclerView.Adapter<GoogleBooksVolumeAdapter.GoogleBooksVolumeViewHolder>() {
+class GoogleBooksVolumeAdapter(private val mOnGoogleBookItemClickListener: (ItemGoogleBooksVolumeBinding) -> Unit) : RecyclerView.Adapter<GoogleBooksVolumeAdapter.GoogleBooksVolumeViewHolder>() {
 
     private val mGoogleBookBodies = ArrayList<GoogleBookBody>()
 
@@ -35,12 +35,6 @@ class GoogleBooksVolumeAdapter(private val mOnGoogleBookItemClickListener: Googl
         return mGoogleBookBodies.size
     }
 
-    interface OnGoogleBookItemClickListener {
-
-        fun onGoogleBookItemClicked(binding: ItemGoogleBooksVolumeBinding)
-
-    }
-
     inner class GoogleBooksVolumeViewHolder(private val mBinding: ItemGoogleBooksVolumeBinding) : RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
 
         init {
@@ -54,7 +48,7 @@ class GoogleBooksVolumeAdapter(private val mOnGoogleBookItemClickListener: Googl
         }
 
         override fun onClick(v: View) {
-            mOnGoogleBookItemClickListener?.onGoogleBookItemClicked(mBinding)
+            mOnGoogleBookItemClickListener(mBinding)
         }
 
     }

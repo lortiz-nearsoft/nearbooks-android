@@ -10,7 +10,6 @@ import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.databinding.BookItemBinding
 import com.nearsoft.nearbooks.models.BookModel
 import com.nearsoft.nearbooks.models.realm.Book
-import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener
 import com.nearsoft.nearbooks.view.adapters.realm.RealmRecyclerViewAdapter
 import com.nearsoft.nearbooks.view.adapters.viewholders.BookViewHolder
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper
@@ -24,11 +23,11 @@ import javax.inject.Inject
 class BookRecyclerViewCursorAdapter(
         context: Context,
         private val mRealm: Realm,
-        private val mOnBookItemClickListener: OnBookItemClickListener
+        private val mOnBookItemClickListener: (BookItemBinding) -> Unit
 ) : RealmRecyclerViewAdapter<Book>(context, BookModel.getAllBooks(mRealm)) {
 
     @Inject
-    lateinit protected var defaultColors: ColorsWrapper
+    lateinit var defaultColors: ColorsWrapper
 
     init {
         NearbooksApplication.applicationComponent.inject(this)

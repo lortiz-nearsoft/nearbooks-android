@@ -6,7 +6,6 @@ import com.nearsoft.nearbooks.R
 import com.nearsoft.nearbooks.databinding.BookItemBinding
 import com.nearsoft.nearbooks.models.realm.Book
 import com.nearsoft.nearbooks.util.ViewUtil
-import com.nearsoft.nearbooks.view.adapters.listeners.OnBookItemClickListener
 import com.nearsoft.nearbooks.view.helpers.ColorsWrapper
 
 /**
@@ -16,7 +15,7 @@ import com.nearsoft.nearbooks.view.helpers.ColorsWrapper
 class BookViewHolder(
         private val mBinding: BookItemBinding,
         private val defaultColors: ColorsWrapper,
-        private val mOnBookItemClickListener: OnBookItemClickListener
+        private val mOnBookItemClickListener: (BookItemBinding) -> Unit
 ) : RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
 
     init {
@@ -41,6 +40,6 @@ class BookViewHolder(
     }
 
     override fun onClick(v: View) {
-        mOnBookItemClickListener.onBookItemClicked(mBinding)
+        mOnBookItemClickListener(mBinding)
     }
 }

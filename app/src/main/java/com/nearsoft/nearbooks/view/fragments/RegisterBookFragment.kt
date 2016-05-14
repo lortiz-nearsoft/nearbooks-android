@@ -25,7 +25,7 @@ import com.nearsoft.nearbooks.ws.responses.MessageResponse
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import rx.Subscriber
 
-class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBookItemClickListener {
+class RegisterBookFragment : BaseFragment() {
 
     companion object {
 
@@ -48,7 +48,7 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
     private lateinit var mBinding: FragmentRegisterBookBinding
     private var mCode: String? = null
     private val mGoogleBooksVolumeAdapter: GoogleBooksVolumeAdapter by lazy {
-        GoogleBooksVolumeAdapter(this)
+        GoogleBooksVolumeAdapter { onGoogleBookItemClicked(it) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,7 +131,7 @@ class RegisterBookFragment : BaseFragment(), GoogleBooksVolumeAdapter.OnGoogleBo
         integrator.initiateScan()
     }
 
-    override fun onGoogleBookItemClicked(binding: ItemGoogleBooksVolumeBinding) {
+    fun onGoogleBookItemClicked(binding: ItemGoogleBooksVolumeBinding) {
         val googleBookBody = binding.book
         AlertDialog.Builder(context)
                 .setTitle(R.string.question_register_new_book)
