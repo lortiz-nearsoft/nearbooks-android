@@ -16,8 +16,8 @@ android {
         applicationId nearbooksApplicationId
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 33
-        versionName "0.0.13.a"
+        versionCode 34
+        versionName "0.0.14.a"
 
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"

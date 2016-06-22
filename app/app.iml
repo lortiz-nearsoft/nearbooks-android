@@ -45,6 +45,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooksDebug/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooksDebug/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooksDebug/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/kapt/nsbooksDebugAndroidTest" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/nsbooks/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/nsbooks/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/kapt/nsbooksDebugUnitTest" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNsbooksDebug/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNsbooksDebug/resources" type="java-test-resource" />
@@ -54,13 +61,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testNsbooksDebug/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNsbooksDebug/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNsbooksDebug/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/kapt/nsbooksDebugAndroidTest" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/nsbooks/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/nsbooks/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/nsbooks/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooks/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooks/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooks/assets" type="java-resource" />
@@ -69,14 +69,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooks/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooks/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/nsbooks/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNsbooks/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNsbooks/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNsbooks/assets" type="java-test-resource" />
@@ -85,6 +77,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNsbooks/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNsbooks/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNsbooks/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNsbooks/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
