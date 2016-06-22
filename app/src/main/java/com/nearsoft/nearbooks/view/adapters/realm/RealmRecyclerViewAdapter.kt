@@ -24,7 +24,7 @@ abstract class RealmRecyclerViewAdapter<T : RealmObject>(
     }
 
     fun getItem(position: Int): T {
-        return realmBaseAdapter.getItem(position)
+        return realmBaseAdapter.getItem(position)!!
     }
 
     override fun getItemCount(): Int {
