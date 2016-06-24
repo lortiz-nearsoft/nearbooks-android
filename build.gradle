@@ -5,9 +5,9 @@ buildscript {
     ext {
         NSBOOKS_libraryJUnit = "junit:junit:4.12"
 
-        NSBOOKS_versionKotlin = '1.0.3-eap-30'
+        NSBOOKS_versionKotlin = '1.0.3-eap-58'
         NSBOOKS_libraryKotlin = "org.jetbrains.kotlin:kotlin-stdlib:$NSBOOKS_versionKotlin"
-        NSBOOKS_versionBuildTools = '2.2.0-alpha3'
+        NSBOOKS_versionBuildTools = '2.2.0-alpha4'
         NSBOOKS_libraryDataBindingCompiler = "com.android.databinding:compiler:$NSBOOKS_versionBuildTools"
 
         NSBOOKS_libraryMultidex = "com.android.support:multidex:1.0.1"
